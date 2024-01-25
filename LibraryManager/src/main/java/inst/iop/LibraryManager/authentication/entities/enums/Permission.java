@@ -1,4 +1,4 @@
-package inst.iop.LibraryManager.authentication.entities;
+package inst.iop.LibraryManager.authentication.entities.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
