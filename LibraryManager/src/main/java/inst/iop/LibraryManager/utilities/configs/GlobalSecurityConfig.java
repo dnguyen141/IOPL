@@ -1,4 +1,4 @@
-package inst.iop.LibraryManager.authentication.configs;
+package inst.iop.LibraryManager.utilities.configs;
 
 import inst.iop.LibraryManager.authentication.filters.JwtAuthenticationFilter;
 import inst.iop.LibraryManager.authentication.filters.TrailingSlashFilter;
@@ -23,7 +23,7 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
-public class SecurityConfig {
+public class GlobalSecurityConfig {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final TrailingSlashFilter trailingSlashFilter;
   private final AuthenticationProvider authenticationProvider;
@@ -46,8 +46,8 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             (authorize) -> authorize
                 .requestMatchers(
-                    "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/book/list/**",
-                    "/api/v1/book/search/**"
+                    "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/confirm",
+                    "/api/v1/book/list/**", "/api/v1/book/search/**"
                 )
                 .permitAll()
                 .anyRequest()
