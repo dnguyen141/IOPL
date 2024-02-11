@@ -9,13 +9,13 @@ import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class SuccessWithDataApiResponse implements ApiResponse {
+public class ErrorWithViolationsApiResponse implements ApiResponse {
   private String status;
   private int code;
   private String message;
-  private Map<String, Object> data;
+  private Map<String, Object> violations;
 
-  SuccessWithDataApiResponse(int code, String message, Map<String, Object> data) {
-    this("success", code, message, data);
+  ErrorWithViolationsApiResponse(int code, String message, Map<String, Object> data) {
+    this("error", code, message, data);
   }
 }
