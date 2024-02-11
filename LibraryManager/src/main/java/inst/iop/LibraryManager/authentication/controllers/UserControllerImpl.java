@@ -6,12 +6,8 @@ import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
 
 import inst.iop.LibraryManager.authentication.services.UserService;
-import inst.iop.LibraryManager.utilities.InformationResponse;
-import inst.iop.LibraryManager.utilities.InformationWithDetailsResponse;
+import inst.iop.LibraryManager.utilities.responses.ApiResponseEntityFactory;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -30,76 +26,54 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController implements UserControllerInterface {
+public class UserControllerImpl implements UserController {
   private final UserService userService;
+  private final ApiResponseEntityFactory responseFactory;
 
   @Override
-  public ResponseEntity<?> getCurrentUser() {
+  public ResponseEntity<Object> getCurrentUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     User user;
     try {
       user = userService.findUserByEmail(authentication.getName());
     } catch (BadRequestDetailsException e) {
-      return ResponseEntity
-          .badRequest()
-          .body(
-              new InformationWithDetailsResponse(
-                  "error",
-                  400,
-                  "Unable to get user details",
-                  e.getViolations()
-              )
-          );
+      return responseFactory.createErrorResponse(
+          HttpStatus.BAD_REQUEST,
+          "Unable to get user details"
+      );
     }
 
-    Map<String, Object> details = new HashMap<>();
-    details.put("user", user);
+    Map<String, Object> data = new HashMap<>();
+    data.put("user", user);
 
-    return ResponseEntity.ok(
-        new InformationWithDetailsResponse(
-            "success",
-            200,
-            "Successfully queried user details",
-            details
-        )
-    );
+    return responseFactory.createSuccessWithDataResponse(HttpStatus.OK, "Successfully query user details",
+        data);
   }
 
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
-  public ResponseEntity<?> getUserDetailsById(@PathVariable Long id) {
+  public ResponseEntity<Object> getUserById(@PathVariable Long id) {
     User user;
     try {
       user = userService.findUserById(id);
     } catch (BadRequestDetailsException e) {
-      return ResponseEntity
-          .badRequest()
-          .body(
-              new InformationWithDetailsResponse(
-                  "error",
-                  400,
-                  "Unable to get user details",
-                  e.getViolations()
-              )
-          );
+      return responseFactory.createErrorResponse(
+          HttpStatus.BAD_REQUEST,
+          "Unable to get user details"
+      );
     }
 
-    Map<String, Object> details = new HashMap<>();
-    details.put("user", user);
+    Map<String, Object> data = new HashMap<>();
+    data.put("user", user);
 
-    return ResponseEntity.ok(
-        new InformationWithDetailsResponse(
-            "success",
-            200,
-            "Successfully get user details",
-            details
-        )
+    return responseFactory.createSuccessWithDataResponse(
+        HttpStatus.OK, "Successfully query user details", data
     );
   }
 
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
-  public ResponseEntity<?> getAllUsers() {
+  public ResponseEntity<Object> listAllUsers() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String callerRole = authentication.getAuthorities().stream().toList().get(0).toString();
     List<User> query = userService.findAllUsers();
@@ -111,139 +85,77 @@ public class UserController implements UserControllerInterface {
 
     Map<String, Object> details = new HashMap<>();
     details.put("users", query);
-    return ResponseEntity.ok(
-        new InformationWithDetailsResponse(
-            "success",
-            200,
-            "Successfully queried users list",
-            details
-        )
+    return responseFactory.createSuccessWithDataResponse(
+        HttpStatus.OK, "Successfully query users list", details
     );
   }
 
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
-  public ResponseEntity<?> createUser(@RequestBody @Valid RegisterDto request, BindingResult bindingResult) {
+  public ResponseEntity<Object> createUser(@RequestBody @Valid RegisterDto request, BindingResult bindingResult) {
     try {
       userService.createUser(request, bindingResult);
-      return ResponseEntity
-          .status(HttpStatus.CREATED)
-          .body(new InformationResponse(
-              "success",
-              201,
-              "Successfully created user"
-          ));
+      return responseFactory.createSuccessResponse(
+          HttpStatus.CREATED, "Successfully create new user"
+      );
     } catch (BadRequestDetailsException e) {
-      return ResponseEntity
-          .badRequest()
-          .body(new InformationWithDetailsResponse(
-              "error",
-              400,
-              "Invalid create request",
-              e.getViolations()
-          ));
+      return responseFactory.createErrorWithDetailsResponse(
+          HttpStatus.BAD_REQUEST, "Invalid create request", e.getViolations()
+      );
     }
   }
 
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
-  @Transactional
-  public ResponseEntity<?> updateOtherUserProfile(@RequestBody @Valid ChangeUserDetailsDto request,
+  public ResponseEntity<Object> updateOtherUserProfile(@RequestBody @Valid ChangeUserDetailsDto request,
                                                       BindingResult bindingResult) {
     try {
-      userService.updateUserByEmail(request, bindingResult);
+      userService.updateOtherUserByEmail(request, bindingResult);
+      return responseFactory.createSuccessResponse(
+          HttpStatus.ACCEPTED, "Successfully update specified user details"
+      );
     } catch (BadRequestDetailsException e) {
-      return ResponseEntity
-          .badRequest()
-          .body(new InformationWithDetailsResponse(
-              "error",
-              400,
-              "Unable to update user details",
-              e.getViolations()
-          ));
+      return responseFactory.createErrorWithDetailsResponse(
+          HttpStatus.BAD_REQUEST, "Unable to update specified user details", e.getViolations()
+      );
     }
-
-    return ResponseEntity
-        .ok(new InformationResponse(
-            "success",
-            201,
-            "Successfully update user details"
-        ));
   }
 
   @Override
-  @PreAuthorize("hasRole('ROLE_USER')")
-  @Transactional
-  public ResponseEntity<?> updateUserProfile(@RequestBody @Valid ChangeDetailsDto request,
+  public ResponseEntity<Object> updateUserProfile(@RequestBody @Valid ChangeDetailsDto request,
                                                BindingResult bindingResult) {
     try {
-      userService.updateUserByEmail(request, bindingResult);
+      userService.updateOtherUserByEmail(request, bindingResult);
+      return responseFactory.createSuccessResponse(
+          HttpStatus.ACCEPTED, "Successfully update current user details"
+      );
     } catch (BadRequestDetailsException e) {
-      return ResponseEntity
-          .badRequest()
-          .body(new InformationWithDetailsResponse(
-              "error",
-              400,
-              "Unable to update profile",
-              e.getViolations()
-          ));
+      return responseFactory.createErrorWithDetailsResponse(
+          HttpStatus.BAD_REQUEST, "Unable to update current user details", e.getViolations()
+      );
     }
-
-    return ResponseEntity
-        .ok(new InformationResponse(
-            "success",
-            201,
-            "Successfully update profile"
-        ));
   }
 
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
-  @Transactional
-  public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
+  public ResponseEntity<Object> deleteUserById(@PathVariable Long id) {
     try {
       userService.deleteUserById(id);
-      return ResponseEntity
-          .status(HttpStatus.OK)
-          .body(new InformationResponse(
-              "success",
-              201,
-              "Successfully delete user with id " + id
-          ));
+      return responseFactory.createSuccessResponse(
+          HttpStatus.ACCEPTED, "Successfully delete user with id " + id
+      );
     } catch (BadRequestDetailsException e) {
-      return ResponseEntity
-          .badRequest()
-          .body(new InformationWithDetailsResponse(
-             "error",
-             400,
-             "Unable to delete user with id " + id,
-             e.getViolations()
-          ));
+      return responseFactory.createErrorWithDetailsResponse(
+          HttpStatus.BAD_REQUEST, "Unable to delete user with id " + id, e.getViolations()
+      );
     }
   }
 
   @Override
-  @Transactional
-  public ResponseEntity<?> deleteUser() {
+  public ResponseEntity<Object> deleteUser() {
     userService.deleteUser();
-    return ResponseEntity.ok(
-        new InformationResponse(
-            "success",
-            202,
-            "Delete user successfully"
-        )
-    );
-  }
-
-  @Override
-  public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-    userService.logout(request, response);
-    return ResponseEntity.ok(
-        new InformationResponse(
-            "success",
-            200,
-            "Logout successfully"
-        )
+    return responseFactory.createSuccessResponse(
+        HttpStatus.ACCEPTED, "Successfully delete current user"
     );
   }
 }

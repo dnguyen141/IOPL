@@ -1,11 +1,10 @@
 package inst.iop.LibraryManager.authentication.controllers;
 
+import inst.iop.LibraryManager.authentication.services.AuthenticationService;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import inst.iop.LibraryManager.authentication.dtos.LoginDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
-import inst.iop.LibraryManager.utilities.InformationResponse;
-import inst.iop.LibraryManager.utilities.InformationWithDetailsResponse;
-import inst.iop.LibraryManager.authentication.services.UserService;
+import inst.iop.LibraryManager.utilities.responses.ApiResponseEntityFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -15,79 +14,80 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
+import static inst.iop.LibraryManager.utilities.BindingResultHandler.handleBindingResult;
+
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
-public class AuthenticationController implements AuthenticationControllerInf{
+@RequestMapping("/api/v1/auth")
+public class AuthenticationControllerImpl implements AuthenticationController {
 
-  private final UserService userService;
+  private final AuthenticationService authenticationService;
+  private final ApiResponseEntityFactory responseEntityFactory;
 
   @Override
-  public ResponseEntity<?> register(@RequestBody @Valid RegisterDto request, BindingResult bindingResult) {
+  public ResponseEntity<Object> register(@RequestBody @Valid RegisterDto request, BindingResult bindingResult) {
     try {
-      return ResponseEntity
-          .status(HttpStatus.CREATED)
-          .body(new InformationWithDetailsResponse(
-              "success",
-              201,
-              "Successfully register",
-              userService.register(request, bindingResult)
-          ));
+      Map<String, Object> violations = handleBindingResult(bindingResult);
+      if (!violations.isEmpty()) {
+        throw new BadRequestDetailsException(violations);
+      }
+
+      authenticationService.register(request, bindingResult);
+      return responseEntityFactory.createSuccessResponse(
+          HttpStatus.CREATED, "Successfully register new user"
+      );
     } catch (BadRequestDetailsException e) {
-      return ResponseEntity
-          .badRequest()
-          .body(new InformationWithDetailsResponse(
-              "error",
-              400,
-              "Invalid register request",
-              e.getViolations()
-          ));
+      return responseEntityFactory.createErrorWithDetailsResponse(
+          HttpStatus.BAD_REQUEST, "Invalid register request", e.getViolations()
+      );
     }
   }
 
   @Override
-  public ResponseEntity<?> login(@RequestBody LoginDto request) {
+  public ResponseEntity<Object> login(@RequestBody LoginDto request) {
     try {
-      return ResponseEntity
-          .accepted()
-          .body(new InformationWithDetailsResponse(
-              "success",
-              HttpStatus.ACCEPTED.value(),
-              "Successfully login",
-              userService.login(request)
-          ));
+      return responseEntityFactory.createSuccessWithDataResponse(
+          HttpStatus.ACCEPTED, "Successfully login", authenticationService.login(request)
+      );
     } catch (BadRequestDetailsException e) {
-      return ResponseEntity
-          .status(HttpStatus.UNAUTHORIZED)
-          .body(new InformationWithDetailsResponse(
-              "error",
-              401,
-              "Unable to login",
-              e.getViolations()
-          ));
+      return responseEntityFactory.createErrorWithDetailsResponse(
+          HttpStatus.UNAUTHORIZED, "Unable to login", e.getViolations()
+      );
     }
   }
 
   @Override
-  public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+  public ResponseEntity<Object> refreshToken(HttpServletRequest request, HttpServletResponse response) {
     try {
-      userService.refreshToken(request, response);
-      return ResponseEntity
-          .status(HttpStatus.ACCEPTED)
-          .body(new InformationResponse(
-              "success",
-              202,
-              "Successfully refresh token"
-          ));
+      return responseEntityFactory.createSuccessWithDataResponse(
+          HttpStatus.ACCEPTED,
+          "Successfully refresh token",
+          authenticationService.refreshToken(request, response)
+      );
     } catch (BadRequestDetailsException e) {
-      return ResponseEntity
-          .badRequest()
-          .body(new InformationWithDetailsResponse(
-              "error",
-              400,
-              "Invalid register request",
-              e.getViolations()
-          ));
+      return responseEntityFactory.createErrorWithDetailsResponse(
+          HttpStatus.BAD_REQUEST, "Unable to refresh token", e.getViolations()
+      );
     }
+  }
+
+  @Override
+  public ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response) {
+    authenticationService.logout(request, response);
+    return responseEntityFactory.createSuccessResponse(HttpStatus.ACCEPTED, "Logout successfully");
+  }
+
+  @Override
+  public ResponseEntity<Object> confirmRegistration(
+      @RequestParam("u") String email,
+      @RequestParam("c") String code
+  ) {
+    authenticationService.confirmRegister(email, code);
+    return responseEntityFactory.createSuccessResponse(
+        HttpStatus.ACCEPTED, "Registration confirmed. Account is enable"
+    );
   }
 }
