@@ -22,11 +22,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.security.SignatureException;
+import java.util.Arrays;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 @RestControllerAdvice
-public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
+public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
 
   private final ApiResponseEntityFactory responseEntityFactory;
 
