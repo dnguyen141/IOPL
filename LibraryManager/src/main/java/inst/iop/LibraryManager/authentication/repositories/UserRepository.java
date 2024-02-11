@@ -2,10 +2,6 @@ package inst.iop.LibraryManager.authentication.repositories;
 
 import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.authentication.entities.enums.Role;
-import jakarta.annotation.Nullable;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -35,12 +31,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
   List<User> findAllAdmins();
 
   @Modifying
-  @Transactional
-  @Query("DELETE FROM User u WHERE u.email = :email")
-  void deleteUserByEmail(String email);
-
-  @Modifying
-  @Transactional
   @Query("UPDATE User u " +
       "SET u.password = CASE WHEN (:password is not null) THEN :password ELSE u.password END, " +
       "u.firstName = CASE WHEN (:firstName is not null) THEN :firstName ELSE u.firstName END, " +
@@ -48,4 +38,21 @@ public interface UserRepository extends JpaRepository<User, Long> {
       "u.role = CASE WHEN (:role is not null) THEN :role ELSE u.role END " +
       "WHERE u.email = :email")
   void updateUserByEmail(String email, String password, String firstName, String lastName, Role role);
+
+  @Modifying
+  @Query("UPDATE User u " +
+      "SET u.password = CASE WHEN (:password is not null) THEN :password ELSE u.password END, " +
+      "u.firstName = CASE WHEN (:firstName is not null) THEN :firstName ELSE u.firstName END, " +
+      "u.lastName = CASE WHEN (:lastName is not null) THEN :lastName ELSE u.lastName END, " +
+      "u.role = CASE WHEN (:role is not null) THEN :role ELSE u.role END " +
+      "WHERE u.id = :id")
+  void updateUserByEmail(Long id, String password, String firstName, String lastName, Role role);
+
+  @Modifying
+  @Query("DELETE FROM User u WHERE u.id = :id")
+  void deleteUserById(Long id);
+
+  @Modifying
+  @Query("DELETE FROM User u WHERE u.email = :email")
+  void deleteUserByEmail(String email);
 }

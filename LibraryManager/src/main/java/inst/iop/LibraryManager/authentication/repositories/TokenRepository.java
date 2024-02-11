@@ -2,7 +2,9 @@ package inst.iop.LibraryManager.authentication.repositories;
 
 
 import inst.iop.LibraryManager.authentication.entities.JwtToken;
+import inst.iop.LibraryManager.authentication.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -17,5 +19,9 @@ public interface TokenRepository extends JpaRepository<JwtToken, Long> {
   List<JwtToken> findAllValidTokensByUserId(Long id);
 
   @Query("SELECT t FROM JwtToken t WHERE t.token = :token")
-  Optional<JwtToken> findTokenByToken(String token);
+  Optional<JwtToken> findTokenByString(String token);
+
+  @Modifying
+  @Query("DELETE FROM JwtToken t WHERE t.user = :user")
+  void deleteTokenByUser(User user);
 }

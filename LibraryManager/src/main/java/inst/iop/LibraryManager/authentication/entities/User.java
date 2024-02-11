@@ -1,13 +1,15 @@
 package inst.iop.LibraryManager.authentication.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import inst.iop.LibraryManager.authentication.entities.enums.Role;
 import inst.iop.LibraryManager.library.entities.BorrowEntry;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +19,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"borrowEntries", "tokens", "username", "accountNonExpired",
+    "credentialsNonExpired", "accountNonLocked"})
 @Table(name = "users")
 public class User implements UserDetails {
 
@@ -44,39 +48,40 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Role role = Role.USER;
 
-  @JsonIgnore
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "borrower")
+  @Transient
   private Set<BorrowEntry> borrowEntries;
 
-  @JsonIgnore
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
   private List<JwtToken> tokens;
 
-  @JsonIgnore
+  private boolean enabled;
+
+  private LocalDateTime created;
+
+  @Nullable
+  private String confirmationCode;
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return role.getAuthorities();
   }
 
-  @JsonIgnore
   @Override
   public String getUsername() {
     return email;
   }
 
-  @JsonIgnore
   @Override
   public boolean isAccountNonExpired() {
     return true;
   }
 
-  @JsonIgnore
   @Override
   public boolean isAccountNonLocked() {
     return true;
   }
 
-  @JsonIgnore
   @Override
   public boolean isCredentialsNonExpired() {
     return true;
@@ -84,6 +89,6 @@ public class User implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return true;
+    return enabled;
   }
 }

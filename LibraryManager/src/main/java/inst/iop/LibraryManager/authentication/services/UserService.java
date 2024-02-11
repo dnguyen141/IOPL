@@ -1,133 +1,35 @@
 package inst.iop.LibraryManager.authentication.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import inst.iop.LibraryManager.authentication.entities.JwtToken;
-import inst.iop.LibraryManager.authentication.entities.enums.Role;
-import inst.iop.LibraryManager.authentication.entities.enums.TokenType;
-import inst.iop.LibraryManager.authentication.exceptions.BadRequestDetailsException;
-import inst.iop.LibraryManager.authentication.models.requests.LoginRequest;
-import inst.iop.LibraryManager.authentication.models.responses.AuthenticationResponse;
-import inst.iop.LibraryManager.authentication.models.requests.RegisterRequest;
+import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
 import inst.iop.LibraryManager.authentication.entities.User;
-import inst.iop.LibraryManager.authentication.repositories.TokenRepository;
-import inst.iop.LibraryManager.authentication.repositories.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
+import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
+import org.springframework.validation.BindingResult;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 
-import static inst.iop.LibraryManager.authentication.utility.UserValidators.*;
+public interface UserService {
 
-@Service
-@RequiredArgsConstructor
-public class UserService {
+  User findUserById(Long id) throws BadRequestDetailsException;
 
-  private final UserRepository userRepository;
+  User findUserByEmail(String email) throws BadRequestDetailsException;
 
-  private final TokenRepository tokenRepository;
+  void deleteUserById(Long id) throws BadRequestDetailsException;
 
-  private final PasswordEncoder passwordEncoder;
+  List<User> findAllUsers();
 
-  private final JwtService jwtService;
+  List<User> findAllModerators();
 
-  private final AuthenticationManager authenticationManager;
+  List<User> findAllAdmins();
 
-  public AuthenticationResponse register(RegisterRequest request) throws BadRequestDetailsException {
-    Map<String, Object> violations = validateUserRequest(request, userRepository, true);
-    if (violations.isEmpty()) {
-      User user = User.builder()
-          .email(request.getEmail())
-          .password(passwordEncoder.encode(request.getPassword()))
-          .firstName(request.getFirstName())
-          .lastName(request.getLastName())
-          .role(Role.valueOf(request.getRole()))
-          .borrowEntries(new HashSet<>())
-          .build();
-      userRepository.save(user);
-      String accessToken = jwtService.generateToken(user);
-      String refreshToken = jwtService.generateRefreshToken(user);
-      saveToken(user, accessToken);
-      return new AuthenticationResponse(accessToken, refreshToken);
-    }
-    throw new BadRequestDetailsException(violations);
-  }
+  void createUser(RegisterDto request, BindingResult bindingResult) throws BadRequestDetailsException;
 
-  public AuthenticationResponse login(LoginRequest request) throws AuthenticationException {
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-    );
-    User user = userRepository.findUserByEmail(request.getEmail()).orElseThrow();
-    String accessToken = jwtService.generateToken(user);
-    String refreshToken = jwtService.generateRefreshToken(user);
-    revokeAllTokens(user);
-    saveToken(user, accessToken);
-    return new AuthenticationResponse(accessToken, refreshToken);
-  }
+  void updateOtherUserByEmail(ChangeUserDetailsDto userDetailsRequest, BindingResult bindingResult)
+      throws BadRequestDetailsException;
 
-  public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String authenticationHeader = request.getHeader("Authorization");
-    if (authenticationHeader == null || !authenticationHeader.startsWith("Bearer ")) {
-      return;
-    }
+  void updateOtherUserByEmail(ChangeDetailsDto userDetailsRequest, BindingResult bindingResult)
+      throws BadRequestDetailsException;
 
-    String refreshToken = authenticationHeader.substring(7);
-    String email = jwtService.extractUsername(refreshToken);
-    if (email != null) {
-      User user = userRepository.findUserByEmail(email).orElseThrow();
-      if (jwtService.isTokenValid(refreshToken, user)) {
-        var accessToken = jwtService.generateToken(user);
-        revokeAllTokens(user);
-        saveToken(user, accessToken);
-        var authenticationResponse = new AuthenticationResponse(accessToken, refreshToken);
-        new ObjectMapper().writeValue(response.getOutputStream(), authenticationResponse);
-      }
-    }
-  }
-
-  public void logout(HttpServletRequest request, HttpServletResponse response) {
-    String authenticationHeader = request.getHeader("Authorization");
-    if (authenticationHeader == null || !authenticationHeader.startsWith("Bearer ")) {
-      return;
-    }
-
-    String token = authenticationHeader.substring(7);
-    var storedToken = tokenRepository.findTokenByToken(token).orElse(null);
-    if (storedToken != null) {
-      storedToken.setExpired(true);
-      storedToken.setRevoked(true);
-      tokenRepository.save(storedToken);
-      SecurityContextHolder.clearContext();
-    }
-  }
-
-  private void saveToken(User user, String jwtToken) {
-    JwtToken token = JwtToken.builder()
-        .user(user)
-        .token(jwtToken)
-        .tokenType(TokenType.BEARER)
-        .expired(false)
-        .revoked(false)
-        .build();
-    tokenRepository.save(token);
-  }
-
-  private void revokeAllTokens(User user) {
-    var storedTokens = tokenRepository.findAllValidTokensByUserId(user.getId());
-    if (!storedTokens.isEmpty()) {
-      storedTokens.forEach(t -> {
-        t.setExpired(true);
-        t.setRevoked(true);
-      });
-      tokenRepository.saveAll(storedTokens);
-    }
-  }
+  void deleteUser();
 }

@@ -8,6 +8,6 @@ import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class BadRequestDetailsException extends Throwable {
+public class BadRequestDetailsException extends RuntimeException {
   private final Map<String, Object> violations;
 }

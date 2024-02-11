@@ -3,7 +3,6 @@ package inst.iop.LibraryManager.authentication.configs;
 import inst.iop.LibraryManager.authentication.filters.JwtAuthenticationFilter;
 import inst.iop.LibraryManager.authentication.filters.TrailingSlashFilter;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -46,7 +45,10 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             (authorize) -> authorize
-                .requestMatchers("/api/v1/auth/**")
+                .requestMatchers(
+                    "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/book/list/**",
+                    "/api/v1/book/search/**"
+                )
                 .permitAll()
                 .anyRequest()
                 .authenticated()

@@ -1,5 +1,6 @@
 package inst.iop.LibraryManager.authentication.entities.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,15 +11,15 @@ import java.util.List;
 import java.util.Set;
 
 @Getter
-@RequiredArgsConstructor
-public enum Role {
-  USER(Collections.emptySet(), 0),
+@AllArgsConstructor
+public enum Role implements Comparable<Role> {
+  USER(Collections.emptySet(), "ROLE_USER", 0),
   MODERATOR(Set.of(
       Permission.MODERATOR_CREATE,
       Permission.MODERATOR_DELETE,
       Permission.MODERATOR_READ,
       Permission.MODERATOR_UPDATE
-  ), 1),
+  ), "ROLE_MODERATOR", 1),
   ADMIN(Set.of(
       Permission.ADMIN_CREATE,
       Permission.ADMIN_DELETE,
@@ -28,9 +29,10 @@ public enum Role {
       Permission.MODERATOR_DELETE,
       Permission.MODERATOR_READ,
       Permission.MODERATOR_UPDATE
-  ), 2);
+  ), "ROLE_ADMIN", 2);
 
   private final Set<Permission> permissions;
+  private final String authority;
   private final int order;
 
   public List<SimpleGrantedAuthority> getAuthorities() {
@@ -41,5 +43,23 @@ public enum Role {
         .map(authority -> new SimpleGrantedAuthority(authority.getPermission()))
         .toList());
     return authorities;
+  }
+
+  public static Role getRoleFromAuthority(String authority) {
+    for (Role role: Role.values()) {
+      if (role.authority.equalsIgnoreCase(authority)) {
+        return role;
+      }
+    }
+    return null;
+  }
+
+  public static Role getRoleFromString(String role) {
+    for (Role r: Role.values()) {
+      if (r.name().equalsIgnoreCase(role)) {
+        return r;
+      }
+    }
+    return null;
   }
 }

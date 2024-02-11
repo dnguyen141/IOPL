@@ -1,4 +1,4 @@
-package inst.iop.LibraryManager.authentication.models.requests;
+package inst.iop.LibraryManager.authentication.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeleteUserRequest {
+public class LoginDto {
   private String email;
+  private String password;
 }
