@@ -1,6 +1,5 @@
 package inst.iop.LibraryManager.authentication.filters;
 
-import inst.iop.LibraryManager.authentication.models.CustomHttpServletRequestWrapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
