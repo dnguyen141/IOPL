@@ -28,7 +28,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
   private final ApiResponseEntityFactory responseEntityFactory;
 
   @Override
-  public ResponseEntity<Object> register(@RequestBody @Valid RegisterDto request, BindingResult bindingResult) {
+  public ResponseEntity<Object> register(@Valid RegisterDto request, BindingResult bindingResult) {
     try {
       Map<String, Object> violations = handleBindingResult(bindingResult);
       if (!violations.isEmpty()) {
@@ -47,7 +47,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
   }
 
   @Override
-  public ResponseEntity<Object> login(@RequestBody LoginDto request) {
+  public ResponseEntity<Object> login(LoginDto request) {
     try {
       return responseEntityFactory.createSuccessWithDataResponse(
           HttpStatus.ACCEPTED, "Successfully login", authenticationService.login(request)

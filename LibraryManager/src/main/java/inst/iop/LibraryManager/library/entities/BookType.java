@@ -11,9 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Comparator;
 import java.util.Set;
-import java.util.TreeSet;
 
 @Entity
 @Data
@@ -30,7 +28,7 @@ public class BookType {
   private long id;
 
   @Column(unique = true)
-  @TypeConstrain(isNotNullConstrain = true)
+  @TypeConstrain
   public String name;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)

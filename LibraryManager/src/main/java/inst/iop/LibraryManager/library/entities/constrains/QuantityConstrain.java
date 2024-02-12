@@ -17,7 +17,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = QuantityConstrainValidator.class)
 public @interface QuantityConstrain {
-  String message() default "Quantity must be equal or smaller than 1 and equal or smaller than 20";
+  String message() default "Quantity must be equal or smaller than 1 and equal or smaller than 99";
 
   Class<?>[] groups() default { };
 

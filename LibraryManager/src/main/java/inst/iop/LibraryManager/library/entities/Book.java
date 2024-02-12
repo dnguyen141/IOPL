@@ -35,13 +35,13 @@ public class Book {
   private long id;
 
   @Column(unique = true)
-  @TitleConstrain(isNotNullConstrain = true)
+  @TitleConstrain
   private String title;
 
-  @AuthorsConstrain(isNotNullConstrain = true)
+  @AuthorsConstrain
   private String authors;
 
-  @PublisherConstrain(isNotNullConstrain = true)
+  @PublisherConstrain
   private String publisher;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -54,20 +54,19 @@ public class Book {
   @JsonIdentityReference(alwaysAsId = true)
   private BookField field;
 
-  @YearConstrain(isNotNullConstrain = true)
+  @YearConstrain
   private Integer year;
 
-  @EditionConstrain(isNotNullConstrain = true)
+  @EditionConstrain
   private Integer edition;
 
-  @IsbnConstrain(isNotNullConstrain = true)
+  @IsbnConstrain
   private String isbn;
 
   @InventoryNumberConstrain(isNotNullConstrain = true)
   private String inventoryNumber;
 
-  @Size
-  @QuantityConstrain(isNotNullConstrain = true)
+  @QuantityConstrain
   private Integer quantity;
 
   private Integer available;
@@ -75,7 +74,11 @@ public class Book {
   @UrlConstrain
   private String coverImage;
 
-  @OneToMany(mappedBy = "book")
+  @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE)
   @Transient
   private Set<BorrowEntry> borrowEntries;
+
+  public boolean isIssuable() {
+    return available > 0;
+  }
 }

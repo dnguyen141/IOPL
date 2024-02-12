@@ -20,7 +20,7 @@ public interface AuthenticationController {
    * @return The ResponseEntity of type Object that output the result or error in json format
    */
   @PostMapping("/register")
-  ResponseEntity<Object> register(@RequestBody @Valid RegisterDto request, BindingResult bindingResult);
+  ResponseEntity<Object> register(@RequestBody RegisterDto request, BindingResult bindingResult);
 
   @PostMapping("/login")
   ResponseEntity<Object> login(@RequestBody LoginDto request);

@@ -18,6 +18,6 @@ public class QuantityConstrainValidator implements ConstraintValidator<QuantityC
 
   @Override
   public boolean isValid(Integer value, ConstraintValidatorContext context) {
-    return !isNotNullConstrain && value == null || value != null && value >= 1 && value <= 20;
+    return !isNotNullConstrain && value == null || value != null && value >= 1 && value <= 99;
   }
 }

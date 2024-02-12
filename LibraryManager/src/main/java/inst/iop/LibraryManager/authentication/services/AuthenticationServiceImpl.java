@@ -84,7 +84,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         .confirmationCode(confirmationCode)
         .build();
     userRepository.save(user);
-
   }
 
   String generateSecureUuid() {
@@ -196,7 +195,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
   }
 
-  private void saveToken(User user, String jwtToken) {
+  @Override
+  public void saveToken(User user, String jwtToken) {
     JwtToken token = JwtToken.builder()
         .user(user)
         .token(jwtToken)

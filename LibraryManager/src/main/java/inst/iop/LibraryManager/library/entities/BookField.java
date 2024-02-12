@@ -8,9 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Comparator;
 import java.util.Set;
-import java.util.TreeSet;
 
 @Entity
 @Data
@@ -27,7 +25,7 @@ public class BookField {
   private long id;
 
   @Column(unique = true)
-  @FieldConstrain(isNotNullConstrain = true)
+  @FieldConstrain
   public String name;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
