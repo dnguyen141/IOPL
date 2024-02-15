@@ -1,4 +1,4 @@
-package inst.iop.LibraryManager.authentication.configs;
+package inst.iop.LibraryManager.authentication.config;
 
 import inst.iop.LibraryManager.authentication.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
