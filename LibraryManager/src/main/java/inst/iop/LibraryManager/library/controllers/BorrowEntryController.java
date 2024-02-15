@@ -4,21 +4,23 @@ import inst.iop.LibraryManager.library.dtos.CreateBorrowEntryDto;
 import inst.iop.LibraryManager.library.dtos.UpdateBorrowEntryDto;
 import inst.iop.LibraryManager.library.entities.constraints.BorrowStatusConstraint;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/issues")
+@Validated
 public interface BorrowEntryController {
 
   @GetMapping("/{id}")
   ResponseEntity<Object> getBorrowEntryById(@PathVariable Long id);
 
   @GetMapping("")
-  ResponseEntity<Object> listAllBorrowEntriesByStatus(@RequestParam @BorrowStatusConstraint String status,
+  ResponseEntity<Object> listAllBorrowEntriesByStatus(@RequestParam String status,
                                                       @RequestParam(defaultValue = "0") Integer pageNumber,
                                                       @RequestParam(defaultValue = "20") Integer pageSize);
 
   @GetMapping("/list")
-  ResponseEntity<Object> listBorrowEntriesFromCurrentUserByStatus(@RequestParam @BorrowStatusConstraint String status,
+  ResponseEntity<Object> listBorrowEntriesFromCurrentUserByStatus(@RequestParam String status,
                                                                   @RequestParam(defaultValue = "0") Integer pageNumber,
                                                                   @RequestParam(defaultValue = "20") Integer pageSize
   );

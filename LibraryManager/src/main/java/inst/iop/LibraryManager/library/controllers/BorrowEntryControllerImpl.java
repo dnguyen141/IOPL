@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Data
 @RestController
-@Validated
 public class BorrowEntryControllerImpl implements BorrowEntryController {
 
   private final BorrowEntryService borrowEntryService;

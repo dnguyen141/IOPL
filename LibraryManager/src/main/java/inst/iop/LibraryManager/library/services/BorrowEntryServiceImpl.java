@@ -169,7 +169,7 @@ public class BorrowEntryServiceImpl implements BorrowEntryService {
         }
     );
 
-    List<BorrowEntry> be = borrowEntryRepository.getRequestedBorrowEntryByUser(user, book);
+    List<BorrowEntry> be = borrowEntryRepository.listRequestedBorrowEntriesByUser(user, book);
     if (!be.isEmpty() && borrowStatus.equals(BorrowStatus.Requested)) {
       violations.put("status", "You already requested to borrow this book");
       throw  new BadRequestDetailsException("Unable to create new borrow entry", violations);
