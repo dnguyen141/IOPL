@@ -37,7 +37,7 @@ public interface BorrowEntryController {
   @PostMapping("/create")
   ResponseEntity<Object> createBorrowEntry(@RequestBody CreateBorrowEntryDto borrowEntryDto);
 
-  @PostMapping("/update/{id}")
+  @PutMapping("/update/{id}")
   ResponseEntity<Object> updateBorrowEntryById(@PathVariable Long id, @RequestBody UpdateBorrowEntryDto borrowEntryDto);
 
   @DeleteMapping("/delete/{id}")

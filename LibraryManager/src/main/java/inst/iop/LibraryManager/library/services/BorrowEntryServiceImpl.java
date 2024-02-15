@@ -150,7 +150,7 @@ public class BorrowEntryServiceImpl implements BorrowEntryService {
         }
     );
 
-    if (!checkIfReturnDateAfterIssuedDate(request.getReturnDate(), LocalDate.now())) {
+    if (checkIfReturnDateNotAfterIssuedDate(request.getReturnDate(), LocalDate.now())) {
       violations.put("returnDate", "Return date must be in the future");
       throw new BadRequestDetailsException("Unable to create new borrow entry", violations);
     }
@@ -228,11 +228,11 @@ public class BorrowEntryServiceImpl implements BorrowEntryService {
     }
 
     if (request.getReturnDate() != null) {
-      borrowEntry.setReturnDate(request.getBorrowDate());
-      if (checkIfReturnDateAfterIssuedDate(request.getReturnDate(), borrowEntry.getBorrowDate())) {
+      if (checkIfReturnDateNotAfterIssuedDate(request.getReturnDate(), borrowEntry.getBorrowDate())) {
         violations.put("returnDate", "Return date must be in the future");
         throw new BadRequestDetailsException("Unable to create new borrow entry", violations);
       }
+      borrowEntry.setReturnDate(request.getReturnDate());
     }
 
     String status = request.getBorrowStatus();
@@ -248,29 +248,13 @@ public class BorrowEntryServiceImpl implements BorrowEntryService {
     borrowEntryRepository.save(borrowEntry);
   }
 
-  private boolean checkIfReturnDateAfterIssuedDate(LocalDate returnDate, LocalDate issuedDate) {
-    return returnDate.isAfter(issuedDate);
+  private boolean checkIfReturnDateNotAfterIssuedDate(LocalDate returnDate, LocalDate issuedDate) {
+    return !returnDate.isAfter(issuedDate);
   }
 
   @Override
   @Transactional
   public void deleteBorrowEntryById(Long id) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String callerRole = authentication.getAuthorities().stream().toList().get(0).toString();
-
-    BorrowEntry borrowEntry = borrowEntryRepository.getBorrowEntryById(id).orElseThrow(
-        () -> {
-          Map<String, String> violations = new HashMap<>();
-          violations.put("id", "Borrow entry with id " + id + " is not exists");
-          return new BadRequestDetailsException("Unable to delete borrow entry by id", violations);
-        });
-
-    if (callerRole.equals("ROLE_USER") && !borrowEntry.getStatus().equals(BorrowStatus.Requested)) {
-      Map<String, String> violations = new HashMap<>();
-      violations.put("id", "You are not allowed to delete this borrow entry");
-      throw  new BadRequestDetailsException("Unable to delete borrow entry by id", violations);
-    }
-
     borrowEntryRepository.deleteBorrowEntryById(id);
   }
 }

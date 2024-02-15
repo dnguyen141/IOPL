@@ -13,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -102,7 +102,6 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   }
 
   @Override
-  @PreAuthorize("hasAnyRole('ROLE_USER')")
   public ResponseEntity<Object> deleteRequestedBorrowEntryById(Long id) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     BorrowEntry borrowEntry = borrowEntryService.getBorrowEntryById(id);
@@ -115,7 +114,7 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
     }
 
     Map<String, String> details = new HashMap<>();
-    details.put("authorization", "You are not allowed to delete the borrow entry that's not requested from you");
+    details.put("authorization", "You are not allowed to delete the borrow entry or the borrow entry is not exists");
     return responseEntityFactory.createErrorWithDetailsResponse(
         HttpStatus.UNAUTHORIZED, "Invalid delete borrow entry request", details
     );
@@ -123,7 +122,12 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
 
   private ResponseEntity<Object> findBorrowEntriesResultConstructor(Page<BorrowEntry> borrowEntries) {
     Map<String, Object> details = new HashMap<>();
-    details.put("borrow-entries", borrowEntries.stream().map(BorrowEntry::mapToDto).collect(Collectors.toList()));
+    details.put("borrow-entries", borrowEntries
+        .stream()
+        .sorted(Comparator.comparingLong(BorrowEntry::getId))
+        .map(BorrowEntry::mapToDto)
+        .collect(Collectors.toList())
+    );
     details.put("pageNumber", borrowEntries.getNumber());
     details.put("pageSize", borrowEntries.getSize());
     details.put("numberOfPages", borrowEntries.getTotalPages());
