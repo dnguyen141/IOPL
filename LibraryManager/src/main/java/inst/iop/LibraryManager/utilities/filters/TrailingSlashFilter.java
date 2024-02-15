@@ -1,4 +1,4 @@
-package inst.iop.LibraryManager.authentication.filters;
+package inst.iop.LibraryManager.utilities.filters;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,6 +26,7 @@ public class TrailingSlashFilter extends OncePerRequestFilter {
       newUri = uri.substring(0, uri.length() - 1);
       alternateRequest = new CustomHttpServletRequestWrapper(request, newUri);
       filterChain.doFilter(alternateRequest, response);
+      return;
     }
     filterChain.doFilter(request, response);
   }

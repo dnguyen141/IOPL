@@ -1,4 +1,4 @@
-package inst.iop.LibraryManager.authentication.filters;
+package inst.iop.LibraryManager.utilities.filters;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;

@@ -1,4 +1,4 @@
-package inst.iop.LibraryManager.authentication.filters;
+package inst.iop.LibraryManager.utilities.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import inst.iop.LibraryManager.authentication.repositories.TokenRepository;
@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.io.IOException;
 import java.util.stream.Stream;
@@ -47,8 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/v1/auth/login",
             "/api/v1/auth/register",
             "/api/v1/auth/confirm",
-            "/api/v1/book/list",
-            "/api/v1/book/search"
+            "/api/v1/books/list",
+            "/api/v1/books/search"
         ).anyMatch(uri -> request.getRequestURI().startsWith(uri));
 
         if (!checkIfUriMatches) {
