@@ -1,25 +1,22 @@
 package inst.iop.LibraryManager.library.services;
 
+import inst.iop.LibraryManager.library.dtos.CreateUpdateTypeDto;
 import inst.iop.LibraryManager.library.entities.BookType;
-import inst.iop.LibraryManager.library.entities.constrains.TypeConstrain;
-import org.springframework.validation.BindingResult;
+import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookTypeService {
 
-  List<BookType> getAllBookTypes();
+  List<BookType> listAllBookTypes();
 
-  BookType getBookTypeById(Long id);
+  BookType getBookTypeById(Long id) throws BadRequestDetailsException;
 
-  BookType getBookTypeFromString(String type, BindingResult bindingResult);
+  BookType getBookTypeByString(String name, boolean isCreateBookRequest) throws BadRequestDetailsException;
 
-  BookType getBookTypeFromString(String type, boolean isCreateRequest);
+  void createType(CreateUpdateTypeDto request) throws BadRequestDetailsException;
 
-  BookType getBookTypeFromString(String type, BindingResult bindingResult, boolean isCreateRequest);
+  void updateBookTypeById(Long id, CreateUpdateTypeDto name) throws BadRequestDetailsException;
 
-  void updateBookTypeById(Long id, String name, BindingResult bindingResult);
-
-  void deleteTypeById(Long id);
+  void deleteTypeById(Long id) throws BadRequestDetailsException;
 }

@@ -1,10 +1,11 @@
 package inst.iop.LibraryManager.library.services;
 
+import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageFileService {
 
-  String uploadImage(MultipartFile file, String isbn);
+  String uploadImage(MultipartFile file, String isbn) throws BadRequestDetailsException;
 
-  void downloadImage(String imageUrl, String isbn);
+  String downloadImage(String coverUrl, String isbn);
 }

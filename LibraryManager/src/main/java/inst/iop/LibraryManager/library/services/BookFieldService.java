@@ -1,24 +1,22 @@
 package inst.iop.LibraryManager.library.services;
 
+import inst.iop.LibraryManager.library.dtos.CreateUpdateFieldDto;
 import inst.iop.LibraryManager.library.entities.BookField;
-import org.springframework.validation.BindingResult;
+import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookFieldService {
 
-  List<BookField> getAllBookFields();
+  List<BookField> listAllBookFields();
 
-  Optional<BookField> getBookFieldById(Long id);
+  BookField getBookFieldById(Long id) throws BadRequestDetailsException;
 
-  Optional<BookField> getBookFieldFromString(String field);
+  BookField getBookFieldByString(String name, boolean isCreateBookRequest) throws BadRequestDetailsException;
 
-  Optional<BookField> getBookFieldFromString(String field, boolean isCreateRequest);
+  void createField(CreateUpdateFieldDto request) throws BadRequestDetailsException;
 
-  void createField(String field, BindingResult bindingResult);
+  void updateBookFieldById(Long id, CreateUpdateFieldDto request) throws BadRequestDetailsException;
 
-  void updateBookFieldById(Long id, String name, BindingResult bindingResult);
-
-  void deleteField(Long id);
+  void deleteField(Long id) throws BadRequestDetailsException;
 }

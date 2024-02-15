@@ -1,29 +1,30 @@
 package inst.iop.LibraryManager.library.services;
 
-import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.library.dtos.CreateBorrowEntryDto;
 import inst.iop.LibraryManager.library.dtos.UpdateBorrowEntryDto;
-import inst.iop.LibraryManager.library.entities.Book;
 import inst.iop.LibraryManager.library.entities.BorrowEntry;
-import inst.iop.LibraryManager.library.entities.enums.BorrowStatus;
-
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
+import org.springframework.data.domain.Page;
 
 public interface BorrowEntryService {
 
-  Optional<BorrowEntry> getBorrowEntryById(Long id);
+  BorrowEntry getBorrowEntryById(Long id) throws BadRequestDetailsException;
 
-  List<BorrowEntry> listBorrowEntriesByStatus(BorrowStatus status);
+  Page<BorrowEntry> listBorrowEntriesByStatus(String status, Integer pageNumber, Integer pageSize)
+      throws BadRequestDetailsException;
 
-  List<BorrowEntry> listBorrowEntriesByUserIdAndStatus(User user, BorrowStatus status) throws NoSuchElementException;
+  Page<BorrowEntry> listBorrowEntriesByUsernameAndStatus(String username, String status, Integer pageNumber,
+                                                         Integer pageSize)
+      throws BadRequestDetailsException;
 
-  List<BorrowEntry> listBorrowEntriesByBookIdAndStatus(Book book, String status);
+  Page<BorrowEntry> listBorrowEntriesByBookIdAndStatus(Long bookId, String status, Integer pageNumber, Integer pageSize)
+      throws BadRequestDetailsException;
 
-  void createBorrowEntry(CreateBorrowEntryDto borrowEntryDto);
+  Integer getBookAvailable(Long bookID);
 
-  void updateBorrowEntryById(Long id, UpdateBorrowEntryDto borrowEntryDto) throws IllegalArgumentException;
+  void createBorrowEntry(CreateBorrowEntryDto request) throws BadRequestDetailsException;
 
-  void deleteBorrowEntryById(Long id) throws IllegalArgumentException;
+  void updateBorrowEntryById(Long id, UpdateBorrowEntryDto request) throws BadRequestDetailsException;
+
+  void deleteBorrowEntryById(Long id);
 }
