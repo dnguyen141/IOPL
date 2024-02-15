@@ -24,10 +24,11 @@ public interface BorrowEntryRepository extends JpaRepository<BorrowEntry, Long> 
   Optional<BorrowEntry> getBorrowEntryById(Long id);
 
   @Query("SELECT be FROM BorrowEntry be WHERE be.user = :user and be.book = :book and " +
-      "be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Requested")
+      "be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Requested " +
+      "ORDER BY be.id")
   List<BorrowEntry> listRequestedBorrowEntriesByUser(User user, Book book);
 
-  @Query("SELECT be FROM BorrowEntry be WHERE be.status = :status")
+  @Query("SELECT be FROM BorrowEntry be WHERE be.status = :status ORDER BY be.id")
   Page<BorrowEntry> findBorrowEntriesByStatus(BorrowStatus status, Pageable pageable);
 
   @Query("SELECT count(be) FROM BorrowEntry be " +
@@ -43,10 +44,10 @@ public interface BorrowEntryRepository extends JpaRepository<BorrowEntry, Long> 
       "and be.book = :book")
   Integer countClosedBorrowEntries(Book book);
 
-  @Query("SELECT be FROM BorrowEntry be WHERE be.user = :user AND be.status = :status")
+  @Query("SELECT be FROM BorrowEntry be WHERE be.user = :user AND be.status = :status ORDER BY be.id")
   Page<BorrowEntry> findBorrowEntriesByUserIdAndStatus(User user, BorrowStatus status, Pageable pageable);
 
-  @Query("SELECT be FROM BorrowEntry be WHERE be.book = :book AND be.status = :status")
+  @Query("SELECT be FROM BorrowEntry be WHERE be.book = :book AND be.status = :status ORDER BY be.id")
   Page<BorrowEntry> findBorrowEntriesByBookIdAndStatus(Book book, BorrowStatus status, Pageable pageable);
 
   @Modifying

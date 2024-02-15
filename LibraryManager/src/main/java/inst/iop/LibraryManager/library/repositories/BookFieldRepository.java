@@ -14,7 +14,7 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface BookFieldRepository extends JpaRepository<BookField, Long> {
 
-  @Query("SELECT bf FROM BookField bf")
+  @Query("SELECT bf FROM BookField bf ORDER BY bf.id")
   List<BookField> getAllBookFields();
 
   @Query("SELECT bf FROM BookField bf WHERE bf.id = :id")

@@ -15,7 +15,7 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface BookTypeRepository extends JpaRepository<BookType, Long> {
 
-  @Query("SELECT bt FROM BookType bt")
+  @Query("SELECT bt FROM BookType bt ORDER BY bt.id")
   List<BookType> getAllBookType();
 
   @Query("SELECT bt FROM BookType bt WHERE bt.id = :id")
