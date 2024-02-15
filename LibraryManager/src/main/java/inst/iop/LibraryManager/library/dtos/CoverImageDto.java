@@ -1,15 +1,19 @@
 package inst.iop.LibraryManager.library.dtos;
 
-import inst.iop.LibraryManager.library.entities.constraints.TypeConstraint;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUpdateTypeDto {
+public class CoverImageDto {
 
-  @TypeConstraint
-  private String name;
+  private String imageName;
+
+  private String imageContentType;
+
+  private byte[] imageData;
 }

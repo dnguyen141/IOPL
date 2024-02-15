@@ -1,6 +1,6 @@
 package inst.iop.LibraryManager.library.dtos;
 
-import inst.iop.LibraryManager.library.entities.constrains.FieldConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.FieldConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateUpdateFieldDto {
   
-  @FieldConstrain
+  @FieldConstraint
   private String name;
 }

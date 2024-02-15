@@ -1,12 +1,12 @@
 package inst.iop.LibraryManager.library.dtos;
 
-import inst.iop.LibraryManager.library.entities.constrains.BorrowStatusConstrain;
-import jakarta.validation.constraints.NotBlank;
+import inst.iop.LibraryManager.library.entities.constraints.BorrowStatusConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -22,9 +22,9 @@ public class CreateBorrowEntryDto {
   @NotNull
   private Long bookId;
 
-  @BorrowStatusConstrain(isNotNullConstrain = true)
+  @BorrowStatusConstraint
   private String status;
 
-  @NotNull
+  @DateTimeFormat(pattern = "dd-MM-yyyy", iso = DateTimeFormat.ISO.DATE)
   private LocalDate returnDate;
 }

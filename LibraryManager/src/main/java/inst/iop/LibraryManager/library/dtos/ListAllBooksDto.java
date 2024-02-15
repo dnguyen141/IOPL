@@ -1,20 +1,19 @@
 package inst.iop.LibraryManager.library.dtos;
 
-import inst.iop.LibraryManager.library.entities.constrains.PageNumberConstrain;
-import inst.iop.LibraryManager.library.entities.constrains.PageSizeConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.PageNumberConstraint;
+import inst.iop.LibraryManager.library.entities.constraints.PageSizeConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ListAllBooksDto {
 
-  @PageNumberConstrain
+  @PageNumberConstraint
   private Integer pageNumber = 0;
 
-  @PageSizeConstrain
+  @PageSizeConstraint
   private Integer pageSize = 10;
 }

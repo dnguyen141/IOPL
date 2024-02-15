@@ -1,8 +1,8 @@
 package inst.iop.LibraryManager.library.dtos;
 
-import inst.iop.LibraryManager.library.entities.constrains.BorrowStatusConstrain;
-import inst.iop.LibraryManager.library.entities.constrains.PageNumberConstrain;
-import inst.iop.LibraryManager.library.entities.constrains.PageSizeConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.BorrowStatusConstraint;
+import inst.iop.LibraryManager.library.entities.constraints.PageNumberConstraint;
+import inst.iop.LibraryManager.library.entities.constraints.PageSizeConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ListBorrowEntriesDto {
 
-  @BorrowStatusConstrain
+  @BorrowStatusConstraint
   private String status;
 
-  @PageNumberConstrain
+  @PageNumberConstraint
   private Integer pageNumber = 0;
 
-  @PageSizeConstrain
+  @PageSizeConstraint
   private Integer pageSize = 10;
 }

@@ -1,9 +1,6 @@
 package inst.iop.LibraryManager.library.dtos;
 
-import inst.iop.LibraryManager.authentication.entities.User;
-import inst.iop.LibraryManager.library.entities.Book;
-import inst.iop.LibraryManager.library.entities.constrains.*;
-import inst.iop.LibraryManager.library.entities.enums.BorrowStatus;
+import inst.iop.LibraryManager.library.entities.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +22,6 @@ public class UpdateBorrowEntryDto {
 
   private LocalDate returnDate;
 
-  @BorrowStatusConstrain
+  @BorrowStatusConstraint(isNotNullConstrain = false)
   private String borrowStatus;
 }

@@ -1,32 +1,29 @@
 package inst.iop.LibraryManager.library.dtos;
 
-import inst.iop.LibraryManager.library.entities.constrains.PageNumberConstrain;
-import inst.iop.LibraryManager.library.entities.constrains.YearConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.PageNumberConstraint;
+import inst.iop.LibraryManager.library.entities.constraints.YearConstraint;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.Year;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchBooksDto {
 
-  private String term = "";
+  private String term;
 
-  @YearConstrain
-  private Integer beforeYear = 1900;
+  @YearConstraint
+  private Integer beforeYear = Year.now().getValue();
 
-  @YearConstrain
-  private Integer afterYear = Year.now().getValue();
+  @YearConstraint
+  private Integer afterYear = 1900;
 
-  @PageNumberConstrain
+  @PageNumberConstraint
   private Integer pageNumber = 0;
 
-  @PageNumberConstrain
+  @PageNumberConstraint
   private Integer pageSize = 10;
 }

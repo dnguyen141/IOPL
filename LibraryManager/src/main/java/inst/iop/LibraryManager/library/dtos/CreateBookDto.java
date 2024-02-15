@@ -1,12 +1,10 @@
 package inst.iop.LibraryManager.library.dtos;
 
-import inst.iop.LibraryManager.library.entities.constrains.*;
+import inst.iop.LibraryManager.library.entities.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -14,36 +12,33 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class CreateBookDto {
 
-  @TitleConstrain
+  @TitleConstraint
   private String title;
 
-  @AuthorsConstrain
+  @AuthorsConstraint
   private String authors;
 
-  @PublisherConstrain
+  @PublisherConstraint
   private String publisher;
 
-  @TypeConstrain
+  @TypeConstraint
   private String type;
 
-  @FieldConstrain
+  @FieldConstraint
   private String field;
 
-  @YearConstrain
+  @YearConstraint
   private Integer year;
 
-  @EditionConstrain
+  @EditionConstraint
   private Integer edition;
 
-  @IsbnConstrain
+  @IsbnConstraint
   private String isbn;
 
-  @QuantityConstrain
+  @QuantityConstraint
   private Integer quantity;
 
-  @UrlConstrain
+  @UrlConstraint
   private String coverUrl;
-
-  @Nullable
-  private MultipartFile coverImage;
 }

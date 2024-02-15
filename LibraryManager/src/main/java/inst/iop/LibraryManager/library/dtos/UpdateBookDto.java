@@ -1,8 +1,7 @@
 package inst.iop.LibraryManager.library.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import inst.iop.LibraryManager.library.entities.constrains.*;
+import inst.iop.LibraryManager.library.entities.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,37 +16,34 @@ import org.springframework.web.multipart.MultipartFile;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UpdateBookDto {
 
-  @TitleConstrain(isNotNullConstrain = false)
+  @TitleConstraint(isNotNullConstrain = false)
   private String title;
 
-  @AuthorsConstrain(isNotNullConstrain = false)
+  @AuthorsConstraint(isNotNullConstrain = false)
   private String authors;
 
-  @PublisherConstrain(isNotNullConstrain = false)
+  @PublisherConstraint(isNotNullConstrain = false)
   private String publisher;
 
-  @TypeConstrain(isNotNullConstrain = false)
+  @TypeConstraint(isNotNullConstrain = false)
   private String type;
 
-  @FieldConstrain(isNotNullConstrain = false)
+  @FieldConstraint(isNotNullConstrain = false)
   private String field;
 
-  @YearConstrain(isNotNullConstrain = false)
+  @YearConstraint(isNotNullConstrain = false)
   private Integer year;
 
-  @EditionConstrain(isNotNullConstrain = false)
+  @EditionConstraint(isNotNullConstrain = false)
   private Integer edition;
 
-  @IsbnConstrain(isNotNullConstrain = false)
+  @IsbnConstraint(isNotNullConstrain = false)
   private String isbn;
 
-  @InventoryNumberConstrain
-  private String inventoryNumber;
-
-  @QuantityConstrain(isNotNullConstrain = false)
+  @QuantityConstraint(isNotNullConstrain = false)
   private Integer quantity;
 
-  @UrlConstrain
+  @UrlConstraint
   private String coverUrl;
 
   @Nullable
