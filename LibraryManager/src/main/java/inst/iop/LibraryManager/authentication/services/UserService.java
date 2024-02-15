@@ -5,9 +5,7 @@ import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
 import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
-import org.springframework.validation.BindingResult;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface UserService {
 
@@ -15,21 +13,17 @@ public interface UserService {
 
   User findUserByEmail(String email) throws BadRequestDetailsException;
 
-  void deleteUserById(Long id) throws BadRequestDetailsException;
+  Page<User> findAllModeratorsAndUsers(Integer pageNumber, Integer pageSize);
 
-  List<User> findAllUsers();
+  Page<User> findAllUsers(Integer pageNumber, Integer pageSize);
 
-  List<User> findAllModerators();
+  void createUser(RegisterDto request) throws BadRequestDetailsException;
 
-  List<User> findAllAdmins();
+  void updateOtherUserById(Long id, ChangeUserDetailsDto request) throws BadRequestDetailsException;
 
-  void createUser(RegisterDto request, BindingResult bindingResult) throws BadRequestDetailsException;
-
-  void updateOtherUserByEmail(ChangeUserDetailsDto userDetailsRequest, BindingResult bindingResult)
-      throws BadRequestDetailsException;
-
-  void updateOtherUserByEmail(ChangeDetailsDto userDetailsRequest, BindingResult bindingResult)
-      throws BadRequestDetailsException;
+  void updateUserByEmail(ChangeDetailsDto request) throws BadRequestDetailsException;
 
   void deleteUser();
+
+  void deleteUserById(Long id);
 }
