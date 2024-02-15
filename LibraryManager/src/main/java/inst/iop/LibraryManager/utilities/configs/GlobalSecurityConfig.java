@@ -1,7 +1,7 @@
 package inst.iop.LibraryManager.utilities.configs;
 
-import inst.iop.LibraryManager.authentication.filters.JwtAuthenticationFilter;
-import inst.iop.LibraryManager.authentication.filters.TrailingSlashFilter;
+import inst.iop.LibraryManager.utilities.filters.JwtAuthenticationFilter;
+import inst.iop.LibraryManager.utilities.filters.TrailingSlashFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
+@EnableMethodSecurity(proxyTargetClass = true)
 public class GlobalSecurityConfig {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final TrailingSlashFilter trailingSlashFilter;
@@ -46,8 +46,7 @@ public class GlobalSecurityConfig {
         .authorizeHttpRequests(
             (authorize) -> authorize
                 .requestMatchers(
-                    "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/confirm",
-                    "/api/v1/book/list/**", "/api/v1/book/search/**"
+                    "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/confirm"
                 )
                 .permitAll()
                 .anyRequest()
