@@ -13,9 +13,9 @@ public class ErrorWithViolationsApiResponse implements ApiResponse {
   private String status;
   private int code;
   private String message;
-  private Map<String, Object> violations;
+  private Map<String, String> violations;
 
-  ErrorWithViolationsApiResponse(int code, String message, Map<String, Object> data) {
+  ErrorWithViolationsApiResponse(int code, String message, Map<String, String> data) {
     this("error", code, message, data);
   }
 }

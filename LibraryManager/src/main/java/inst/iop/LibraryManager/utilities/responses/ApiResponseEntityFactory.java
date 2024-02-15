@@ -15,5 +15,5 @@ public interface ApiResponseEntityFactory {
   ResponseEntity<Object> createErrorResponse(HttpStatus httpStatus, String message);
 
   ResponseEntity<Object> createErrorWithDetailsResponse(HttpStatus httpStatus, String message,
-                                                        Map<String, Object> violations);
+                                                        Map<String, String> violations);
 }

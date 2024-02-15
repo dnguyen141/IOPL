@@ -37,7 +37,7 @@ public class ApiResponseEntityFactoryImpl implements ApiResponseEntityFactory {
 
   @Override
   public ResponseEntity<Object> createErrorWithDetailsResponse(
-      HttpStatus httpStatus, String message, Map<String, Object> violations) {
+      HttpStatus httpStatus, String message, Map<String, String> violations) {
     return ResponseEntity
         .status(httpStatus)
         .contentType(MediaType.APPLICATION_JSON)
