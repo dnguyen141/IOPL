@@ -1,6 +1,6 @@
 package inst.iop.LibraryManager.authentication.entities.validators;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.RoleConstraint;
+import inst.iop.LibraryManager.authentication.entities.constraints.RoleConstraint;
 import inst.iop.LibraryManager.authentication.entities.enums.Role;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

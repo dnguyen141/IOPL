@@ -1,6 +1,6 @@
 package inst.iop.LibraryManager.authentication.entities.validators;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.EmailConstraint;
+import inst.iop.LibraryManager.authentication.entities.constraints.EmailConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

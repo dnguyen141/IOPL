@@ -1,7 +1,6 @@
-package inst.iop.LibraryManager.library.entities.constrains;
+package inst.iop.LibraryManager.authentication.entities.constraints;
 
-import inst.iop.LibraryManager.library.entities.validators.AuthorsConstrainValidator;
-import inst.iop.LibraryManager.library.entities.validators.IsbnConstrainValidator;
+import inst.iop.LibraryManager.authentication.entities.validators.NameConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -15,14 +14,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = AuthorsConstrainValidator.class)
-public @interface AuthorsConstrain {
-  String message() default "Book authors should have at least 1 character, at most 100 character(s)" +
-      "and separated by commas if there are more than one author";
+@Constraint(validatedBy = NameConstraintValidator.class)
+public @interface NameConstraint {
+  String message() default "Name must be at least 1 and at most 50 characters";
 
   Class<?>[] groups() default { };
 
   Class<? extends Payload>[] payload() default { };
 
   boolean isNotNullConstrain() default true;
+
+  int min() default 1;
+
+  int max() default 50;
 }

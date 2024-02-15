@@ -1,6 +1,6 @@
 package inst.iop.LibraryManager.authentication.entities.validators;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.IntegerConstraint;
+import inst.iop.LibraryManager.authentication.entities.constraints.IntegerConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

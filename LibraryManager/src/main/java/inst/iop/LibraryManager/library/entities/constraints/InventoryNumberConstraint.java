@@ -1,6 +1,6 @@
-package inst.iop.LibraryManager.library.entities.constrains;
+package inst.iop.LibraryManager.library.entities.constraints;
 
-import inst.iop.LibraryManager.library.entities.validators.EditionConstrainValidator;
+import inst.iop.LibraryManager.library.entities.validators.InventoryNumberConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,9 +14,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = EditionConstrainValidator.class)
-public @interface EditionConstrain {
-  String message() default "Edition must be equal or greater than 1 and equal or smaller than 100";
+@Constraint(validatedBy = InventoryNumberConstraintValidator.class)
+public @interface InventoryNumberConstraint {
+  String message() default "Inventory number must match the format \"{book_id} CSST " +
+      "{book_type_first_2_letters_capitalized} {year_of_publish}\"";
 
   Class<?>[] groups() default { };
 

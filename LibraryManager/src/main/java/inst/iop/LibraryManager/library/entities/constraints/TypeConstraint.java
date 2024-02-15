@@ -1,7 +1,6 @@
-package inst.iop.LibraryManager.library.entities.constrains;
+package inst.iop.LibraryManager.library.entities.constraints;
 
-import inst.iop.LibraryManager.library.entities.validators.IsbnConstrainValidator;
-import inst.iop.LibraryManager.library.entities.validators.UrlConstrainValidator;
+import inst.iop.LibraryManager.library.entities.validators.TypeConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -15,13 +14,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = UrlConstrainValidator.class)
-public @interface UrlConstrain {
-  String message() default "Invalid cover image link";
+@Constraint(validatedBy = TypeConstraintValidator.class)
+public @interface TypeConstraint {
+  String message() default "Book type must have at least 1 character and at most 100 characters";
 
   Class<?>[] groups() default { };
 
   Class<? extends Payload>[] payload() default { };
 
-  boolean isNotNullConstrain() default false;
+  boolean isNotNullConstrain() default true;
 }

@@ -1,7 +1,6 @@
-package inst.iop.LibraryManager.library.entities.constrains;
+package inst.iop.LibraryManager.library.entities.constraints;
 
-import inst.iop.LibraryManager.library.entities.validators.AuthorsConstrainValidator;
-import inst.iop.LibraryManager.library.entities.validators.BorrowStatusConstrainValidator;
+import inst.iop.LibraryManager.library.entities.validators.PageNumberConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -15,9 +14,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = BorrowStatusConstrainValidator.class)
-public @interface BorrowStatusConstrain {
-  String message() default "Borrow status must either be Requested, Confirmed, Borrowed, Returned or Overdue";
+@Constraint(validatedBy = PageNumberConstraintValidator.class)
+public @interface PageNumberConstraint {
+  String message() default "Page number must be positive";
 
   Class<?>[] groups() default { };
 

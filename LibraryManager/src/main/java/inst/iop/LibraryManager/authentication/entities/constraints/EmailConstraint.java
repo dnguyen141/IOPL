@@ -1,6 +1,6 @@
-package inst.iop.LibraryManager.authentication.entities.constrains;
+package inst.iop.LibraryManager.authentication.entities.constraints;
 
-import inst.iop.LibraryManager.authentication.entities.validators.RoleConstraintValidator;
+import inst.iop.LibraryManager.authentication.entities.validators.EmailConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,9 +14,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = RoleConstraintValidator.class)
-public @interface RoleConstraint {
-  String message() default "Role is invalid and can't be recognized";
+@Constraint(validatedBy = EmailConstraintValidator.class)
+public @interface EmailConstraint {
+  String message() default "The email address is either invalid or used";
 
   Class<?>[] groups() default { };
 

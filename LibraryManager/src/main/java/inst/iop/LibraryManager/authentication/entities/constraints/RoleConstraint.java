@@ -1,6 +1,6 @@
-package inst.iop.LibraryManager.authentication.entities.constrains;
+package inst.iop.LibraryManager.authentication.entities.constraints;
 
-import inst.iop.LibraryManager.authentication.entities.validators.NameConstraintValidator;
+import inst.iop.LibraryManager.authentication.entities.validators.RoleConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,17 +14,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = NameConstraintValidator.class)
-public @interface NameConstraint {
-  String message() default "Name must be at least 1 and at most 50 characters";
+@Constraint(validatedBy = RoleConstraintValidator.class)
+public @interface RoleConstraint {
+  String message() default "Role is invalid and can't be recognized";
 
   Class<?>[] groups() default { };
 
   Class<? extends Payload>[] payload() default { };
 
   boolean isNotNullConstrain() default true;
-
-  int min() default 1;
-
-  int max() default 50;
 }

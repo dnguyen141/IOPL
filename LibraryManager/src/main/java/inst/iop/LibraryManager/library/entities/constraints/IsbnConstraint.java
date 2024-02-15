@@ -1,6 +1,6 @@
-package inst.iop.LibraryManager.library.entities.constrains;
+package inst.iop.LibraryManager.library.entities.constraints;
 
-import inst.iop.LibraryManager.library.entities.validators.IsbnConstrainValidator;
+import inst.iop.LibraryManager.library.entities.validators.IsbnConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -13,8 +13,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = IsbnConstrainValidator.class)
-public @interface IsbnConstrain {
+@Constraint(validatedBy = IsbnConstraintValidator.class)
+public @interface IsbnConstraint {
   String message() default "Isbn must be in ISBN-10 or ISBN-13 format";
 
   Class<?>[] groups() default { };

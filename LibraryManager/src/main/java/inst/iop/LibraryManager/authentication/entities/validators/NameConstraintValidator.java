@@ -1,6 +1,6 @@
 package inst.iop.LibraryManager.authentication.entities.validators;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.NameConstraint;
+import inst.iop.LibraryManager.authentication.entities.constraints.NameConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

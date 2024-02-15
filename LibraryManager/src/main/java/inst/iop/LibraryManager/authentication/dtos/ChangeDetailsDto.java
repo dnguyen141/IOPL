@@ -1,7 +1,7 @@
 package inst.iop.LibraryManager.authentication.dtos;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.NameConstraint;
-import inst.iop.LibraryManager.authentication.entities.constrains.PasswordConstraint;
+import inst.iop.LibraryManager.authentication.entities.constraints.NameConstraint;
+import inst.iop.LibraryManager.authentication.entities.constraints.PasswordConstraint;
 import lombok.*;
 
 @Data

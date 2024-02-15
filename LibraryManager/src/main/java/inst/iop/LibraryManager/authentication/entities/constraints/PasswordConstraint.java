@@ -1,7 +1,6 @@
-package inst.iop.LibraryManager.library.entities.constrains;
+package inst.iop.LibraryManager.authentication.entities.constraints;
 
-import inst.iop.LibraryManager.library.entities.validators.FieldConstrainValidator;
-import inst.iop.LibraryManager.library.entities.validators.TitleConstrainValidator;
+import inst.iop.LibraryManager.authentication.entities.validators.PasswordConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -15,9 +14,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = TitleConstrainValidator.class)
-public @interface TitleConstrain {
-  String message() default "Book title must have at least 1 character and at most 100 characters";
+@Constraint(validatedBy = PasswordConstraintValidator.class)
+public @interface PasswordConstraint {
+  String message() default "The password must contain at least one lowercase Latin character and " +
+      "a length of at least and at most 20 characters";
 
   Class<?>[] groups() default { };
 

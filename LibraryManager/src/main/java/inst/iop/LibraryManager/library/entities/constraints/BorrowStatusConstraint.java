@@ -1,6 +1,6 @@
-package inst.iop.LibraryManager.authentication.entities.constrains;
+package inst.iop.LibraryManager.library.entities.constraints;
 
-import inst.iop.LibraryManager.authentication.entities.validators.PasswordConstraintValidator;
+import inst.iop.LibraryManager.library.entities.validators.BorrowStatusConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,10 +14,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = PasswordConstraintValidator.class)
-public @interface PasswordConstraint {
-  String message() default "The password must contain at least one lowercase Latin character and " +
-      "a length of at least and at most 20 characters";
+@Constraint(validatedBy = BorrowStatusConstraintValidator.class)
+public @interface BorrowStatusConstraint {
+  String message() default "Borrow status must either be Requested, Issued, Returned, Overdue or Lost";
 
   Class<?>[] groups() default { };
 

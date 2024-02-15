@@ -1,7 +1,6 @@
-package inst.iop.LibraryManager.library.entities.constrains;
+package inst.iop.LibraryManager.library.entities.constraints;
 
-import inst.iop.LibraryManager.library.entities.validators.QuantityConstrainValidator;
-import inst.iop.LibraryManager.library.entities.validators.YearConstrainValidator;
+import inst.iop.LibraryManager.library.entities.validators.AuthorsConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -15,9 +14,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = QuantityConstrainValidator.class)
-public @interface QuantityConstrain {
-  String message() default "Quantity must be equal or smaller than 1 and equal or smaller than 99";
+@Constraint(validatedBy = AuthorsConstraintValidator.class)
+public @interface AuthorsConstraint {
+  String message() default "Book authors should have at least 1 character, at most 100 character(s)" +
+      "and separated by commas if there are more than one author";
 
   Class<?>[] groups() default { };
 

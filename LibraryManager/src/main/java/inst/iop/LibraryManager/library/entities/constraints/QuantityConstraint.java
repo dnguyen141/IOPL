@@ -1,7 +1,6 @@
-package inst.iop.LibraryManager.library.entities.constrains;
+package inst.iop.LibraryManager.library.entities.constraints;
 
-import inst.iop.LibraryManager.library.entities.validators.PageNumberConstrainValidator;
-import inst.iop.LibraryManager.library.entities.validators.YearConstrainValidator;
+import inst.iop.LibraryManager.library.entities.validators.QuantityConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -15,13 +14,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = PageNumberConstrainValidator.class)
-public @interface PageNumberConstrain {
-  String message() default "Page number must be positive";
+@Constraint(validatedBy = QuantityConstraintValidator.class)
+public @interface QuantityConstraint {
+  String message() default "Quantity must be equal or smaller than 1 and equal or smaller than 99";
 
   Class<?>[] groups() default { };
 
   Class<? extends Payload>[] payload() default { };
 
-  boolean isNotNullConstrain() default false;
+  boolean isNotNullConstrain() default true;
 }

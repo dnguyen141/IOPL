@@ -1,7 +1,6 @@
-package inst.iop.LibraryManager.library.entities.constrains;
+package inst.iop.LibraryManager.library.entities.constraints;
 
-import inst.iop.LibraryManager.library.entities.validators.FieldConstrainValidator;
-import inst.iop.LibraryManager.library.entities.validators.TypeConstrainValidator;
+import inst.iop.LibraryManager.library.entities.validators.FieldConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -15,8 +14,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = FieldConstrainValidator.class)
-public @interface FieldConstrain {
+@Constraint(validatedBy = FieldConstraintValidator.class)
+public @interface FieldConstraint {
   String message() default "Book field must have at least 1 character and at most 100 characters";
 
   Class<?>[] groups() default { };

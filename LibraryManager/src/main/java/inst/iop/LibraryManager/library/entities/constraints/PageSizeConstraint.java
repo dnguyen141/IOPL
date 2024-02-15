@@ -1,7 +1,6 @@
-package inst.iop.LibraryManager.library.entities.constrains;
+package inst.iop.LibraryManager.library.entities.constraints;
 
-import inst.iop.LibraryManager.library.entities.validators.PageNumberConstrainValidator;
-import inst.iop.LibraryManager.library.entities.validators.PageSizeConstrainValidator;
+import inst.iop.LibraryManager.library.entities.validators.PageSizeConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -15,8 +14,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = PageSizeConstrainValidator.class)
-public @interface PageSizeConstrain {
+@Constraint(validatedBy = PageSizeConstraintValidator.class)
+public @interface PageSizeConstraint {
   String message() default "Page size must be at least 1";
 
   Class<?>[] groups() default { };
