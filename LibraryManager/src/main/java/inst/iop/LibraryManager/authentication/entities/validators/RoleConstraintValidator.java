@@ -1,19 +1,18 @@
 package inst.iop.LibraryManager.authentication.entities.validators;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.RoleConstrain;
+import inst.iop.LibraryManager.authentication.entities.constrains.RoleConstraint;
 import inst.iop.LibraryManager.authentication.entities.enums.Role;
-import inst.iop.LibraryManager.library.entities.BookType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.Arrays;
 
-public class RoleConstrainValidator implements ConstraintValidator<RoleConstrain, Object> {
+public class RoleConstraintValidator implements ConstraintValidator<RoleConstraint, Object> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(RoleConstrain constraintAnnotation) {
+  public void initialize(RoleConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

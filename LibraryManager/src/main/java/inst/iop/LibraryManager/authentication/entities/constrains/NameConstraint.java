@@ -1,7 +1,6 @@
 package inst.iop.LibraryManager.authentication.entities.constrains;
 
-import inst.iop.LibraryManager.authentication.entities.validators.EmailConstrainValidator;
-import inst.iop.LibraryManager.authentication.entities.validators.NameConstrainValidator;
+import inst.iop.LibraryManager.authentication.entities.validators.NameConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -15,8 +14,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = NameConstrainValidator.class)
-public @interface NameConstrain {
+@Constraint(validatedBy = NameConstraintValidator.class)
+public @interface NameConstraint {
   String message() default "Name must be at least 1 and at most 50 characters";
 
   Class<?>[] groups() default { };

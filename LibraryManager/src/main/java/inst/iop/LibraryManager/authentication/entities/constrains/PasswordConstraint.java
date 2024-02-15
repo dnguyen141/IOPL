@@ -1,6 +1,6 @@
 package inst.iop.LibraryManager.authentication.entities.constrains;
 
-import inst.iop.LibraryManager.authentication.entities.validators.PasswordConstrainValidator;
+import inst.iop.LibraryManager.authentication.entities.validators.PasswordConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,8 +14,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = PasswordConstrainValidator.class)
-public @interface PasswordConstrain {
+@Constraint(validatedBy = PasswordConstraintValidator.class)
+public @interface PasswordConstraint {
   String message() default "The password must contain at least one lowercase Latin character and " +
       "a length of at least and at most 20 characters";
 

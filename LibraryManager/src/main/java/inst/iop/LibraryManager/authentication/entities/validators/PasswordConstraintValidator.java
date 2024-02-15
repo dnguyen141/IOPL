@@ -1,18 +1,17 @@
 package inst.iop.LibraryManager.authentication.entities.validators;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.EmailConstrain;
-import inst.iop.LibraryManager.authentication.entities.constrains.PasswordConstrain;
+import inst.iop.LibraryManager.authentication.entities.constrains.PasswordConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.regex.Pattern;
 
-public class PasswordConstrainValidator implements ConstraintValidator<PasswordConstrain, String> {
+public class PasswordConstraintValidator implements ConstraintValidator<PasswordConstraint, String> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(PasswordConstrain constraintAnnotation) {
+  public void initialize(PasswordConstraint constraintAnnotation) {
     isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

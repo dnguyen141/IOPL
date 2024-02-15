@@ -1,6 +1,6 @@
 package inst.iop.LibraryManager.authentication.entities.constrains;
 
-import inst.iop.LibraryManager.authentication.entities.validators.EmailConstrainValidator;
+import inst.iop.LibraryManager.authentication.entities.validators.EmailConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,8 +14,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = EmailConstrainValidator.class)
-public @interface EmailConstrain {
+@Constraint(validatedBy = EmailConstraintValidator.class)
+public @interface EmailConstraint {
   String message() default "The email address is either invalid or used";
 
   Class<?>[] groups() default { };

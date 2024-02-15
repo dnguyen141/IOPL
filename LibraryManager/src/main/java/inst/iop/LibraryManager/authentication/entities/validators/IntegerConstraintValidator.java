@@ -1,17 +1,17 @@
 package inst.iop.LibraryManager.authentication.entities.validators;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.IntegerConstrain;
+import inst.iop.LibraryManager.authentication.entities.constrains.IntegerConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class IntegerConstrainValidator implements ConstraintValidator<IntegerConstrain, Integer> {
+public class IntegerConstraintValidator implements ConstraintValidator<IntegerConstraint, Integer> {
 
   private boolean isNotNullConstrain;
   private int min;
   private int max;
 
   @Override
-  public void initialize(IntegerConstrain constraintAnnotation) {
+  public void initialize(IntegerConstraint constraintAnnotation) {
     isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
     min = constraintAnnotation.min();
     max = constraintAnnotation.max();

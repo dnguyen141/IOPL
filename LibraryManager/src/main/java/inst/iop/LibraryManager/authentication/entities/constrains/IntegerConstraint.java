@@ -1,6 +1,6 @@
 package inst.iop.LibraryManager.authentication.entities.constrains;
 
-import inst.iop.LibraryManager.authentication.entities.validators.IntegerConstrainValidator;
+import inst.iop.LibraryManager.authentication.entities.validators.IntegerConstraintValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,8 +14,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ FIELD, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = IntegerConstrainValidator.class)
-public @interface IntegerConstrain {
+@Constraint(validatedBy = IntegerConstraintValidator.class)
+public @interface IntegerConstraint {
   String message() default "";
 
   Class<?>[] groups() default { };
