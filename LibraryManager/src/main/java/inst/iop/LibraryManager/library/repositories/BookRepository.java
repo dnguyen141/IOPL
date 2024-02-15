@@ -1,6 +1,8 @@
 package inst.iop.LibraryManager.library.repositories;
 
 import inst.iop.LibraryManager.library.entities.Book;
+import inst.iop.LibraryManager.library.entities.BookField;
+import inst.iop.LibraryManager.library.entities.BookType;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,86 +19,97 @@ import java.util.Optional;
 public interface BookRepository extends JpaRepository<Book, Long> {
 
   @Query("SELECT b from Book b")
-  Page<Book> findAllBooks(Pageable pageable);
+  Page<Book> listAllBooks(Pageable pageable);
 
   @Query("SELECT b from Book b WHERE b.id = :id")
-  Optional<Book> findBookById(Long id);
+  Optional<Book> getBookById(Long id);
 
-  @Query("SELECT b from Book b WHERE lower(b.title) = trim(lower(:title))")
-  Optional<Book> findBookByTitle(String title);
+  @Query("SELECT b from Book b WHERE lower(b.title) = lower(:title)")
+  Optional<Book> getBookByTitle(String title);
+
+  @Query("SELECT b from Book b WHERE b.isbn = :isbn")
+  Optional<Book> getBookByIsbn(String isbn);
 
   @Query("SELECT COUNT(b) FROM Book b")
   Integer getNumberOfBooks();
 
   @Query("SELECT Max(b.id) FROM Book b")
-  Integer getHighestBookId();
+  Long getHighestBookId();
 
   @Query(
       "SELECT b FROM Book b " +
-      "WHERE ((:title is null or lower(b.title) like '%' || trim(lower(:title)) || '%') or " +
-      "(:authors is null or lower(b.authors) like '%' || trim(lower(:authors)) || '%') or " +
-      "(:publisher is null or lower(b.publisher) like '%' || trim(lower(:publisher)) || '%') or " +
-      "(:type is null or lower(b.type.name) like trim(lower(:type)) || '%') or " +
-      "(:field is null or lower(b.field.name) like trim(lower(:field)) || '%') or " +
-      "(:isbn is null or b.isbn like trim(:isbn) || '%') or " +
-      "(:inventoryNumber is null or lower(b.inventoryNumber) like trim(lower(:inventoryNumber)) || '%')) and " +
-      "(:beforeYear is null or b.year >= :beforeYear) and " +
-      "(:afterYear is null or b.year <= :afterYear)"
+      "WHERE (lower(b.title) like concat('%', lower(:title), '%') or " +
+      "lower(b.authors) like concat('%', lower(:authors), '%') or " +
+      "lower(b.publisher) like concat('%', lower(:publisher), '%') or " +
+      "lower(b.type.name) like concat('%', lower(:type), '%') or " +
+      "lower(b.field.name) like concat('%', lower(:field), '%') or " +
+      "b.isbn like concat('%', :isbn, '%') or " +
+      "lower(b.inventoryNumber) like concat('%', lower(:inventoryNumber), '%')) and " +
+      "(b.year <= :beforeYear and b.year >= :afterYear)"
   )
   Page<Book> findBooks(String title, String authors, String publisher, String type, String field,
                        Integer beforeYear, Integer afterYear, String isbn, String inventoryNumber, Pageable pageable);
 
   @Query(
       "SELECT b FROM Book b " +
-      "WHERE lower(b.title) like '%' || trim(lower(:title)) || '%' and " +
-      "(:beforeYear is null or b.year >= :beforeYear) and " +
-      "(:afterYear is null or b.year <= :afterYear)"
+      "WHERE lower(b.title) like concat('%', lower(:title), '%') and " +
+      "(:beforeYear is null or b.year <= :beforeYear) and " +
+      "(:afterYear is null or b.year >= :afterYear)"
   )
   Page<Book> findBooksByTitle(String title, Integer beforeYear, Integer afterYear, Pageable pageable);
 
   @Query(
       "SELECT b FROM Book b " +
-          "WHERE lower(b.authors) like '%' || trim(lower(:authors)) || '%' and " +
-          "(:beforeYear is null or b.year >= :beforeYear) and " +
-          "(:afterYear is null or b.year <= :afterYear)"
+          "WHERE lower(b.authors) like concat('%', lower(:authors), '%') and " +
+          "(:beforeYear is null or b.year <= :beforeYear) and " +
+          "(:afterYear is null or b.year >= :afterYear)"
   )
   Page<Book> findBooksByAuthors(String authors, Integer beforeYear, Integer afterYear, Pageable pageable);
 
   @Query(
-      "SELECT b FROM Book b WHERE lower(b.publisher) like '%' || trim(lower(:publisher)) || '%' and " +
-          "(:beforeYear is null or b.year >= :beforeYear) and " +
-          "(:afterYear is null or b.year <= :afterYear)"
+      "SELECT b FROM Book b WHERE lower(b.publisher) like concat('%', lower(:publisher), '%') and " +
+          "(:beforeYear is null or b.year <= :beforeYear) and " +
+          "(:afterYear is null or b.year >= :afterYear)"
   )
   Page<Book> findBooksByPublisher(String publisher, Integer beforeYear, Integer afterYear, Pageable pageable);
 
   @Query(
-      "SELECT b FROM Book b WHERE lower(b.type.name) like trim(lower(:type)) || '%' and " +
-          "(:beforeYear is null or b.year >= :beforeYear) and " +
-          "(:afterYear is null or b.year <= :afterYear)"
+      "SELECT b FROM Book b WHERE lower(b.type.name) like concat('%', lower(:type), '%') and " +
+          "(:beforeYear is null or b.year <= :beforeYear) and " +
+          "(:afterYear is null or b.year >= :afterYear)"
   )
   Page<Book> findBooksByType(String type, Integer beforeYear, Integer afterYear, Pageable pageable);
 
   @Query(
-      "SELECT b FROM Book b WHERE lower(b.field.name) like trim(lower(:field)) and " +
-          "(:beforeYear is null or b.year >= :beforeYear) and " +
-          "(:afterYear is null or b.year <= :afterYear)"
+      "SELECT b FROM Book b WHERE lower(b.field.name) like concat('%', lower(:field), '%') and " +
+          "(:beforeYear is null or b.year <= :beforeYear) and " +
+          "(:afterYear is null or b.year >= :afterYear)"
   )
   Page<Book> findBooksByField(String field, Integer beforeYear, Integer afterYear, Pageable pageable);
 
   @Query(
-      "SELECT b FROM Book b WHERE b.isbn like trim(:isbn) || '%' and " +
-          "(:beforeYear is null or b.year >= :beforeYear) and " +
-          "(:afterYear is null or b.year <= :afterYear)"
+      "SELECT b FROM Book b WHERE b.isbn like concat('%', :isbn, '%') and " +
+          "(:beforeYear is null or b.year <= :beforeYear) and " +
+          "(:afterYear is null or b.year >= :afterYear)"
   )
   Page<Book> findBooksByIsbn(String isbn, Integer beforeYear, Integer afterYear, Pageable pageable);
 
   @Query(
-      "SELECT b FROM Book b WHERE lower(b.inventoryNumber) like trim(lower(:inventoryNumber)) || '%' and " +
-          "(:beforeYear is null or b.year >= :beforeYear) and " +
-          "(:afterYear is null or b.year <= :afterYear)"
+      "SELECT b FROM Book b WHERE lower(b.inventoryNumber) like concat('%', lower(:inventoryNumber), '%') and " +
+          "(:beforeYear is null or b.year <= :beforeYear) and " +
+          "(:afterYear is null or b.year >= :afterYear)"
   )
   Page<Book> findBooksByInventoryNumber(String inventoryNumber, Integer beforeYear,
                                         Integer afterYear, Pageable pageable);
+
+  @Query("SELECT count(b) FROM Book b WHERE b.type = :type")
+  Integer countBooksByType(BookType type);
+
+  @Query("SELECT count(b) FROM Book b WHERE b.field = :field")
+  Integer countBooksByField(BookField field);
+
+  @Query(value = "SELECT currval('book_id_sequence')", nativeQuery = true)
+  Long getCurrentBookIdSequenceValue();
 
   @Modifying
   @Transactional

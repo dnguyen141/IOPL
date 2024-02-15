@@ -5,6 +5,8 @@ import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.library.entities.Book;
 import inst.iop.LibraryManager.library.entities.BorrowEntry;
 import inst.iop.LibraryManager.library.entities.enums.BorrowStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,22 +23,31 @@ public interface BorrowEntryRepository extends JpaRepository<BorrowEntry, Long> 
   @Query("SELECT be FROM BorrowEntry be WHERE be.id = :id")
   Optional<BorrowEntry> getBorrowEntryById(Long id);
 
-  @Query("SELECT be FROM BorrowEntry be WHERE be.status = :status")
-  List<BorrowEntry> findBorrowEntriesByStatus(BorrowStatus status);
+  @Query("SELECT be FROM BorrowEntry be WHERE be.user = :user and be.book = :book and " +
+      "be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Requested")
+  List<BorrowEntry> getRequestedBorrowEntryByUser(User user, Book book);
 
-  @Query("SELECT be FROM BorrowEntry be " +
-      "WHERE be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Issued " +
-      "or be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Overdue")
-  List<BorrowEntry> findOpenedBorrowEntries();
+  @Query("SELECT be FROM BorrowEntry be WHERE be.status = :status")
+  Page<BorrowEntry> findBorrowEntriesByStatus(BorrowStatus status, Pageable pageable);
+
+  @Query("SELECT count(be) FROM BorrowEntry be " +
+      "WHERE (be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Issued " +
+      "or be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Overdue " +
+      "or be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Lost) " +
+      "and be.book = :book")
+  Integer countOpenedBorrowEntriesByBook(Book book);
+
+  @Query("SELECT count(be) FROM BorrowEntry be " +
+      "WHERE (be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Requested " +
+      "or be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Returned) " +
+      "and be.book = :book")
+  Integer countClosedBorrowEntries(Book book);
 
   @Query("SELECT be FROM BorrowEntry be WHERE be.user = :user AND be.status = :status")
-  List<BorrowEntry> findBorrowEntriesByUserIdAndStatus(User user, BorrowStatus status);
+  Page<BorrowEntry> findBorrowEntriesByUserIdAndStatus(User user, BorrowStatus status, Pageable pageable);
 
   @Query("SELECT be FROM BorrowEntry be WHERE be.book = :book AND be.status = :status")
-  List<BorrowEntry> findRequestedBorrowEntriesByBookIdAndStatus(Book book, BorrowStatus status);
-
-  @Query("SELECT count(be) FROM BorrowEntry be WHERE be.book.id = :bookId AND be.status = :status")
-  Integer countBorrowEntriesByBookIdAndStatus(Long bookId, BorrowStatus status);
+  Page<BorrowEntry> findBorrowEntriesByBookIdAndStatus(Book book, BorrowStatus status, Pageable pageable);
 
   @Modifying
   @Query("DELETE BorrowEntry be WHERE be.id = :id")
