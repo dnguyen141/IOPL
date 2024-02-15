@@ -1,17 +1,17 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
-import inst.iop.LibraryManager.library.entities.constrains.IsbnConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.IsbnConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.regex.Pattern;
 
-public class IsbnConstrainValidator implements ConstraintValidator<IsbnConstrain, String> {
+public class IsbnConstraintValidator implements ConstraintValidator<IsbnConstraint, String> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(IsbnConstrain constraintAnnotation) {
+  public void initialize(IsbnConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

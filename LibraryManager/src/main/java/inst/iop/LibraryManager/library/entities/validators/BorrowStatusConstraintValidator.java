@@ -1,18 +1,18 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
-import inst.iop.LibraryManager.library.entities.constrains.AuthorsConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.BorrowStatusConstraint;
 import inst.iop.LibraryManager.library.entities.enums.BorrowStatus;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.Optional;
 
-public class BorrowStatusConstrainValidator implements ConstraintValidator<AuthorsConstrain, String> {
+public class BorrowStatusConstraintValidator implements ConstraintValidator<BorrowStatusConstraint, String> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(AuthorsConstrain constraintAnnotation) {
+  public void initialize(BorrowStatusConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

@@ -1,17 +1,17 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
-import inst.iop.LibraryManager.library.entities.constrains.InventoryNumberConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.InventoryNumberConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.regex.Pattern;
 
-public class InventoryNumberConstrainValidator implements ConstraintValidator<InventoryNumberConstrain, String> {
+public class InventoryNumberConstraintValidator implements ConstraintValidator<InventoryNumberConstraint, String> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(InventoryNumberConstrain constraintAnnotation) {
+  public void initialize(InventoryNumberConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

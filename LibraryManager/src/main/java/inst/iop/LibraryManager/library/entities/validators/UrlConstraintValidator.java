@@ -1,17 +1,17 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
-import inst.iop.LibraryManager.library.entities.constrains.UrlConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.UrlConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.regex.Pattern;
 
-public class UrlConstrainValidator implements ConstraintValidator<UrlConstrain, String> {
+public class UrlConstraintValidator implements ConstraintValidator<UrlConstraint, String> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(UrlConstrain constraintAnnotation) {
+  public void initialize(UrlConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

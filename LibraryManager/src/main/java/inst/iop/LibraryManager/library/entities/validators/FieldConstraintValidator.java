@@ -1,19 +1,16 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
 import inst.iop.LibraryManager.library.entities.BookField;
-import inst.iop.LibraryManager.library.entities.BookType;
-import inst.iop.LibraryManager.library.entities.constrains.FieldConstrain;
-import inst.iop.LibraryManager.library.entities.constrains.TypeConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.FieldConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.apache.commons.lang3.StringUtils;
 
-public class FieldConstrainValidator implements ConstraintValidator<FieldConstrain, Object> {
+public class FieldConstraintValidator implements ConstraintValidator<FieldConstraint, Object> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(FieldConstrain constraintAnnotation) {
+  public void initialize(FieldConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

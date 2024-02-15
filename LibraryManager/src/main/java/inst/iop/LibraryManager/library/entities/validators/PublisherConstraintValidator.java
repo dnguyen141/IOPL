@@ -1,15 +1,15 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
-import inst.iop.LibraryManager.library.entities.constrains.PublisherConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.PublisherConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PublisherConstrainValidator implements ConstraintValidator<PublisherConstrain, String> {
+public class PublisherConstraintValidator implements ConstraintValidator<PublisherConstraint, String> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(PublisherConstrain constraintAnnotation) {
+  public void initialize(PublisherConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

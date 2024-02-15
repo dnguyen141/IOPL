@@ -1,17 +1,15 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
-import inst.iop.LibraryManager.library.entities.constrains.EditionConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.EditionConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.time.Year;
-
-public class EditionConstrainValidator implements ConstraintValidator<EditionConstrain, Integer> {
+public class EditionConstraintValidator implements ConstraintValidator<EditionConstraint, Integer> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(EditionConstrain constraintAnnotation) {
+  public void initialize(EditionConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

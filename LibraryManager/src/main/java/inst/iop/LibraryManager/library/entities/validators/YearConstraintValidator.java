@@ -1,17 +1,17 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
-import inst.iop.LibraryManager.library.entities.constrains.YearConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.YearConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.time.Year;
 
-public class YearConstrainValidator implements ConstraintValidator<YearConstrain, Integer> {
+public class YearConstraintValidator implements ConstraintValidator<YearConstraint, Integer> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(YearConstrain constraintAnnotation) {
+  public void initialize(YearConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

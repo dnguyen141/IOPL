@@ -1,19 +1,16 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
 import inst.iop.LibraryManager.library.entities.BookType;
-import inst.iop.LibraryManager.library.entities.constrains.TypeConstrain;
-import inst.iop.LibraryManager.library.entities.constrains.UrlConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.TypeConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.util.regex.Pattern;
-
-public class TypeConstrainValidator implements ConstraintValidator<TypeConstrain, Object> {
+public class TypeConstraintValidator implements ConstraintValidator<TypeConstraint, Object> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(TypeConstrain constraintAnnotation) {
+  public void initialize(TypeConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

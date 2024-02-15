@@ -1,18 +1,15 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
-import inst.iop.LibraryManager.library.entities.constrains.QuantityConstrain;
-import inst.iop.LibraryManager.library.entities.constrains.YearConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.QuantityConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.time.Year;
-
-public class QuantityConstrainValidator implements ConstraintValidator<QuantityConstrain, Integer> {
+public class QuantityConstraintValidator implements ConstraintValidator<QuantityConstraint, Integer> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(QuantityConstrain constraintAnnotation) {
+  public void initialize(QuantityConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

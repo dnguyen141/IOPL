@@ -1,15 +1,15 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
-import inst.iop.LibraryManager.library.entities.constrains.PageNumberConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.PageNumberConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PageNumberConstrainValidator implements ConstraintValidator<PageNumberConstrain, Integer> {
+public class PageNumberConstraintValidator implements ConstraintValidator<PageNumberConstraint, Integer> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(PageNumberConstrain constraintAnnotation) {
+  public void initialize(PageNumberConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 

@@ -1,15 +1,15 @@
 package inst.iop.LibraryManager.library.entities.validators;
 
-import inst.iop.LibraryManager.library.entities.constrains.PageSizeConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.PageSizeConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PageSizeConstrainValidator implements ConstraintValidator<PageSizeConstrain, Integer> {
+public class PageSizeConstraintValidator implements ConstraintValidator<PageSizeConstraint, Integer> {
 
   private boolean isNotNullConstrain;
 
   @Override
-  public void initialize(PageSizeConstrain constraintAnnotation) {
+  public void initialize(PageSizeConstraint constraintAnnotation) {
     this.isNotNullConstrain = constraintAnnotation.isNotNullConstrain();
   }
 
