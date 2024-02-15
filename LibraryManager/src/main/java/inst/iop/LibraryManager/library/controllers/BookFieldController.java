@@ -2,11 +2,11 @@ package inst.iop.LibraryManager.library.controllers;
 
 import inst.iop.LibraryManager.library.dtos.CreateUpdateFieldDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1/book-field")
+@RequestMapping("/api/v1/fields")
+@Validated
 public interface BookFieldController {
 
   @GetMapping("")
@@ -16,12 +16,11 @@ public interface BookFieldController {
   ResponseEntity<Object> getBookFieldById(@PathVariable Long id);
 
   @PostMapping("/create")
-  ResponseEntity<Object> createBookField(@RequestBody CreateUpdateFieldDto request, BindingResult bindingResult);
+  ResponseEntity<Object> createBookField(@RequestBody CreateUpdateFieldDto request);
 
-  @PutMapping("/{id}/edit")
-  ResponseEntity<Object> updateBookField(@PathVariable Long id, @RequestBody CreateUpdateFieldDto request,
-                                         BindingResult bindingResult);
+  @PutMapping("/edit/{id}")
+  ResponseEntity<Object> updateBookField(@PathVariable Long id, @RequestBody CreateUpdateFieldDto request);
 
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/delete/{id}")
   ResponseEntity<Object> deleteBookField(@PathVariable Long id);
 }

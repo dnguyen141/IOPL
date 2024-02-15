@@ -2,10 +2,11 @@ package inst.iop.LibraryManager.library.controllers;
 
 import inst.iop.LibraryManager.library.dtos.CreateUpdateTypeDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1/book-type")
+@RequestMapping("/api/v1/types")
+@Validated
 public interface BookTypeController {
 
   @GetMapping("")
@@ -15,12 +16,11 @@ public interface BookTypeController {
   ResponseEntity<Object> getBookTypeById(@PathVariable Long id);
 
   @PostMapping("/create")
-  ResponseEntity<Object> createBookType(@RequestBody CreateUpdateTypeDto request, BindingResult bindingResult);
+  ResponseEntity<Object> createBookType(@RequestBody CreateUpdateTypeDto request);
 
-  @PutMapping("/{id}/edit")
-  ResponseEntity<Object> editBookType(@PathVariable Long id, @RequestBody CreateUpdateTypeDto request,
-                                      BindingResult bindingResult);
+  @PutMapping("/edit/{id}")
+  ResponseEntity<Object> updateBookType(@PathVariable Long id, @RequestBody CreateUpdateTypeDto request);
 
-  @DeleteMapping("/{id}/delete")
+  @DeleteMapping("/delete/{id}")
   ResponseEntity<Object> deleteBookType(@PathVariable Long id);
 }
