@@ -9,11 +9,10 @@ import inst.iop.LibraryManager.authentication.entities.enums.TokenType;
 import inst.iop.LibraryManager.authentication.repositories.TokenRepository;
 import inst.iop.LibraryManager.authentication.repositories.UserRepository;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
-import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,14 +20,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
 
-import static inst.iop.LibraryManager.utilities.BindingResultHandler.handleBindingResult;
+import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
 
 @Service
 @RequiredArgsConstructor
@@ -39,38 +37,43 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
-  private final EmailService emailService;
+//  private final EmailService emailService;
+  private final Validator validator;
 
   private static final int UUID_LENGTH = 32;
 
   @Override
   @Transactional
-  public void register(@Valid RegisterDto request, BindingResult bindingResult)
-      throws BadRequestDetailsException {
-    Map<String, Object> violations = handleBindingResult(bindingResult);
+  public void register(RegisterDto request) throws BadRequestDetailsException {
+    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+
+    if (request.getPassword() == null || !request.getPassword().equals(request.getConfirmedPassword())) {
+      violations.put("confirmedPassword", "Password and confirmed password must be matched");
+    }
+
     if (!violations.isEmpty()) {
-      throw new BadRequestDetailsException(violations);
+      throw new BadRequestDetailsException("Invalid register request", violations);
     }
 
     Optional<User> u = userRepository.findUserByEmail(request.getEmail());
     if (u.isPresent()) {
       violations.put("email", "An user with the same email is already existed");
-      throw new BadRequestDetailsException(violations);
+      throw new BadRequestDetailsException("Invalid register request", violations);
     }
 
     String confirmationCode = generateSecureUuid();
-    try {
-      boolean isSendingSuccess = emailService.sendConfirmationEmailToRecipient(
-          "minhdinhnguyen1495@gmail.com", request.getFirstName(), request.getLastName(), confirmationCode
-      );
-      if (!isSendingSuccess) {
-        violations.put("email", "Unable to send confirmation email. Please check your input");
-        throw new BadRequestDetailsException(violations);
-      }
-    } catch (IOException e) {
-      violations.put("email", "Unable to send confirmation email");
-      throw new BadRequestDetailsException(violations);
-    }
+//    try {
+//      boolean isSendingSuccess = emailService.sendConfirmationEmailToRecipient(
+//          "minhdinhnguyen1495@gmail.com", request.getFirstName(), request.getLastName(), confirmationCode
+//      );
+//      if (!isSendingSuccess) {
+//        violations.put("email", "Unable to send confirmation email");
+//        throw new BadRequestDetailsException("Invalid register request", violations);
+//      }
+//    } catch (IOException e) {
+//      violations.put("email", "Unable to send confirmation email");
+//      throw new BadRequestDetailsException("Invalid register request", violations);
+//    }
 
     User user = User.builder()
         .email(request.getEmail())
@@ -79,14 +82,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         .lastName(request.getLastName())
         .role(Role.USER)
         .borrowEntries(new HashSet<>())
-        .created(LocalDateTime.now())
+        .created(LocalDate.now())
         .enabled(false)
         .confirmationCode(confirmationCode)
         .build();
     userRepository.save(user);
   }
 
-  String generateSecureUuid() {
+  private String generateSecureUuid() {
     SecureRandom secureRandom = new SecureRandom();
     byte[] randomBytes = new byte[UUID_LENGTH / 2];
 
@@ -112,16 +115,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       String refreshToken = jwtService.generateRefreshToken(user);
       revokeAllTokens(user);
       saveToken(user, accessToken);
-
       Map<String, Object> details = new HashMap<>();
       details.put("accessToken", accessToken);
       details.put("refreshToken", refreshToken);
       return details;
     } catch (AuthenticationException | NoSuchElementException e) {
-      Map<String, Object> violations = new HashMap<>();
+      Map<String, String> violations = new HashMap<>();
       violations.put("authentication", "Unable to authenticate with provided email and password. " +
           "Please check your inputs or if you have confirmed your account");
-      throw new BadRequestDetailsException(violations);
+      throw new BadRequestDetailsException("Unable to login", violations);
     }
   }
 
@@ -131,17 +133,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       throws BadRequestDetailsException {
     String authenticationHeader = request.getHeader("Authorization");
     if (authenticationHeader == null || !authenticationHeader.startsWith("Bearer ")) {
-      throw new MalformedJwtException("Invalid header format for refreshing JWT");
+      Map<String, String> violations = new HashMap<>();
+      violations.put("authorization", "Invalid header format for refreshing JWT");
+      throw new BadRequestDetailsException("Unable to refresh token", violations);
     }
+
     String refreshToken = authenticationHeader.substring(7);
-    String email = jwtService.extractUsername(refreshToken);
-    User user = userRepository.findUserByEmail(email).orElseThrow(
-        () -> new MalformedJwtException("Unable to extract username from token")
-    );
+
     Optional<JwtToken> token = tokenRepository.findTokenByString(refreshToken);
     if (token.isEmpty() || token.get().isRevoked() || token.get().isExpired()) {
-      throw new MalformedJwtException("Unable to refresh using provided token");
+      Map<String, String> violations = new HashMap<>();
+      violations.put("token", "Token is invalid or malformed");
+      throw new BadRequestDetailsException("Unable to refresh token", violations);
     }
+
+    String email = jwtService.extractUsername(refreshToken);
+    User user = userRepository.findUserByEmail(email).orElseThrow(
+        () -> {
+          Map<String, String> violations = new HashMap<>();
+          violations.put("authorization", "Invalid header format for refreshing JWT");
+          return new BadRequestDetailsException("Unable to refresh token", violations);
+        }
+    );
 
     if (jwtService.isTokenValid(refreshToken, user)) {
       var accessToken = jwtService.generateToken(user);
@@ -153,7 +166,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       return details;
     }
 
-    throw new MalformedJwtException("Unable to refresh using provided token");
+    Map<String, String> violations = new HashMap<>();
+    violations.put("token", "Token is invalid");
+    throw new BadRequestDetailsException("Unable to refresh token", violations);
   }
 
   @Override
@@ -175,12 +190,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   @Override
-  public void confirmRegister(String email, String confirmationCode) {
+  public void confirmRegistration(String email, String confirmationCode) throws BadRequestDetailsException {
     Optional<User> u = userRepository.findUserByEmail(email);
     if (u.isEmpty()) {
-      Map<String, Object> violation = new HashMap<>();
+      Map<String, String> violation = new HashMap<>();
       violation.put("url", "Invalid confirmation link");
-      throw new BadRequestDetailsException(violation);
+      throw new BadRequestDetailsException("Unable to confirm registration", violation);
     }
 
     User user = u.get();
@@ -189,15 +204,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       user.setEnabled(true);
       userRepository.save(user);
     } else {
-      Map<String, Object> violation = new HashMap<>();
+      Map<String, String> violation = new HashMap<>();
       violation.put("url", "The code is invalid or already confirmed");
-      throw new BadRequestDetailsException(violation);
+      throw new BadRequestDetailsException("Unable to confirm registration", violation);
     }
   }
 
   @Override
   public void saveToken(User user, String jwtToken) {
-    JwtToken token = JwtToken.builder()
+    var token = JwtToken.builder()
         .user(user)
         .token(jwtToken)
         .tokenType(TokenType.BEARER)

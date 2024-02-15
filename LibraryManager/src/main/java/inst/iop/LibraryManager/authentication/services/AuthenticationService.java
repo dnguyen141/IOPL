@@ -6,14 +6,12 @@ import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.validation.BindingResult;
 
 import java.util.*;
 
 public interface AuthenticationService {
 
-  void register(RegisterDto request, BindingResult bindingResult)
-      throws BadRequestDetailsException;
+  void register(RegisterDto request) throws BadRequestDetailsException;
 
   Map<String, Object> login(LoginDto request) throws BadRequestDetailsException;
 
@@ -24,5 +22,5 @@ public interface AuthenticationService {
 
   void logout(HttpServletRequest request, HttpServletResponse response);
 
-  void confirmRegister(String email, String confirmationCode);
+  void confirmRegistration(String email, String confirmationCode) throws BadRequestDetailsException;
 }
