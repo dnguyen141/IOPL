@@ -25,7 +25,7 @@ public interface BorrowEntryRepository extends JpaRepository<BorrowEntry, Long> 
 
   @Query("SELECT be FROM BorrowEntry be WHERE be.user = :user and be.book = :book and " +
       "be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Requested")
-  List<BorrowEntry> getRequestedBorrowEntryByUser(User user, Book book);
+  List<BorrowEntry> listRequestedBorrowEntriesByUser(User user, Book book);
 
   @Query("SELECT be FROM BorrowEntry be WHERE be.status = :status")
   Page<BorrowEntry> findBorrowEntriesByStatus(BorrowStatus status, Pageable pageable);
