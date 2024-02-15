@@ -18,23 +18,19 @@ import java.util.Optional;
 @EnableJpaRepositories
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-  @Query("SELECT b from Book b")
+  @Query("SELECT b FROM Book b")
   Page<Book> listAllBooks(Pageable pageable);
 
-  @Query("SELECT b from Book b WHERE b.id = :id")
+  @Query("SELECT b FROM Book b WHERE b.id = :id")
   Optional<Book> getBookById(Long id);
 
-  @Query("SELECT b from Book b WHERE lower(b.title) = lower(:title)")
+  @Query("SELECT b FROM Book b WHERE lower(b.title) = lower(:title)")
   Optional<Book> getBookByTitle(String title);
 
-  @Query("SELECT b from Book b WHERE b.isbn = :isbn")
-  Optional<Book> getBookByIsbn(String isbn);
+  Optional<Book> findFirstByOrderById();
 
   @Query("SELECT COUNT(b) FROM Book b")
   Integer getNumberOfBooks();
-
-  @Query("SELECT Max(b.id) FROM Book b")
-  Long getHighestBookId();
 
   @Query(
       "SELECT b FROM Book b " +
