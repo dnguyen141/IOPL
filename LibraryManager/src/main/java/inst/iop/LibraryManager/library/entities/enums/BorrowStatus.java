@@ -25,8 +25,4 @@ public enum BorrowStatus {
     }
     return Optional.empty();
   }
-
-  public static int calculateNewAvailable(BorrowStatus oldBs, BorrowStatus newBs, Integer available) {
-    return available - oldBs.getState() + newBs.getState();
-  }
 }

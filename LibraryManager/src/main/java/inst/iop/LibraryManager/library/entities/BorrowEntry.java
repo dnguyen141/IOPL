@@ -2,6 +2,7 @@ package inst.iop.LibraryManager.library.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import inst.iop.LibraryManager.authentication.entities.User;
+import inst.iop.LibraryManager.library.dtos.BorrowEntryDto;
 import inst.iop.LibraryManager.library.entities.enums.BorrowStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -46,4 +50,15 @@ public class BorrowEntry {
 
   @Enumerated(EnumType.STRING)
   private BorrowStatus status = BorrowStatus.Requested;
+
+  public BorrowEntryDto mapToDto() {
+    return BorrowEntryDto.builder()
+        .id(id)
+        .userId(user.getId())
+        .bookId(book.getId())
+        .borrowDate(borrowDate.toString())
+        .returnDate(returnDate.toString())
+        .borrowStatus(status.name())
+        .build();
+  }
 }

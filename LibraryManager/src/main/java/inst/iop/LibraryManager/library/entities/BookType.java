@@ -3,7 +3,7 @@ package inst.iop.LibraryManager.library.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import inst.iop.LibraryManager.library.entities.constrains.TypeConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.TypeConstraint;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class BookType {
   private long id;
 
   @Column(unique = true)
-  @TypeConstrain
+  @TypeConstraint
   public String name;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)

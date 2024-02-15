@@ -2,13 +2,13 @@ package inst.iop.LibraryManager.library.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import inst.iop.LibraryManager.library.entities.constrains.*;
+import inst.iop.LibraryManager.library.entities.constraints.*;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import java.util.Set;
 
@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "books")
-@JsonIgnoreProperties({"borrowEntries"})
+@JsonIgnoreProperties({"borrowEntries", "coverImage"})
 public class Book {
 
   @Id
@@ -35,13 +35,13 @@ public class Book {
   private long id;
 
   @Column(unique = true)
-  @TitleConstrain
+  @TitleConstraint
   private String title;
 
-  @AuthorsConstrain
+  @AuthorsConstraint
   private String authors;
 
-  @PublisherConstrain
+  @PublisherConstraint
   private String publisher;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -54,31 +54,25 @@ public class Book {
   @JsonIdentityReference(alwaysAsId = true)
   private BookField field;
 
-  @YearConstrain
+  @YearConstraint
   private Integer year;
 
-  @EditionConstrain
+  @EditionConstraint
   private Integer edition;
 
-  @IsbnConstrain
+  @IsbnConstraint
   private String isbn;
 
-  @InventoryNumberConstrain(isNotNullConstrain = true)
+  @InventoryNumberConstraint
   private String inventoryNumber;
 
-  @QuantityConstrain
+  @QuantityConstraint
   private Integer quantity;
 
-  private Integer available;
-
-  @UrlConstrain
+  @Nullable
   private String coverImage;
 
   @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE)
   @Transient
   private Set<BorrowEntry> borrowEntries;
-
-  public boolean isIssuable() {
-    return available > 0;
-  }
 }

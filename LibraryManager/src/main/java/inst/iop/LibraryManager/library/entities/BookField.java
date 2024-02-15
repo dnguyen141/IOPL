@@ -1,7 +1,7 @@
 package inst.iop.LibraryManager.library.entities;
 
 import com.fasterxml.jackson.annotation.*;
-import inst.iop.LibraryManager.library.entities.constrains.FieldConstrain;
+import inst.iop.LibraryManager.library.entities.constraints.FieldConstraint;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +25,7 @@ public class BookField {
   private long id;
 
   @Column(unique = true)
-  @FieldConstrain
+  @FieldConstraint
   public String name;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
