@@ -1,28 +1,26 @@
 package inst.iop.LibraryManager.authentication.dtos;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.NameConstrain;
-import inst.iop.LibraryManager.authentication.entities.constrains.PasswordConstrain;
-import inst.iop.LibraryManager.authentication.entities.constrains.RoleConstrain;
+import inst.iop.LibraryManager.authentication.entities.constrains.NameConstraint;
+import inst.iop.LibraryManager.authentication.entities.constrains.PasswordConstraint;
+import inst.iop.LibraryManager.authentication.entities.constrains.RoleConstraint;
 import lombok.*;
 
 @Data
 @AllArgsConstructor
 public class ChangeUserDetailsDto {
 
-  private String email;
-
-  @PasswordConstrain(isNotNullConstrain = false)
+  @PasswordConstraint(isNotNullConstrain = false)
   private String password;
 
-  @PasswordConstrain(isNotNullConstrain = false, message = "The confirmed password must match the password")
+  @PasswordConstraint(isNotNullConstrain = false)
   private String confirmedPassword;
 
-  @RoleConstrain(isNotNullConstrain = false)
+  @RoleConstraint(isNotNullConstrain = false)
   private String role;
 
-  @NameConstrain(isNotNullConstrain = false)
+  @NameConstraint(isNotNullConstrain = false)
   private String firstName;
 
-  @NameConstrain(isNotNullConstrain = false)
+  @NameConstraint(isNotNullConstrain = false)
   private String lastName;
 }

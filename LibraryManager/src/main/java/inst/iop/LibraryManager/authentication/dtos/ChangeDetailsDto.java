@@ -1,7 +1,7 @@
 package inst.iop.LibraryManager.authentication.dtos;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.NameConstrain;
-import inst.iop.LibraryManager.authentication.entities.constrains.PasswordConstrain;
+import inst.iop.LibraryManager.authentication.entities.constrains.NameConstraint;
+import inst.iop.LibraryManager.authentication.entities.constrains.PasswordConstraint;
 import lombok.*;
 
 @Data
@@ -10,16 +10,16 @@ import lombok.*;
 @NoArgsConstructor
 public class ChangeDetailsDto {
 
-  @NameConstrain(isNotNullConstrain = false)
+  @NameConstraint(isNotNullConstrain = false)
   private String firstName;
 
-  @NameConstrain(isNotNullConstrain = false)
+  @NameConstraint(isNotNullConstrain = false)
   private String lastName;
 
-  @PasswordConstrain(isNotNullConstrain = false)
+  @PasswordConstraint(isNotNullConstrain = false)
   private String password;
 
-  @PasswordConstrain(isNotNullConstrain = false, message = "The confirmed password must match the password")
+  @PasswordConstraint(isNotNullConstrain = false)
   private String confirmedPassword;
 }
 

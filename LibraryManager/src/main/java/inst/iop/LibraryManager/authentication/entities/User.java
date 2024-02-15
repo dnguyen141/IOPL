@@ -9,7 +9,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +19,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"borrowEntries", "tokens", "username", "accountNonExpired",
+@JsonIgnoreProperties({"borrowEntries", "tokens", "username", "confirmationCode",  "authorities", "accountNonExpired",
     "credentialsNonExpired", "accountNonLocked"})
 @Table(name = "users")
 public class User implements UserDetails {
@@ -57,7 +57,7 @@ public class User implements UserDetails {
 
   private boolean enabled;
 
-  private LocalDateTime created;
+  private LocalDate created;
 
   @Nullable
   private String confirmationCode;

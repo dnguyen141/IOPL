@@ -1,9 +1,8 @@
 package inst.iop.LibraryManager.authentication.dtos;
 
-import inst.iop.LibraryManager.authentication.entities.constrains.EmailConstrain;
-import inst.iop.LibraryManager.authentication.entities.constrains.NameConstrain;
-import inst.iop.LibraryManager.authentication.entities.constrains.PasswordConstrain;
-import inst.iop.LibraryManager.authentication.entities.constrains.RoleConstrain;
+import inst.iop.LibraryManager.authentication.entities.constrains.EmailConstraint;
+import inst.iop.LibraryManager.authentication.entities.constrains.NameConstraint;
+import inst.iop.LibraryManager.authentication.entities.constrains.PasswordConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,18 +14,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterDto {
 
-  @EmailConstrain
+  @EmailConstraint
   private String email;
 
-  @PasswordConstrain
+  @PasswordConstraint
   private String password;
 
-  @PasswordConstrain(message = "The confirmed password must match the password")
+  @PasswordConstraint
   private String confirmedPassword;
 
-  @NameConstrain
+  @NameConstraint
   private String firstName;
 
-  @NameConstrain
+  @NameConstraint
   private String lastName;
 }
