@@ -226,7 +226,11 @@ public class BookServiceImpl implements BookService {
   @Override
   @Transactional
   public void createBook(CreateBookDto request, MultipartFile coverImage) throws BadRequestDetailsException {
-    Long nextBookId = bookRepository.getCurrentBookIdSequenceValue() + 1;
+    long nextBookId = 100;
+    Optional<Book> firstBook = bookRepository.findFirstByOrderById();
+    if (firstBook.isPresent()) {
+      nextBookId = bookRepository.getCurrentBookIdSequenceValue() + 1;
+    }
 
     Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
