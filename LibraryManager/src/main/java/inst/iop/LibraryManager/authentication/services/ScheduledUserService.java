@@ -2,9 +2,6 @@ package inst.iop.LibraryManager.authentication.services;
 
 import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.authentication.repositories.UserRepository;
-import inst.iop.LibraryManager.library.entities.BorrowEntry;
-import inst.iop.LibraryManager.library.entities.enums.BorrowStatus;
-import inst.iop.LibraryManager.library.repositories.BorrowEntryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
