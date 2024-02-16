@@ -24,7 +24,7 @@ public class ScheduledUserService {
     logger.info("Start checking for unconfirmed users...");
     List<User> lateUnconfirmedUsers = userRepository.findAllLateUsers();
     if (lateUnconfirmedUsers.isEmpty()) {
-      logger.info("No late unconfirmed user found");
+      logger.info("No unconfirmed user found");
       return;
     }
     logger.info("Unconfirmed users detected. Start deleting...");
