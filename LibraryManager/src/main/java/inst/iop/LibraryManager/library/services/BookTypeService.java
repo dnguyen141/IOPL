@@ -3,7 +3,6 @@ package inst.iop.LibraryManager.library.services;
 import inst.iop.LibraryManager.library.dtos.CreateUpdateTypeDto;
 import inst.iop.LibraryManager.library.entities.BookType;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

@@ -19,8 +19,6 @@ import org.springframework.http.MediaTypeFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
 
 @RequiredArgsConstructor
 @Service
@@ -41,6 +41,24 @@ public class BookServiceImpl implements BookService {
   private final BookFieldService bookFieldService;
   private final ImageFileService imageFileService;
   private final Validator validator;
+
+  @NonNull
+  private static String getCoverImageString(Long id, Optional<Book> b) {
+    if (b.isEmpty()) {
+      Map<String, String> violations = new HashMap<>();
+      violations.put("book", "Book with id " + id + " is not found");
+      throw new BadRequestDetailsException("Unable to get book cover", violations);
+    }
+
+    Book book = b.get();
+    String coverImageString = book.getCoverImage();
+    if (coverImageString == null) {
+      Map<String, String> violations = new HashMap<>();
+      violations.put("book", "Book with id " + id + " has no cover");
+      throw new BadRequestDetailsException("Unable to get book cover", violations);
+    }
+    return coverImageString;
+  }
 
   public Page<Book> listAllBooks(ListAllBooksDto request) throws BadRequestDetailsException {
     Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
@@ -203,24 +221,6 @@ public class BookServiceImpl implements BookService {
         .imageData(coverImageBytes)
         .imageContentType(mediaType.getType())
         .build();
-  }
-
-  @NonNull
-  private static String getCoverImageString(Long id, Optional<Book> b) {
-    if (b.isEmpty()) {
-      Map<String, String> violations = new HashMap<>();
-      violations.put("book", "Book with id " + id + " is not found");
-      throw new BadRequestDetailsException("Unable to get book cover", violations);
-    }
-
-    Book book = b.get();
-    String coverImageString = book.getCoverImage();
-    if (coverImageString == null) {
-      Map<String, String> violations = new HashMap<>();
-      violations.put("book", "Book with id " + id + " has no cover");
-      throw new BadRequestDetailsException("Unable to get book cover", violations);
-    }
-    return coverImageString;
   }
 
   @Override

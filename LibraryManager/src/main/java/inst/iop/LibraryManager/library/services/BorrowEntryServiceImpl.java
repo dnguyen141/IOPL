@@ -21,7 +21,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
 
@@ -172,7 +175,7 @@ public class BorrowEntryServiceImpl implements BorrowEntryService {
     List<BorrowEntry> be = borrowEntryRepository.listRequestedBorrowEntriesByUser(user, book);
     if (!be.isEmpty() && borrowStatus.equals(BorrowStatus.Requested)) {
       violations.put("status", "You already requested to borrow this book");
-      throw  new BadRequestDetailsException("Unable to create new borrow entry", violations);
+      throw new BadRequestDetailsException("Unable to create new borrow entry", violations);
     }
 
     BorrowEntry borrowEntry = BorrowEntry.builder()

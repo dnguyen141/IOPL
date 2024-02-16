@@ -15,12 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -32,24 +32,28 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
-
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
 
+  private final ApiResponseEntityFactory responseEntityFactory;
   @Value("${spring.servlet.multipart.max-file-size}")
   private String maxUploadSize;
 
-  private final ApiResponseEntityFactory responseEntityFactory;
+  private static String extractFieldNameFromViolation(ConstraintViolation<?> violation) {
+    String fieldName = null;
+    for (Path.Node node : violation.getPropertyPath()) {
+      fieldName = node.getName();
+    }
+    return fieldName;
+  }
 
   @Override
   protected ResponseEntity<Object> handleNoResourceFoundException(
       NoResourceFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
     return responseEntityFactory.createErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
   }
-
 
   @ExceptionHandler(BadRequestDetailsException.class)
   public ResponseEntity<Object> handleBadRequestDetailsException(BadRequestDetailsException e) {
@@ -117,14 +121,6 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
 
     return responseEntityFactory.createErrorWithDetailsResponse(HttpStatus.BAD_REQUEST,
         "Constraint(s) violation detected", violations);
-  }
-
-  private static String extractFieldNameFromViolation(ConstraintViolation<?> violation) {
-    String fieldName = null;
-    for (Path.Node node : violation.getPropertyPath()) {
-      fieldName = node.getName();
-    }
-    return fieldName;
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)

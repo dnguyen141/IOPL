@@ -5,8 +5,8 @@ import inst.iop.LibraryManager.library.entities.enums.BorrowStatus;
 import inst.iop.LibraryManager.library.repositories.BorrowEntryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +17,8 @@ import java.util.List;
 @Slf4j
 public class ScheduledBorrowEntryService {
 
-  private final BorrowEntryRepository borrowEntryRepository;
   private static final Logger logger = LoggerFactory.getLogger(ScheduledBorrowEntryService.class);
+  private final BorrowEntryRepository borrowEntryRepository;
 
   @Scheduled(cron = "1 0 0 * * *", zone = "Europe/Berlin")
   public void checkStatusAllBorrowEntries() {

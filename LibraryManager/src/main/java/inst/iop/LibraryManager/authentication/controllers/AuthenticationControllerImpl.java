@@ -1,15 +1,17 @@
 package inst.iop.LibraryManager.authentication.controllers;
 
-import inst.iop.LibraryManager.authentication.services.AuthenticationService;
 import inst.iop.LibraryManager.authentication.dtos.LoginDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
+import inst.iop.LibraryManager.authentication.services.AuthenticationService;
 import inst.iop.LibraryManager.utilities.responses.ApiResponseEntityFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor

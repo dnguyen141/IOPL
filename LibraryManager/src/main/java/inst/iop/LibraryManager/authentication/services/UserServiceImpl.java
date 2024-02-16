@@ -1,13 +1,13 @@
 package inst.iop.LibraryManager.authentication.services;
 
-import inst.iop.LibraryManager.authentication.entities.User;
-import inst.iop.LibraryManager.authentication.entities.enums.Role;
 import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
-import inst.iop.LibraryManager.authentication.repositories.TokenRepository;
-import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
+import inst.iop.LibraryManager.authentication.entities.User;
+import inst.iop.LibraryManager.authentication.entities.enums.Role;
+import inst.iop.LibraryManager.authentication.repositories.TokenRepository;
 import inst.iop.LibraryManager.authentication.repositories.UserRepository;
+import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +18,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.*;
-
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+
+import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
 
 @Service
 @RequiredArgsConstructor
@@ -36,9 +36,9 @@ public class UserServiceImpl implements UserService {
   @Override
   public User findUserById(Long id) throws BadRequestDetailsException {
     return userRepository.findUserById(id).orElseThrow(() -> {
-        Map<String, String> violations = new HashMap<>();
-        violations.put("id", "There is no user with id " + id);
-        return new BadRequestDetailsException("Unable to get user with id " + id, violations);
+      Map<String, String> violations = new HashMap<>();
+      violations.put("id", "There is no user with id " + id);
+      return new BadRequestDetailsException("Unable to get user with id " + id, violations);
     });
   }
 
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void createUser(RegisterDto request) throws BadRequestDetailsException{
+  public void createUser(RegisterDto request) throws BadRequestDetailsException {
     Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
 
     if (checkInvalidConfirmedPassword(request.getPassword(), request.getConfirmedPassword())) {

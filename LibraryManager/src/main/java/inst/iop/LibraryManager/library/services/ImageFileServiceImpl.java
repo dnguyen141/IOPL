@@ -14,17 +14,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
 public class ImageFileServiceImpl implements ImageFileService {
 
+  private final RestTemplate restTemplate;
   @Value("${library.coversDirectory}")
   private String UPLOAD_FOLDER;
-
-  private final RestTemplate restTemplate;
 
   @Override
   public String uploadImage(MultipartFile file, String isbn) throws BadRequestDetailsException {

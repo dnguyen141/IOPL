@@ -5,12 +5,12 @@ import inst.iop.LibraryManager.library.entities.BookField;
 import inst.iop.LibraryManager.library.entities.BookType;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -34,14 +34,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
   @Query(
       "SELECT b FROM Book b " +
-      "WHERE (lower(b.title) like concat('%', lower(:title), '%') or " +
-      "lower(b.authors) like concat('%', lower(:authors), '%') or " +
-      "lower(b.publisher) like concat('%', lower(:publisher), '%') or " +
-      "lower(b.type.name) like concat('%', lower(:type), '%') or " +
-      "lower(b.field.name) like concat('%', lower(:field), '%') or " +
-      "b.isbn like concat('%', :isbn, '%') or " +
-      "lower(b.inventoryNumber) like concat('%', lower(:inventoryNumber), '%')) and " +
-      "(b.year <= :beforeYear and b.year >= :afterYear) " +
+          "WHERE (lower(b.title) like concat('%', lower(:title), '%') or " +
+          "lower(b.authors) like concat('%', lower(:authors), '%') or " +
+          "lower(b.publisher) like concat('%', lower(:publisher), '%') or " +
+          "lower(b.type.name) like concat('%', lower(:type), '%') or " +
+          "lower(b.field.name) like concat('%', lower(:field), '%') or " +
+          "b.isbn like concat('%', :isbn, '%') or " +
+          "lower(b.inventoryNumber) like concat('%', lower(:inventoryNumber), '%')) and " +
+          "(b.year <= :beforeYear and b.year >= :afterYear) " +
           "ORDER BY b.id"
   )
   Page<Book> findBooks(String title, String authors, String publisher, String type, String field,
@@ -49,9 +49,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
   @Query(
       "SELECT b FROM Book b " +
-      "WHERE lower(b.title) like concat('%', lower(:title), '%') and " +
-      "(:beforeYear is null or b.year <= :beforeYear) and " +
-      "(:afterYear is null or b.year >= :afterYear) " +
+          "WHERE lower(b.title) like concat('%', lower(:title), '%') and " +
+          "(:beforeYear is null or b.year <= :beforeYear) and " +
+          "(:afterYear is null or b.year >= :afterYear) " +
           "ORDER BY b.id"
   )
   Page<Book> findBooksByTitle(String title, Integer beforeYear, Integer afterYear, Pageable pageable);

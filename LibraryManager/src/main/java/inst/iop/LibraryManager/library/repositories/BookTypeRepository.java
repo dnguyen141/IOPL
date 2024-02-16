@@ -1,6 +1,5 @@
 package inst.iop.LibraryManager.library.repositories;
 
-import inst.iop.LibraryManager.authentication.entities.enums.Role;
 import inst.iop.LibraryManager.library.entities.BookType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

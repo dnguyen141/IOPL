@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import inst.iop.LibraryManager.authentication.entities.enums.Role;
 import inst.iop.LibraryManager.library.entities.BorrowEntry;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +22,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"borrowEntries", "tokens", "username", "confirmationCode",  "authorities", "accountNonExpired",
+@JsonIgnoreProperties({"borrowEntries", "tokens", "username", "confirmationCode", "authorities", "accountNonExpired",
     "credentialsNonExpired", "accountNonLocked"})
 @Table(name = "users")
 public class User implements UserDetails {

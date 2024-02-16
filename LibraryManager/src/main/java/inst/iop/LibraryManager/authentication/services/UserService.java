@@ -2,8 +2,8 @@ package inst.iop.LibraryManager.authentication.services;
 
 import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
-import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
+import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import org.springframework.data.domain.Page;
 

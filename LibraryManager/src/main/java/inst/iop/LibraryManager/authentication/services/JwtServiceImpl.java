@@ -1,7 +1,6 @@
 package inst.iop.LibraryManager.authentication.services;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -41,9 +40,9 @@ public class JwtServiceImpl implements JwtService {
 
   @Override
   public String generateToken(
-     Map<String, Object> extraClaims,
-     UserDetails userDetails,
-     long expiration
+      Map<String, Object> extraClaims,
+      UserDetails userDetails,
+      long expiration
   ) {
     return Jwts.builder()
         .issuer("IOP")

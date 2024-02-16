@@ -2,7 +2,10 @@ package inst.iop.LibraryManager.authentication.dtos;
 
 import inst.iop.LibraryManager.authentication.entities.constraints.NameConstraint;
 import inst.iop.LibraryManager.authentication.entities.constraints.PasswordConstraint;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder

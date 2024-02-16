@@ -1,6 +1,8 @@
 package inst.iop.LibraryManager.library.entities;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import inst.iop.LibraryManager.library.entities.constraints.FieldConstraint;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,14 +22,12 @@ import java.util.Set;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
 public class BookField {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
-
   @Column(unique = true)
   @FieldConstraint
   public String name;
-
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
   @Transient
   private Set<Book> books;

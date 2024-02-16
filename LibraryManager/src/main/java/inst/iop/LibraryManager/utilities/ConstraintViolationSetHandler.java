@@ -1,7 +1,6 @@
 package inst.iop.LibraryManager.utilities;
 
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Path;
 import jakarta.validation.Path.Node;
 
 import java.util.HashMap;

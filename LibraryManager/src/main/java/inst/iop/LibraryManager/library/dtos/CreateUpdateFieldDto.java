@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateUpdateFieldDto {
-  
+
   @FieldConstraint
   private String name;
 }

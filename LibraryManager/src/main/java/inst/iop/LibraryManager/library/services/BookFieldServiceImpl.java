@@ -9,7 +9,6 @@ import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

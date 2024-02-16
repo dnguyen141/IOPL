@@ -1,6 +1,6 @@
 package inst.iop.LibraryManager.library.dtos;
 
-import inst.iop.LibraryManager.library.entities.constraints.*;
+import inst.iop.LibraryManager.library.entities.constraints.BorrowStatusConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

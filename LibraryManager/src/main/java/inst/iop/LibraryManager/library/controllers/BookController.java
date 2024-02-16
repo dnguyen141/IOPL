@@ -2,15 +2,12 @@ package inst.iop.LibraryManager.library.controllers;
 
 import inst.iop.LibraryManager.library.dtos.CreateBookDto;
 import inst.iop.LibraryManager.library.dtos.ListAllBooksDto;
-import inst.iop.LibraryManager.library.dtos.SearchBooksDto;
 import inst.iop.LibraryManager.library.dtos.UpdateBookDto;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.Year;
 
 @RequestMapping("/api/v1/books")
 @Validated
@@ -97,11 +94,11 @@ public interface BookController {
   @GetMapping("/{id}/cover")
   ResponseEntity<Object> getCoverImage(@PathVariable Long id);
 
-  @PostMapping(value = "/create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+  @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   ResponseEntity<Object> createBook(@RequestPart(name = "data") CreateBookDto request,
                                     @RequestPart(name = "coverImage", required = false) MultipartFile coverFile);
 
-  @PostMapping(value = "/update/{id}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+  @PostMapping(value = "/update/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   ResponseEntity<Object> updateBookById(@PathVariable Long id, @RequestPart(name = "data") UpdateBookDto request,
                                         @RequestPart(name = "coverImage", required = false) MultipartFile coverImage);
 

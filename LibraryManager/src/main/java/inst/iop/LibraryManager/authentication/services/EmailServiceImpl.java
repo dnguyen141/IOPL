@@ -20,7 +20,7 @@ public class EmailServiceImpl implements EmailService {
 
   @Override
   public boolean sendConfirmationEmailToRecipient(String to, String firstname, String lastName,
-                                               String confirmationCode) throws IOException {
+                                                  String confirmationCode) throws IOException {
     Email fromEmail = new Email("minhdinhnguyen1495@gmail.com");
     String subject = "Please confirm your registration at IOPL";
     Email toEmail = new Email(to);

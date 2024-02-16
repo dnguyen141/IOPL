@@ -42,7 +42,7 @@ public class AuthenticationConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-      throws Exception{
+      throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
 }

@@ -21,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.*;
@@ -32,15 +31,14 @@ import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.co
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
+  private static final int UUID_LENGTH = 32;
   private final UserRepository userRepository;
   private final TokenRepository tokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
-//  private final EmailService emailService;
+  //  private final EmailService emailService;
   private final Validator validator;
-
-  private static final int UUID_LENGTH = 32;
 
   @Override
   @Transactional

@@ -10,10 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Data
@@ -40,7 +37,7 @@ public class BorrowEntry {
   private User user;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
-  @JoinColumn(name ="book", referencedColumnName = "id")
+  @JoinColumn(name = "book", referencedColumnName = "id")
   @JsonIdentityReference(alwaysAsId = true)
   private Book book;
 

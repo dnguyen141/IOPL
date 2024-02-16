@@ -2,7 +2,6 @@ package inst.iop.LibraryManager.authentication.entities.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
@@ -35,18 +34,8 @@ public enum Role implements Comparable<Role> {
   private final String authority;
   private final int order;
 
-  public List<SimpleGrantedAuthority> getAuthorities() {
-    List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-    authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
-    authorities.addAll(getPermissions()
-        .stream()
-        .map(authority -> new SimpleGrantedAuthority(authority.getPermission()))
-        .toList());
-    return authorities;
-  }
-
   public static Role getRoleFromAuthority(String authority) {
-    for (Role role: Role.values()) {
+    for (Role role : Role.values()) {
       if (role.authority.equalsIgnoreCase(authority)) {
         return role;
       }
@@ -55,11 +44,21 @@ public enum Role implements Comparable<Role> {
   }
 
   public static Role getRoleFromString(String role) {
-    for (Role r: Role.values()) {
+    for (Role r : Role.values()) {
       if (r.name().equalsIgnoreCase(role)) {
         return r;
       }
     }
     return null;
+  }
+
+  public List<SimpleGrantedAuthority> getAuthorities() {
+    List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+    authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+    authorities.addAll(getPermissions()
+        .stream()
+        .map(authority -> new SimpleGrantedAuthority(authority.getPermission()))
+        .toList());
+    return authorities;
   }
 }

@@ -7,7 +7,6 @@ import inst.iop.LibraryManager.library.repositories.BookRepository;
 import inst.iop.LibraryManager.library.repositories.BookTypeRepository;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import jakarta.transaction.Transactional;
-
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;

@@ -2,6 +2,7 @@ package inst.iop.LibraryManager.library.entities.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
 import java.util.Optional;
 
 @Getter

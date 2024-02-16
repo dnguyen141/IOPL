@@ -6,5 +6,5 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties("library")
 public class LibraryConfigurationProperties {
-    private String coversDirectory;
+  private String coversDirectory;
 }

@@ -7,7 +7,7 @@ import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.*;
+import java.util.Map;
 
 public interface AuthenticationService {
 

@@ -1,23 +1,23 @@
 package inst.iop.LibraryManager.authentication.controllers;
 
-import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
-
+import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.authentication.services.UserService;
 import inst.iop.LibraryManager.utilities.responses.ApiResponseEntityFactory;
 import lombok.RequiredArgsConstructor;
-
-import java.util.*;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
