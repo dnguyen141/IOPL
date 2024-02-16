@@ -26,11 +26,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query("SELECT u FROM User u WHERE u.role = 'USER' ORDER BY u.id")
   Page<User> findAllUsers(Pageable pageable);
 
-  @Query("SELECT u FROM User u WHERE u.role = 'USER' and u.createdDate < current_date and u.enabled = false")
-  List<User> findAllLateUsers();
-
   @Query("SELECT u FROM User u WHERE u.role = 'MODERATOR' or u.role = 'USER' ORDER BY u.id")
   Page<User> findAllModeratorsAndUsers(Pageable pageable);
+
+  @Query("SELECT u FROM User u WHERE u.role = 'USER' and u.createdDate < current_date and u.enabled = false")
+  List<User> findAllLateUsers();
 
   @Modifying
   @Query("UPDATE User u " +

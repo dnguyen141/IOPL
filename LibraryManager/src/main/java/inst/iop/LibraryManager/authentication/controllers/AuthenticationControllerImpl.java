@@ -22,7 +22,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
   private final ApiResponseEntityFactory responseEntityFactory;
 
   @Override
-  public ResponseEntity<?> register(RegisterDto request) {
+  public ResponseEntity<Object> register(RegisterDto request) {
     authenticationService.register(request);
     return responseEntityFactory.createSuccessResponse(
         HttpStatus.CREATED, "Successfully register new user"
@@ -30,14 +30,14 @@ public class AuthenticationControllerImpl implements AuthenticationController {
   }
 
   @Override
-  public ResponseEntity<?> login(LoginDto request) {
+  public ResponseEntity<Object> login(LoginDto request) {
     return responseEntityFactory.createSuccessWithDataResponse(
         HttpStatus.OK, "Successfully login", authenticationService.login(request)
     );
   }
 
   @Override
-  public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+  public ResponseEntity<Object> refreshToken(HttpServletRequest request, HttpServletResponse response) {
     return responseEntityFactory.createSuccessWithDataResponse(
         HttpStatus.OK,
         "Successfully refresh token",
@@ -46,13 +46,13 @@ public class AuthenticationControllerImpl implements AuthenticationController {
   }
 
   @Override
-  public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+  public ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response) {
     authenticationService.logout(request, response);
     return responseEntityFactory.createSuccessResponse(HttpStatus.OK, "Logout successfully");
   }
 
   @Override
-  public ResponseEntity<?> confirmRegistration(
+  public ResponseEntity<Object> confirmRegistration(
       @RequestParam("u") String email,
       @RequestParam("c") String code
   ) {

@@ -19,18 +19,18 @@ public interface AuthenticationController {
    * @return The ResponseEntity of type Object that output the result or error in json format
    */
   @PostMapping("/register")
-  ResponseEntity<?> register(@RequestBody RegisterDto request);
+  ResponseEntity<Object> register(@RequestBody RegisterDto request);
 
   @PostMapping("/login")
-  ResponseEntity<?> login(@RequestBody LoginDto request);
+  ResponseEntity<Object> login(@RequestBody LoginDto request);
 
   @PostMapping("/refresh-token")
-  ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response);
+  ResponseEntity<Object> refreshToken(HttpServletRequest request, HttpServletResponse response);
 
   @PostMapping("/logout")
-  ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response);
+  ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response);
 
   @GetMapping("/confirm")
-  ResponseEntity<?> confirmRegistration(@RequestParam("u") String email,
+  ResponseEntity<Object> confirmRegistration(@RequestParam("u") String email,
                                         @RequestParam("c") String confirmationCode);
 }
