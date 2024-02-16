@@ -23,6 +23,10 @@ public interface BorrowEntryRepository extends JpaRepository<BorrowEntry, Long> 
   @Query("SELECT be FROM BorrowEntry be WHERE be.id = :id")
   Optional<BorrowEntry> getBorrowEntryById(Long id);
 
+  @Query("SELECT be FROM BorrowEntry be WHERE be.returnDate < current_date " +
+      "AND be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Issued")
+  List<BorrowEntry> getLateBorrowEntry();
+
   @Query("SELECT be FROM BorrowEntry be WHERE be.user = :user and be.book = :book and " +
       "be.status = inst.iop.LibraryManager.library.entities.enums.BorrowStatus.Requested " +
       "ORDER BY be.id")
