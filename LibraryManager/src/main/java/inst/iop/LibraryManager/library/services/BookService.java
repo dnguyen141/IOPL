@@ -4,7 +4,7 @@ import inst.iop.LibraryManager.library.dtos.*;
 import inst.iop.LibraryManager.library.entities.Book;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import org.springframework.data.domain.Page;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface BookService {

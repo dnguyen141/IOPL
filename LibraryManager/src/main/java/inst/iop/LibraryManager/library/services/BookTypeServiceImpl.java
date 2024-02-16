@@ -10,7 +10,6 @@ import jakarta.transaction.Transactional;
 
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,6 @@ import java.util.Optional;
 
 import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
 
-@Data
 @RequiredArgsConstructor
 @Service
 public class BookTypeServiceImpl implements BookTypeService {

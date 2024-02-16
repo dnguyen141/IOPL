@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class BookServiceImpl implements BookService {
 
   private final BookRepository bookRepository;

@@ -3,6 +3,7 @@ package inst.iop.LibraryManager.library.services;
 import inst.iop.LibraryManager.library.dtos.CreateUpdateFieldDto;
 import inst.iop.LibraryManager.library.entities.BookField;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 

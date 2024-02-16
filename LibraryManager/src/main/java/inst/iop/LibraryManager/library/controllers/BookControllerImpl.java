@@ -16,8 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
 @RequiredArgsConstructor
+@CrossOrigin
+@RestController
 public class BookControllerImpl implements BookController {
 
   private final BookService bookService;

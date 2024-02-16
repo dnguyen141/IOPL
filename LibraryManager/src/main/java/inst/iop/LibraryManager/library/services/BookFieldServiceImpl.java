@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
 
-@Data
 @RequiredArgsConstructor
 @Service
 public class BookFieldServiceImpl implements BookFieldService {

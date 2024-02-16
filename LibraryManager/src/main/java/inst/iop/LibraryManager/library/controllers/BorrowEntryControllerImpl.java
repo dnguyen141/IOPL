@@ -6,7 +6,7 @@ import inst.iop.LibraryManager.library.entities.BorrowEntry;
 import inst.iop.LibraryManager.library.entities.enums.BorrowStatus;
 import inst.iop.LibraryManager.library.services.BorrowEntryService;
 import inst.iop.LibraryManager.utilities.responses.ApiResponseEntityFactory;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Data
+@RequiredArgsConstructor
+@CrossOrigin
 @RestController
 public class BorrowEntryControllerImpl implements BorrowEntryController {
 

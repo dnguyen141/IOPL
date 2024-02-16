@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
 @RequiredArgsConstructor
+@CrossOrigin
+@RestController
 public class BookTypeControllerImpl implements BookTypeController {
 
   private final BookTypeService bookTypeService;

@@ -12,7 +12,7 @@ import inst.iop.LibraryManager.library.repositories.BorrowEntryRepository;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Validator;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +25,7 @@ import java.util.*;
 
 import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
 
-@Data
+@RequiredArgsConstructor
 @Service
 public class BorrowEntryServiceImpl implements BorrowEntryService {
   private final BorrowEntryRepository borrowEntryRepository;

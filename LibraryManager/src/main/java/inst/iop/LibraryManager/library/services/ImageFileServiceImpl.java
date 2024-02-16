@@ -1,7 +1,7 @@
 package inst.iop.LibraryManager.library.services;
 
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,7 +17,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.HashMap;
 
-@Data
+@RequiredArgsConstructor
 @Service
 public class ImageFileServiceImpl implements ImageFileService {
 
