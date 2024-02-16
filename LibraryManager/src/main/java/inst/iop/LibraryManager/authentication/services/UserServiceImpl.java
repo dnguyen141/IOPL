@@ -35,11 +35,23 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User findUserById(Long id) throws BadRequestDetailsException {
-    return userRepository.findUserById(id).orElseThrow(() -> {
+    User user = userRepository.findUserById(id).orElseThrow(() -> {
       Map<String, String> violations = new HashMap<>();
       violations.put("id", "There is no user with id " + id);
       return new BadRequestDetailsException("Unable to get user with id " + id, violations);
     });
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String callerRole = authentication.getAuthorities().stream().toList().get(0).toString();
+    String targetRole = "ROLE_" + user.getRole().toString();
+
+    if (compareRole(callerRole, targetRole) <= 0) {
+      Map<String, String> violations = new HashMap<>();
+      violations.put("role", "You are not allowed to perform this action");
+      throw new BadRequestDetailsException("Invalid update user request", violations);
+    }
+
+    return user;
   }
 
   @Override
