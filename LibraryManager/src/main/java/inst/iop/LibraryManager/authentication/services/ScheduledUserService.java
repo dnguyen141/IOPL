@@ -22,7 +22,7 @@ public class ScheduledUserService {
   private static final Logger logger = LoggerFactory.getLogger(ScheduledUserService.class);
   private final UserRepository userRepository;
 
-  @Scheduled(cron = "0 1 0 * * *", zone = "Europe/Berlin")
+  @Scheduled(cron = "0 1 0 */2 * *", zone = "Europe/Berlin")
   public void checkUnconfirmedUser() {
     logger.info("Start checking for unconfirmed users...");
     List<User> lateUnconfirmedUsers = userRepository.findAllLateUsers();
