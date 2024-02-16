@@ -60,7 +60,7 @@ public class User implements UserDetails {
 
   private boolean enabled;
 
-  private LocalDate created;
+  private LocalDate createdDate;
 
   @Nullable
   private String confirmationCode;
