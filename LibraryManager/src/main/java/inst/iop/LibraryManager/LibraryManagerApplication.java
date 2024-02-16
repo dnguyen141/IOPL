@@ -48,7 +48,7 @@ public class LibraryManagerApplication {
           .lastName("Nguyen")
           .role(Role.ADMIN)
           .enabled(true)
-          .created(LocalDate.now())
+          .createdDate(LocalDate.now())
           .build();
       userRepository.save(admin);
       authenticationService.saveToken(admin, "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJT1AiLCJzdWIiOiJtYWlsQGVtYWls" +
@@ -61,7 +61,7 @@ public class LibraryManagerApplication {
           .lastName("Tran")
           .role(Role.MODERATOR)
           .enabled(true)
-          .created(LocalDate.now())
+          .createdDate(LocalDate.now())
           .build();
       userRepository.save(moderator);
       authenticationService.saveToken(moderator, "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJT1AiLCJzdWIiOiJhbm90aGVyb" +
@@ -74,7 +74,7 @@ public class LibraryManagerApplication {
           .lastName("Pro")
           .role(Role.USER)
           .enabled(true)
-          .created(LocalDate.now())
+          .createdDate(LocalDate.now())
           .build();
       userRepository.save(user);
       authenticationService.saveToken(user, "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJT1AiLCJzdWIiOiJtYWlsMUBlbWFpb" +

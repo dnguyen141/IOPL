@@ -80,7 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         .lastName(request.getLastName())
         .role(Role.USER)
         .borrowEntries(new HashSet<>())
-        .created(LocalDate.now())
+        .createdDate(LocalDate.now())
         .enabled(false)
         .confirmationCode(confirmationCode)
         .build();

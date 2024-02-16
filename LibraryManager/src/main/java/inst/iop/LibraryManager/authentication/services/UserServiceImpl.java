@@ -53,12 +53,12 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public Page<User> findAllModeratorsAndUsers(Integer pageNumber, Integer pageSize) {
-    return userRepository.findAllUsers(PageRequest.of(pageNumber, pageSize));
+    return userRepository.findAllModeratorsAndUsers(PageRequest.of(pageNumber, pageSize));
   }
 
   @Override
   public Page<User> findAllUsers(Integer pageNumber, Integer pageSize) {
-    return userRepository.findAllModeratorsAndUsers(PageRequest.of(pageNumber, pageSize));
+    return userRepository.findAllUsers(PageRequest.of(pageNumber, pageSize));
   }
 
   @Override
