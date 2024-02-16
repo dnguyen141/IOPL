@@ -2,6 +2,7 @@ package inst.iop.LibraryManager.utilities.advices;
 
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import inst.iop.LibraryManager.utilities.responses.ApiResponseEntityFactory;
+import inst.iop.LibraryManager.utilities.responses.SuccessWithDataApiResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -123,5 +125,22 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
       fieldName = node.getName();
     }
     return fieldName;
+  }
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<SuccessWithDataApiResponse> handleMethodArgumentTypeMismatchException(
+      MethodArgumentTypeMismatchException e
+  ) {
+    Map<String, Object> details = new HashMap<>();
+    details.put("causes", e.getCause().toString());
+
+    return ResponseEntity
+        .status(HttpStatus.FORBIDDEN)
+        .body(new SuccessWithDataApiResponse(
+            "error",
+            403,
+            e.getMessage(),
+            details
+        ));
   }
 }
