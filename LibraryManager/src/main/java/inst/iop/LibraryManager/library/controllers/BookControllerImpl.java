@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,8 +32,8 @@ public class BookControllerImpl implements BookController {
   private final ApiResponseEntityFactory responseEntityFactory;
 
   @Override
-  public ResponseEntity<Object> listAllBooks(ListAllBooksDto request) {
-    Page<Book> books = bookService.listAllBooks(request);
+  public ResponseEntity<Object> listAllBooks(Integer pageNumber, Integer pageSize) {
+    Page<Book> books = bookService.listAllBooks(new ListAllBooksDto(pageNumber, pageSize));
     return findBooksResultConstructor(books);
   }
 

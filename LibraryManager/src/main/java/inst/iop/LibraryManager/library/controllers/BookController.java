@@ -15,7 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 public interface BookController {
 
   @GetMapping("")
-  ResponseEntity<Object> listAllBooks(ListAllBooksDto request);
+  ResponseEntity<Object> listAllBooks(@RequestParam(defaultValue = "0") Integer pageNumber,
+                                      @RequestParam(defaultValue = "10") Integer pageSize);
 
   @GetMapping("/{id}")
   ResponseEntity<Object> getBookById(@PathVariable Long id);
