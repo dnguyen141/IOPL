@@ -16,14 +16,14 @@ public class SearchBooksDto {
   private String term;
 
   @YearConstraint
-  private Integer beforeYear = Year.now().getValue();
+  private Integer beforeYear;
 
   @YearConstraint
-  private Integer afterYear = 1900;
+  private Integer afterYear;
 
   @PageNumberConstraint
-  private Integer pageNumber = 0;
+  private Integer pageNumber;
 
   @PageNumberConstraint
-  private Integer pageSize = 10;
+  private Integer pageSize;
 }
