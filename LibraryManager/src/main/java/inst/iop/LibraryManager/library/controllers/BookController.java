@@ -3,6 +3,7 @@ package inst.iop.LibraryManager.library.controllers;
 import inst.iop.LibraryManager.library.dtos.CreateBookDto;
 import inst.iop.LibraryManager.library.dtos.ListAllBooksDto;
 import inst.iop.LibraryManager.library.dtos.UpdateBookDto;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -92,14 +93,14 @@ public interface BookController {
   );
 
   @GetMapping("/{id}/cover")
-  ResponseEntity<Object> getCoverImage(@PathVariable Long id);
+  ResponseEntity<Resource> getCoverImage(@PathVariable Long id);
 
   @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  ResponseEntity<Object> createBook(@RequestPart(name = "data") CreateBookDto request,
+  ResponseEntity<Object> createBook(@ModelAttribute CreateBookDto request,
                                     @RequestPart(name = "coverImage", required = false) MultipartFile coverFile);
 
   @PostMapping(value = "/update/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  ResponseEntity<Object> updateBookById(@PathVariable Long id, @RequestPart(name = "data") UpdateBookDto request,
+  ResponseEntity<Object> updateBookById(@PathVariable Long id, @ModelAttribute UpdateBookDto request,
                                         @RequestPart(name = "coverImage", required = false) MultipartFile coverImage);
 
   @DeleteMapping("/delete/{id}")

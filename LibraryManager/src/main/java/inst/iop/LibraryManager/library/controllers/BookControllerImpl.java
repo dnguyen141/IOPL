@@ -6,16 +6,21 @@ import inst.iop.LibraryManager.library.services.BookService;
 import inst.iop.LibraryManager.utilities.responses.ApiResponseEntityFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @CrossOrigin
@@ -112,14 +117,17 @@ public class BookControllerImpl implements BookController {
   }
 
   @Override
-  public ResponseEntity<Object> getCoverImage(Long id) {
-    CoverImageDto coverImageDto = bookService.getCoverImage(id);
-    return ResponseEntity.ok().body(coverImageDto);
+  public ResponseEntity<Resource> getCoverImage(Long id) {
+    Resource resource = new ClassPathResource(
+        "covers/" + Objects.requireNonNull(bookService.findBookById(id).getIsbn()) + ".jpg"
+    );
+
+    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resource);
   }
 
   private ResponseEntity<Object> findBooksResultConstructor(Page<Book> books) {
     Map<String, Object> details = new HashMap<>();
-    details.put("books", books.getContent().stream());
+    details.put("books", books.stream().sorted(Comparator.comparingLong(Book::getId)));
     details.put("pageNumber", books.getNumber());
     details.put("pageSize", books.getSize());
     details.put("numberOfPages", books.getTotalPages());

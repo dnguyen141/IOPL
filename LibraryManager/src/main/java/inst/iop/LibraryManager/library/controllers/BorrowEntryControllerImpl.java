@@ -124,11 +124,9 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
 
   private ResponseEntity<Object> findBorrowEntriesResultConstructor(Page<BorrowEntry> borrowEntries) {
     Map<String, Object> details = new HashMap<>();
-    details.put("borrow-entries", borrowEntries
-        .stream()
+    details.put("borrow-entries", borrowEntries.stream()
         .sorted(Comparator.comparingLong(BorrowEntry::getId))
         .map(BorrowEntry::mapToDto)
-        .collect(Collectors.toList())
     );
     details.put("pageNumber", borrowEntries.getNumber());
     details.put("pageSize", borrowEntries.getSize());
