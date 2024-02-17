@@ -94,7 +94,7 @@ public interface BookController {
   );
 
   @GetMapping("/{id}/cover")
-  ResponseEntity<Resource> getCoverImage(@PathVariable Long id);
+  ResponseEntity<?> getCoverImage(@PathVariable Long id);
 
   @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   ResponseEntity<Object> createBook(@ModelAttribute CreateBookDto request,

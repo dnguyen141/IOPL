@@ -28,7 +28,7 @@ public interface BookService {
 
   Page<Book> findBooksByInventoryNumber(SearchBooksDto request) throws BadRequestDetailsException;
 
-  CoverImageDto getCoverImage(Long id);
+  String getCoverImagePath(Long id);
 
   void createBook(CreateBookDto request, MultipartFile coverImage) throws BadRequestDetailsException;
 

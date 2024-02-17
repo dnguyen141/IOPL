@@ -14,14 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @CrossOrigin
@@ -118,11 +116,15 @@ public class BookControllerImpl implements BookController {
   }
 
   @Override
-  public ResponseEntity<Resource> getCoverImage(Long id) {
-    Resource resource = new ClassPathResource(
-        "covers/" + Objects.requireNonNull(bookService.findBookById(id).getIsbn()) + ".jpg"
-    );
+  public ResponseEntity<?> getCoverImage(Long id) {
+    String coverImagePath = bookService.getCoverImagePath(id);
+    if (coverImagePath == null) {
+      return responseEntityFactory.createErrorResponse(
+          HttpStatus.NO_CONTENT, "Book with id " + id + " has no content"
+      );
+    }
 
+    Resource resource = new ClassPathResource(coverImagePath);
     return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resource);
   }
 
