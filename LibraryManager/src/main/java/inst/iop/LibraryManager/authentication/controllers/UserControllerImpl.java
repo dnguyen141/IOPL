@@ -26,6 +26,11 @@ public class UserControllerImpl implements UserController {
   private final UserService userService;
   private final ApiResponseEntityFactory responseFactory;
 
+  /**
+   * Retrieve details of the currently authenticated user.
+   *
+   * @return ResponseEntity with user details and success message.
+   */
   @Override
   public ResponseEntity<Object> getCurrentUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -38,6 +43,12 @@ public class UserControllerImpl implements UserController {
     );
   }
 
+  /**
+   * Retrieve details of a user by their ID.
+   *
+   * @param id User ID to retrieve details for.
+   * @return ResponseEntity with user details and success message.
+   */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> getUserById(Long id) {
