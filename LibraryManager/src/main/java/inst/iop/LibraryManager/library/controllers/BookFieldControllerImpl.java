@@ -21,6 +21,11 @@ public class BookFieldControllerImpl implements BookFieldController {
   private final BookFieldServiceImpl bookFieldService;
   private final ApiResponseEntityFactory responseEntityFactory;
 
+  /**
+   * The API end-point for listing all book fields
+   *
+   * @return ResponseEntity that contains a list of book fields and http response code - 200 if success
+   */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> listAllBookFields() {
@@ -32,6 +37,13 @@ public class BookFieldControllerImpl implements BookFieldController {
     );
   }
 
+  /**
+   * The API end-point for getting a book field from id
+   *
+   * @param id book field's id
+   * @return ResponseEntity that contains the book field's information and http response code - 200 if success or
+   * 400 if error
+   */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> getBookFieldById(Long id) {
@@ -43,6 +55,12 @@ public class BookFieldControllerImpl implements BookFieldController {
     );
   }
 
+  /**
+   * The API end-point for creating a new book field from string
+   *
+   * @param request which contains new book field's name
+   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> createBookField(CreateUpdateFieldDto request) {
@@ -52,6 +70,13 @@ public class BookFieldControllerImpl implements BookFieldController {
     );
   }
 
+  /**
+   * The API end-point for editing a book field
+   *
+   * @param id book field's id
+   * @param request which contains book field's new name
+   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> updateBookField(Long id, CreateUpdateFieldDto request) {
@@ -61,6 +86,12 @@ public class BookFieldControllerImpl implements BookFieldController {
     );
   }
 
+  /**
+   * The API end-point for deleting a book field
+   *
+   * @param id book field's id
+   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> deleteBookField(Long id) {

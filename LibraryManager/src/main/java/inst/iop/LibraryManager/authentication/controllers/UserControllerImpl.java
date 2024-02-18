@@ -27,9 +27,10 @@ public class UserControllerImpl implements UserController {
   private final ApiResponseEntityFactory responseFactory;
 
   /**
-   * Retrieve details of the currently authenticated user.
+   * The API end-point to get current user information.
    *
-   * @return ResponseEntity with user details and success message.
+   * @return ResponseEntity that contains a message, http response code, a Map contains user information in success case
+   * or violations from input or verification in error case
    */
   @Override
   public ResponseEntity<Object> getCurrentUser() {
@@ -44,10 +45,13 @@ public class UserControllerImpl implements UserController {
   }
 
   /**
-   * Retrieve details of a user by their ID.
+   * The API end-point for listing a user's information.
+   * There are 3 types of user: ADMIN, MODERATOR and USER. ADMINs can see MODERATORs and USERs information,
+   * MODERATORs can only see USERs information.
    *
-   * @param id User ID to retrieve details for.
-   * @return ResponseEntity with user details and success message.
+   * @param  id user's id
+   * @return ResponseEntity that contains a message, http response code, a list of users in success case or violations
+   *         from input or verification in error case
    */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
@@ -62,6 +66,16 @@ public class UserControllerImpl implements UserController {
     );
   }
 
+  /**
+   * The API end-point for listing users for admins and moderators.
+   * There are 3 types of user: ADMIN, MODERATOR and USER. ADMINs can see MODERATORs and USERs information,
+   * MODERATORs can only see USERs information.
+   *
+   * @param  pageNumber page number
+   * @param  pageSize number of entries in a page
+   * @return ResponseEntity that contains a message, http response code, a list of users in success case or violations
+   *         from input or verification in error case
+   */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> listAllUsers(Integer pageNumber, Integer pageSize) {
@@ -86,6 +100,13 @@ public class UserControllerImpl implements UserController {
     );
   }
 
+  /**
+   * The API end-point for create new user. It also sends email for user to confirm their identity.
+   *
+   * @param  request create user request
+   * @return ResponseEntity that contains a message, http response code, a list of users in success case or violations
+   *         from input or verification in error case
+   */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> createUser(RegisterDto request) {
@@ -95,6 +116,13 @@ public class UserControllerImpl implements UserController {
     );
   }
 
+  /**
+   * The API end-point used by admins and moderators to update other user's profile.
+   *
+   * @param  request create user request
+   * @return ResponseEntity that contains a message, http response code, a list of users in success case or violations
+   *         from input or verification in error case
+   */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> updateOtherUserProfile(Long id, ChangeUserDetailsDto request) {
@@ -104,6 +132,13 @@ public class UserControllerImpl implements UserController {
     );
   }
 
+  /**
+   * The API end-point used by users to update their profile.
+   *
+   * @param  request create user request
+   * @return ResponseEntity that contains a message, http response code, a list of users in success case or violations
+   *         from input or verification in error case
+   */
   @Override
   public ResponseEntity<Object> updateUserProfile(ChangeDetailsDto request) {
     userService.updateUserByEmail(request);
@@ -112,6 +147,13 @@ public class UserControllerImpl implements UserController {
     );
   }
 
+  /**
+   * The API end-point used by admins and moderators to delete a user by their ID. Can only delete if the account has
+   * less authority.
+   *
+   * @param  id User ID to delete.
+   * @return ResponseEntity with success message.
+   */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> deleteUserById(Long id) {
@@ -121,6 +163,11 @@ public class UserControllerImpl implements UserController {
     );
   }
 
+  /**
+   * Delete the currently authenticated user.
+   *
+   * @return ResponseEntity with success message.
+   */
   @Override
   public ResponseEntity<Object> deleteUser() {
     userService.deleteUser();
