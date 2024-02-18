@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 public class ListAllBooksDto {
 
   @PageNumberConstraint
-  private Integer pageNumber = 0;
+  private Integer pageNumber;
 
   @PageSizeConstraint
-  private Integer pageSize = 10;
+  private Integer pageSize;
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,8 +23,9 @@ import java.util.Map;
 public class ImageFileServiceImpl implements ImageFileService {
 
   private final RestTemplate restTemplate;
-  @Value("${library.coversDirectory}")
-  private String UPLOAD_FOLDER;
+
+  @Value("${library.coversPath}")
+  private String UPLOAD_COVERS_PATH;
 
   @Override
   public String uploadImage(MultipartFile file, String isbn) throws BadRequestDetailsException {
@@ -53,7 +55,14 @@ public class ImageFileServiceImpl implements ImageFileService {
 
   @Override
   public String downloadImage(String coverUrl, String isbn) throws BadRequestDetailsException {
-    HttpHeaders headers = restTemplate.headForHeaders(coverUrl);
+    HttpHeaders headers;
+    try {
+       headers = restTemplate.headForHeaders(coverUrl);
+    } catch (RestClientException e) {
+      Map<String, String> violations = new HashMap<>();
+      violations.put("coverUrl", "Can't download image due to server error");
+      throw new BadRequestDetailsException("Unable to download image from URL", violations);
+    }
     MediaType contentType = headers.getContentType();
     byte[] imageFileContent = restTemplate.getForObject(coverUrl, byte[].class);
 
@@ -76,7 +85,7 @@ public class ImageFileServiceImpl implements ImageFileService {
   }
 
   private Path getDestinationPath(String isbn) throws IOException {
-    Path coversPath = Paths.get("src", "main", "resources", UPLOAD_FOLDER);
+    Path coversPath = Paths.get(UPLOAD_COVERS_PATH);
     Files.createDirectories(coversPath);
     return coversPath.resolve(isbn + ".jpg");
   }

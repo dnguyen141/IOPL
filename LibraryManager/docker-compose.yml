@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: iopl
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: qwertz$123
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+
+  # Spring Boot Application
+  spring-boot-app:
+    image: iopl:0.0.1
+    container_name: iopl-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/iopl
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: qwertz$123
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

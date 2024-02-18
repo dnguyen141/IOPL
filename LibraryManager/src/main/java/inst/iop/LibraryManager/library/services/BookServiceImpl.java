@@ -9,19 +9,13 @@ import inst.iop.LibraryManager.library.repositories.BorrowEntryRepository;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Validator;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
-import org.springframework.http.MediaTypeFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -41,24 +35,6 @@ public class BookServiceImpl implements BookService {
   private final BookFieldService bookFieldService;
   private final ImageFileService imageFileService;
   private final Validator validator;
-
-  @NonNull
-  private static String getCoverImageString(Long id, Optional<Book> b) {
-    if (b.isEmpty()) {
-      Map<String, String> violations = new HashMap<>();
-      violations.put("book", "Book with id " + id + " is not found");
-      throw new BadRequestDetailsException("Unable to get book cover", violations);
-    }
-
-    Book book = b.get();
-    String coverImageString = book.getCoverImage();
-    if (coverImageString == null) {
-      Map<String, String> violations = new HashMap<>();
-      violations.put("book", "Book with id " + id + " has no cover");
-      throw new BadRequestDetailsException("Unable to get book cover", violations);
-    }
-    return coverImageString;
-  }
 
   public Page<Book> listAllBooks(ListAllBooksDto request) throws BadRequestDetailsException {
     Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
@@ -198,29 +174,27 @@ public class BookServiceImpl implements BookService {
   }
 
   @Override
-  public CoverImageDto getCoverImage(Long id) {
+  public String getCoverImagePath(Long id) {
     Optional<Book> b = bookRepository.getBookById(id);
-    String coverImageString = getCoverImageString(id, b);
-
-    Path coverImagePath = Paths.get(coverImageString);
-
-    byte[] coverImageBytes;
-    try {
-      coverImageBytes = Files.readAllBytes(coverImagePath);
-    } catch (IOException e) {
+    if (b.isEmpty()) {
       Map<String, String> violations = new HashMap<>();
-      violations.put("book", "Unable to read cover image file for book with id " + id);
+      violations.put("book", "Book with id " + id + " is not found");
       throw new BadRequestDetailsException("Unable to get book cover", violations);
     }
 
-    MediaType mediaType = MediaTypeFactory.getMediaType(new ClassPathResource(coverImageString))
-        .orElse(MediaType.APPLICATION_OCTET_STREAM);
+    Book book = b.get();
+    String coverImageString = book.getCoverImage();
+    if (coverImageString == null) {
+      return null;
+    }
 
-    return CoverImageDto.builder()
-        .imageName(coverImagePath.getFileName().toString())
-        .imageData(coverImageBytes)
-        .imageContentType(mediaType.getType())
-        .build();
+    Path coverImagePath = Paths.get(coverImageString);
+    return removeParentFolders(coverImagePath, 3).toString();
+  }
+
+  private Path removeParentFolders(Path path, int count) {
+    int elementsToRemove = Math.min(count, path.getNameCount());
+    return path.subpath(elementsToRemove, path.getNameCount());
   }
 
   @Override

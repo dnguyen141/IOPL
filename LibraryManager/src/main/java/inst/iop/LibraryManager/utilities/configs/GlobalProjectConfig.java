@@ -23,7 +23,7 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity(proxyTargetClass = true)
-public class GlobalSecurityConfig {
+public class GlobalProjectConfig {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final TrailingSlashFilter trailingSlashFilter;
   private final AuthenticationProvider authenticationProvider;
