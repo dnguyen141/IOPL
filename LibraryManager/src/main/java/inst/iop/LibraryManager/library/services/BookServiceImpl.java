@@ -262,9 +262,9 @@ public class BookServiceImpl implements BookService {
     updateIfNotNull(request.getTitle(), book::setTitle);
     updateIfNotNull(request.getAuthors(), book::setAuthors);
     updateIfNotNull(request.getPublisher(), book::setPublisher);
-    updateIfNotNull(bookTypeService.getBookTypeByString(request.getType(), true),
+    updateIfNotNull(bookTypeService.getBookTypeByString(request.getType(), false),
         book::setType);
-    updateIfNotNull(bookFieldService.getBookFieldByString(request.getField(), true),
+    updateIfNotNull(bookFieldService.getBookFieldByString(request.getField(), false),
         book::setField);
     updateIfNotNull(request.getYear(), book::setYear);
     updateIfNotNull(request.getEdition(), book::setEdition);

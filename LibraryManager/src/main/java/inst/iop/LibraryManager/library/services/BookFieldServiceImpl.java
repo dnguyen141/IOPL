@@ -37,7 +37,7 @@ public class BookFieldServiceImpl implements BookFieldService {
     if (bf.isEmpty()) {
       Map<String, String> violations = new HashMap<>();
       violations.put("id", "There is no book field with id " + id);
-      throw new BadRequestDetailsException("Invalid get book field by id request", violations);
+      throw new BadRequestDetailsException("Unable to get book field by string", violations);
     }
     return bf.get();
   }
@@ -47,7 +47,7 @@ public class BookFieldServiceImpl implements BookFieldService {
       throws BadRequestDetailsException {
     Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(name));
     if (!violations.isEmpty()) {
-      throw new BadRequestDetailsException("Invalid get book field by string request", violations);
+      throw new BadRequestDetailsException("Unable to get book field by string", violations);
     }
 
     Optional<BookField> bf = bookFieldRepository.getBookFieldByString(name);

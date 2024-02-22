@@ -37,7 +37,7 @@ public class BookTypeServiceImpl implements BookTypeService {
     if (bt.isEmpty()) {
       Map<String, String> violations = new HashMap<>();
       violations.put("id", "There is no book type with id " + id);
-      throw new BadRequestDetailsException("Invalid get book field by id request", violations);
+      throw new BadRequestDetailsException("Unable to get book field by string", violations);
     }
     return bt.get();
   }
@@ -47,7 +47,7 @@ public class BookTypeServiceImpl implements BookTypeService {
       throws BadRequestDetailsException {
     Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(name));
     if (!violations.isEmpty()) {
-      throw new BadRequestDetailsException("Invalid create type request", violations);
+      throw new BadRequestDetailsException("Unable to get book field by string", violations);
     }
 
     Optional<BookType> bt = bookTypeRepository.getBookTypeByString(name);
@@ -68,7 +68,7 @@ public class BookTypeServiceImpl implements BookTypeService {
   public void createType(CreateUpdateTypeDto request) throws BadRequestDetailsException {
     Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
-      throw new BadRequestDetailsException("Invalid create type request", violations);
+      throw new BadRequestDetailsException("Invalid create book type request", violations);
     }
 
     Optional<BookType> bt = bookTypeRepository.getBookTypeByString(request.getName().trim());
