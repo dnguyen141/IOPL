@@ -48,7 +48,7 @@ public class GlobalProjectConfig {
         .authorizeHttpRequests(
             (authorize) -> authorize
                 .requestMatchers(
-                    LOGIN_URL, REGISTER_URL, CONFIRM_REGISTRATION_URL, DOCUMENTATION_URL, SWAGGER_UI_URL, ACTUATOR_URL,
+                    LOGIN_URI, REGISTER_URI, CONFIRM_REGISTRATION_URI, DOCUMENTATION_URI, SWAGGER_UI_URI, ACTUATOR_URI,
                     SWAGGER_FAVICON_URI
                 )
                 .permitAll()

@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       String authenticationHeader = request.getHeader("Authorization");
       if (authenticationHeader == null || !authenticationHeader.startsWith("Bearer ")) {
         boolean checkIfUriMatches = Stream.of(
-            LOGIN_URL, REGISTER_URL, CONFIRM_REGISTRATION_URL, DOCUMENTATION_URL, SWAGGER_UI_URL, ACTUATOR_URL,
+            LOGIN_URI, REGISTER_URI, CONFIRM_REGISTRATION_URI, DOCUMENTATION_URI, SWAGGER_UI_URI, ACTUATOR_URI,
             SWAGGER_FAVICON_URI
         ).map(AntPathRequestMatcher::new).anyMatch(antPathRequestMatcher -> antPathRequestMatcher.matches(request));
 
