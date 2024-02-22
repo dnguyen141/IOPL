@@ -5,7 +5,7 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:latest
-    container_name: postgres-db
+    container_name: iopl-postgres
     environment:
       POSTGRES_DB: iopl
       POSTGRES_USER: admin
@@ -15,10 +15,23 @@ services:
     networks:
       - backend
 
+  # pgAdmin
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: iopl-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@localhost.com
+      PGADMIN_DEFAULT_PASSWORD: qwertz$123
+      PGADMIN_LISTEN_PORT: 5050
+    ports:
+      - "5050:5050"
+    networks:
+      - backend
+
   # Spring Boot Application
   spring-boot-app:
-    image: iopl:0.0.1
-    container_name: iopl-app
+    image: iopl:0.0.3
+    container_name: iopl-backend
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/iopl
       SPRING_DATASOURCE_USERNAME: admin
