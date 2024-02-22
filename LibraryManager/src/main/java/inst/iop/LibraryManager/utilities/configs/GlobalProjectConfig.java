@@ -1,5 +1,6 @@
 package inst.iop.LibraryManager.utilities.configs;
 
+import static inst.iop.LibraryManager.utilities.configs.SecurityConstants.*;
 import inst.iop.LibraryManager.utilities.filters.JwtAuthenticationFilter;
 import inst.iop.LibraryManager.utilities.filters.TrailingSlashFilter;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.session.DisableEncodeUrlFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+
 
 import java.util.List;
 
@@ -46,7 +48,8 @@ public class GlobalProjectConfig {
         .authorizeHttpRequests(
             (authorize) -> authorize
                 .requestMatchers(
-                    "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/confirm"
+                    LOGIN_URL, REGISTER_URL, CONFIRM_REGISTRATION_URL, DOCUMENTATION_URL, SWAGGER_UI_URL, ACTUATOR_URL,
+                    SWAGGER_FAVICON_URI
                 )
                 .permitAll()
                 .anyRequest()
