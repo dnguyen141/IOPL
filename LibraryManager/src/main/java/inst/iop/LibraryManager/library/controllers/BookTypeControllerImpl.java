@@ -59,7 +59,7 @@ public class BookTypeControllerImpl implements BookTypeController {
    * The API end-point for creating a new book type from string
    *
    * @param request which contains new book type's name
-   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   * @return ResponseEntity that contains a report message and http response code - 201 if success or 400 if error
    */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
@@ -75,14 +75,14 @@ public class BookTypeControllerImpl implements BookTypeController {
    *
    * @param id book type's id
    * @param request which contains book type's new name
-   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   * @return ResponseEntity that contains a report message and http response code - 202 if success or 400 if error
    */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> updateBookType(Long id, CreateUpdateTypeDto request) {
     bookTypeService.updateBookTypeById(id, request);
     return responseEntityFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully update book type with id " + id
+        HttpStatus.ACCEPTED, "Successfully update book type with id " + id
     );
   }
 
@@ -90,14 +90,14 @@ public class BookTypeControllerImpl implements BookTypeController {
    * The API end-point for deleting a book type
    *
    * @param id book type's id
-   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   * @return ResponseEntity that contains a report message and http response code - 204 if success or 400 if error
    */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> deleteBookType(Long id) {
     bookTypeService.deleteTypeById(id);
     return responseEntityFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully delete book type"
+        HttpStatus.NO_CONTENT, "Successfully delete book type"
     );
   }
 }

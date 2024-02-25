@@ -128,7 +128,7 @@ public class UserControllerImpl implements UserController {
   public ResponseEntity<Object> updateOtherUserProfile(Long id, ChangeUserDetailsDto request) {
     userService.updateOtherUserById(id, request);
     return responseFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully update specified user details"
+        HttpStatus.ACCEPTED, "Successfully update specified user details"
     );
   }
 
@@ -143,7 +143,7 @@ public class UserControllerImpl implements UserController {
   public ResponseEntity<Object> updateUserProfile(ChangeDetailsDto request) {
     userService.updateUserByEmail(request);
     return responseFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully update current user details"
+        HttpStatus.ACCEPTED, "Successfully update current user details"
     );
   }
 
@@ -159,7 +159,7 @@ public class UserControllerImpl implements UserController {
   public ResponseEntity<Object> deleteUserById(Long id) {
     userService.deleteUserById(id);
     return responseFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully delete user with id " + id
+        HttpStatus.NO_CONTENT, "Successfully delete user with id " + id
     );
   }
 
@@ -172,7 +172,7 @@ public class UserControllerImpl implements UserController {
   public ResponseEntity<Object> deleteUser() {
     userService.deleteUser();
     return responseFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully delete current user"
+        HttpStatus.NO_CONTENT, "Successfully delete current user"
     );
   }
 }

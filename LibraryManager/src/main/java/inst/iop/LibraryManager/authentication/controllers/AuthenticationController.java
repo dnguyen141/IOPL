@@ -2,6 +2,14 @@ package inst.iop.LibraryManager.authentication.controllers;
 
 import inst.iop.LibraryManager.authentication.dtos.LoginDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
+import inst.iop.LibraryManager.authentication.entities.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
@@ -9,60 +17,60 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/auth")
+@Tag(name = "authentication-controller")
 @Validated
 public interface AuthenticationController {
 
-  /**
-   * The exposed API end-point for user registration. Also send email via SendGrid which contains confirmation code
-   * if the registration succeeded.
-   *
-   * @param request RegisterDto that provides every information needed for registration
-   * @return ResponseEntity that contains a message and http response code - 201 for success or 400 for error.
-   *         In error case it will return a map of input or system violations
-   */
+  @Operation(summary = "Register a new user")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Successfully register new user",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to register new user due to invalid inputs",
+          content = @Content)
+  })
   @PostMapping("/register")
-  ResponseEntity<Object> register(@RequestBody RegisterDto request);
+  ResponseEntity<Object> register(@Parameter(description = "Vital information for registration")
+                                  @RequestBody RegisterDto request);
 
-  /**
-   * The exposed API end-point for user login.
-   *
-   * @param request LoginDto which contains username and password input
-   * @return ResponseEntity that contains a message, http response code - 201 for success or 400 for error,
-   *         access and refresh JWT in success case or a map of input or database violations in error case
-   */
+  @Operation(summary = "Log an user in")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully login",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to register new user due to invalid inputs",
+          content = @Content)
+  })
   @PostMapping("/login")
-  ResponseEntity<Object> login(@RequestBody LoginDto request);
+  ResponseEntity<Object> login(@Parameter(description = "Login information from user")
+                               @RequestBody @io.swagger.v3.oas.annotations.parameters.RequestBody LoginDto request);
 
-  /**
-   * The exposed API end-point to refresh user token that generates new access and refresh JWT
-   *
-   * @param request sent request from user
-   * @param response response from server
-   * @return ResponseEntity that contains a message, http response code - 201 for success and 400 for error,
-   *         new access JWT and refresh JWT in success case and a map violations in error case
-   */
+  @Operation(summary = "Refresh JWT of an user in case it expires. Only for logged in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Successfully refresh token",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to refresh token",
+          content = @Content)
+  })
   @PostMapping("/refresh-token")
   ResponseEntity<Object> refreshToken(HttpServletRequest request, HttpServletResponse response);
 
-  /**
-   * The exposed API end-point for user logout.
-   *
-   * @param request sent request from user
-   * @param response response from server
-   * @return ResponseEntity that contains a message and http response code 200 in success case
-   */
+  @Operation(summary = "Log an user out")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully logout",
+          content = @Content)
+  })
   @PostMapping("/logout")
   ResponseEntity<Object> logout(HttpServletRequest request, HttpServletResponse response);
 
-  /**
-   * The exposed API end-point to confirm registration
-   *
-   * @param email username
-   * @param confirmationCode confirmation code input by user
-   * @return ResponseEntity that contains a message, http response code - 200 for success or 400 for error.
-   *         In error case, it also returns a map of violations from input or verification process.
-   */
+  @Operation(summary = "Confirm new user registration. Only for logged in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully confirm new user",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to confirm registration",
+          content = @Content)
+  })
   @GetMapping("/confirm")
-  ResponseEntity<Object> confirmRegistration(@RequestParam("u") String email,
+  ResponseEntity<Object> confirmRegistration(@Parameter(description = "email of the user that needs to be confirmed")
+                                             @RequestParam("u") String email,
+                                             @Parameter(description = "confirmation code that was sent per email")
                                              @RequestParam("c") String confirmationCode);
 }

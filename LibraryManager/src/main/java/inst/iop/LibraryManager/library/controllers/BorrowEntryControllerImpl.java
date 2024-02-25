@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @CrossOrigin
@@ -122,7 +121,7 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
    * The API end-point for creating a new borrow entry
    *
    * @param request contains information for new borrow entry
-   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   * @return ResponseEntity that contains a report message and http response code - 201 if success or 400 if error
    */
   @Override
   @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
@@ -134,11 +133,26 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   }
 
   /**
+   * The API end-point for creating a new requested borrow entry
+   *
+   * @param request contains information for new borrow entry
+   * @return ResponseEntity that contains a report message and http response code - 201 if success or 400 if error
+   */
+  @Override
+  @PreAuthorize("hasRole('ROLE_USER')")
+  public ResponseEntity<Object> createRequestedBorrowEntry(CreateBorrowEntryDto request) {
+    borrowEntryService.createBorrowEntry(request);
+    return responseEntityFactory.createSuccessResponse(
+        HttpStatus.CREATED, "Successfully request new borrow entry"
+    );
+  }
+
+  /**
    * The API end-point for updating a borrow entry
    *
    * @param id borrow entry's id
    * @param request contains updated information for borrow entry
-   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   * @return ResponseEntity that contains a report message and http response code - 202 if success or 400 if error
    */
   @Override
   @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
@@ -160,7 +174,7 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   public ResponseEntity<Object> deleteBorrowEntryById(Long id) {
     borrowEntryService.deleteBorrowEntryById(id);
     return responseEntityFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully delete borrow entry"
+        HttpStatus.NO_CONTENT, "Successfully delete borrow entry"
     );
   }
 
@@ -178,7 +192,7 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
         && borrowEntry.getUser().getEmail().equals(authentication.getName())) {
       borrowEntryService.deleteBorrowEntryById(id);
       return responseEntityFactory.createSuccessResponse(
-          HttpStatus.OK, "Successfully delete borrow entry"
+          HttpStatus.NO_CONTENT, "Successfully delete borrow entry"
       );
     }
 

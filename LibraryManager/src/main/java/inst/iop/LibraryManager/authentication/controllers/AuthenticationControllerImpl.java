@@ -47,7 +47,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
   @Override
   public ResponseEntity<Object> login(LoginDto request) {
     return responseEntityFactory.createSuccessWithDataResponse(
-        HttpStatus.OK, "Successfully login", authenticationService.login(request)
+        HttpStatus.CREATED, "Successfully login", authenticationService.login(request)
     );
   }
 
