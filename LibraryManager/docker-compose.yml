@@ -30,7 +30,7 @@ services:
 
   # Spring Boot Application
   spring-boot-app:
-    image: iopl:0.0.3
+    image: iopl:0.0.1
     container_name: iopl-backend
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/iopl
