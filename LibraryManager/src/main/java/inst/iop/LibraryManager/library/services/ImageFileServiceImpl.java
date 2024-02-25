@@ -24,12 +24,14 @@ public class ImageFileServiceImpl implements ImageFileService {
 
   private final RestTemplate restTemplate;
 
+  private static final int MAX_FILE_SIZE = 10 * 1024 * 1024;
+
   @Value("${library.coversPath}")
   private String UPLOAD_COVERS_PATH;
 
   @Override
   public String uploadImage(MultipartFile file, String isbn) throws BadRequestDetailsException {
-    if (file.isEmpty() || file.getSize() > 10 * 1024 * 1024) {
+    if (file.isEmpty() || file.getSize() > MAX_FILE_SIZE) {
       Map<String, String> violations = new HashMap<>();
       violations.put("file", "Upload file must be a not-empty image that is smaller than 10Mb");
       throw new BadRequestDetailsException("Unable to upload image", violations);
@@ -67,7 +69,7 @@ public class ImageFileServiceImpl implements ImageFileService {
     byte[] imageFileContent = restTemplate.getForObject(coverUrl, byte[].class);
 
     if (contentType == null || imageFileContent == null || !contentType.isCompatibleWith(MediaType.IMAGE_JPEG) &&
-        !contentType.isCompatibleWith(MediaType.IMAGE_PNG) || imageFileContent.length > 10 * 1024 * 1024) {
+        !contentType.isCompatibleWith(MediaType.IMAGE_PNG) || imageFileContent.length > MAX_FILE_SIZE) {
       Map<String, String> violations = new HashMap<>();
       violations.put("file", "URL must be from a not-empty image that is smaller than 10Mb");
       throw new BadRequestDetailsException("Unable to download image from URL", violations);
