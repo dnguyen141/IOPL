@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/auth")
 @Tag(name = "authentication-controller")
-@Validated
 public interface AuthenticationController {
 
   @Operation(summary = "Register a new user")

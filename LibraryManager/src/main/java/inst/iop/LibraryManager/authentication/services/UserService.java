@@ -17,7 +17,7 @@ public interface UserService {
 
   Page<User> findAllUsers(Integer pageNumber, Integer pageSize);
 
-  void createUser(RegisterDto request) throws BadRequestDetailsException;
+  User createUser(RegisterDto request) throws BadRequestDetailsException;
 
   void updateOtherUserById(Long id, ChangeUserDetailsDto request) throws BadRequestDetailsException;
 

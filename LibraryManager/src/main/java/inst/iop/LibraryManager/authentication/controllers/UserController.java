@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/users")
 @Tag(name = "user-controller")
-@Validated
 public interface UserController {
 
   @Operation(summary = "Get current users. Only for logged in users.")

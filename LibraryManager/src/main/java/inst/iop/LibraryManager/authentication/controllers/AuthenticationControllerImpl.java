@@ -33,7 +33,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
   public ResponseEntity<Object> register(RegisterDto request) {
     authenticationService.register(request);
     return responseEntityFactory.createSuccessResponse(
-        HttpStatus.CREATED, "Successfully register new user"
+        HttpStatus.CREATED, "Successfully register new user. Please check your email for confirmation link."
     );
   }
 

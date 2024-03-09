@@ -4,9 +4,11 @@ import inst.iop.LibraryManager.authentication.entities.constraints.NameConstrain
 import inst.iop.LibraryManager.authentication.entities.constraints.PasswordConstraint;
 import inst.iop.LibraryManager.authentication.entities.constraints.RoleConstraint;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class ChangeUserDetailsDto {
 
