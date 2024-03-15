@@ -26,5 +26,8 @@ public class CreateBorrowEntryDto {
   private String status;
 
   @DateTimeFormat(pattern = "dd-MM-yyyy", iso = DateTimeFormat.ISO.DATE)
+  private LocalDate borrowDate;
+
+  @DateTimeFormat(pattern = "dd-MM-yyyy", iso = DateTimeFormat.ISO.DATE)
   private LocalDate returnDate;
 }
