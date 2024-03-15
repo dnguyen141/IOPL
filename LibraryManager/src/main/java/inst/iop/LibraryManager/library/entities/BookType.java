@@ -25,9 +25,11 @@ public class BookType {
   @Column(unique = true)
   @TypeConstraint
   public String name;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
+
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
   @Transient
   private Set<Book> books;
