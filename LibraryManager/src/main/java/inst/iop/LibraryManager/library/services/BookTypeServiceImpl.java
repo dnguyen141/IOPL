@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
+import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertSetToMap;
 
 @RequiredArgsConstructor
 @Service
@@ -45,7 +45,7 @@ public class BookTypeServiceImpl implements BookTypeService {
   @Override
   public BookType getBookTypeByString(@Valid @TypeConstraint String name, boolean isCreateBookRequest)
       throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(name));
+    Map<String, String> violations = convertSetToMap(validator.validate(name));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Unable to get book field by string", violations);
     }
@@ -66,7 +66,7 @@ public class BookTypeServiceImpl implements BookTypeService {
   @Override
   @Transactional
   public void createType(CreateUpdateTypeDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid create book type request", violations);
     }
@@ -87,7 +87,7 @@ public class BookTypeServiceImpl implements BookTypeService {
   @Override
   @Transactional
   public void updateBookTypeById(Long id, CreateUpdateTypeDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid update type request", violations);
     }
