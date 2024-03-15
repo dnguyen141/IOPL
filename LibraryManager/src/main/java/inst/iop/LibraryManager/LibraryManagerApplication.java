@@ -40,4 +40,22 @@ public class LibraryManagerApplication {
   public static void main(String[] args) {
     SpringApplication.run(LibraryManagerApplication.class, args);
   }
+
+  @Bean
+  @Transactional
+  public CommandLineRunner addDefaultObjects(UserRepository userRepository,
+                                           PasswordEncoder passwordEncoder) {
+    return args -> {
+      User admin = User.builder()
+          .email("admin@iopl.com")
+          .password(passwordEncoder.encode("a123456"))
+          .firstName("The")
+          .lastName("Admin")
+          .role(Role.ADMIN)
+          .enabled(true)
+          .createdDate(LocalDate.of(2024, 1, 1))
+          .build();
+      userRepository.save(admin);
+    };
+  }
 }
