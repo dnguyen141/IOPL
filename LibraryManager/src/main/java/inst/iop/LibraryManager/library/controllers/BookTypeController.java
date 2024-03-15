@@ -8,12 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/types")
 @Tag(name = "book-type-controller")
-@Validated
 public interface BookTypeController {
 
   @Operation(summary = "List all book types. Only for moderators and admins.")
