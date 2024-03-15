@@ -26,7 +26,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static inst.iop.LibraryManager.utilities.ConfirmationCodeGenerator.generateSecuredUuid;
-import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
+import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertSetToMap;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Override
   @Transactional
   public User register(RegisterDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
 
     if (request.getPassword() == null || !request.getPassword().equals(request.getConfirmedPassword())) {
       violations.put("confirmedPassword", "Password and confirmed password must be matched");
@@ -133,13 +133,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     String refreshToken = authenticationHeader.substring(7);
 
     String email = jwtService.extractUsername(refreshToken);
-    User user = userRepository.findUserByEmail(email).orElseThrow(
-        () -> {
-          Map<String, String> violations = new HashMap<>();
-          violations.put("authentication", "Invalid header format for refreshing JWT");
-          return new BadRequestDetailsException("Unable to refresh token", violations);
-        }
-    );
+    User user = userRepository.findUserByEmail(email).orElseThrow(() -> {
+      Map<String, String> violations = new HashMap<>();
+      violations.put("authentication", "Invalid header format for refreshing JWT");
+      return new BadRequestDetailsException("Unable to refresh token", violations);
+    });
 
     if (jwtService.isTokenValid(refreshToken, user)) {
       var accessToken = jwtService.generateToken(user);
@@ -177,14 +175,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Override
   @Transactional
   public void confirmRegistration(String email, String confirmationCode) throws BadRequestDetailsException {
-    Optional<User> u = userRepository.findUserByEmail(email);
-    if (u.isEmpty()) {
+    User user = userRepository.findUserByEmail(email).orElseThrow(() -> {
       Map<String, String> violation = new HashMap<>();
       violation.put("url", "Invalid confirmation link");
-      throw new BadRequestDetailsException("Unable to confirm registration", violation);
-    }
+      return new BadRequestDetailsException("Unable to confirm registration", violation);
+    });
 
-    User user = u.get();
     if (user.getConfirmationCode() != null && user.getConfirmationCode().equals(confirmationCode)
         && !user.isEnabled()) {
       user.setEnabled(true);
