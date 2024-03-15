@@ -30,7 +30,7 @@ public class ImageFileServiceImpl implements ImageFileService {
   private String UPLOAD_COVERS_PATH;
 
   @Override
-  public String uploadImage(MultipartFile file, String isbn) throws BadRequestDetailsException {
+  public String uploadImage(MultipartFile file, Long bookId) throws BadRequestDetailsException {
     if (file.isEmpty() || file.getSize() > MAX_FILE_SIZE) {
       Map<String, String> violations = new HashMap<>();
       violations.put("file", "Upload file must be a not-empty image that is smaller than 10Mb");
@@ -40,7 +40,7 @@ public class ImageFileServiceImpl implements ImageFileService {
     String contentType = file.getContentType();
     if (contentType != null && contentType.startsWith("image/")) {
       try {
-        Path path = getDestinationPath(isbn);
+        Path path = getDestinationPath(bookId);
         Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
         return path.toString();
       } catch (IOException e) {
@@ -56,7 +56,7 @@ public class ImageFileServiceImpl implements ImageFileService {
   }
 
   @Override
-  public String downloadImage(String coverUrl, String isbn) throws BadRequestDetailsException {
+  public String downloadImage(String coverUrl, Long bookId) throws BadRequestDetailsException {
     HttpHeaders headers;
     try {
        headers = restTemplate.headForHeaders(coverUrl);
@@ -76,7 +76,7 @@ public class ImageFileServiceImpl implements ImageFileService {
     }
 
     try {
-      Path path = getDestinationPath(isbn);
+      Path path = getDestinationPath(bookId);
       Files.write(path, imageFileContent);
       return path.toString();
     } catch (IOException e) {
@@ -86,9 +86,9 @@ public class ImageFileServiceImpl implements ImageFileService {
     }
   }
 
-  private Path getDestinationPath(String isbn) throws IOException {
+  private Path getDestinationPath(Long bookId) throws IOException {
     Path coversPath = Paths.get(UPLOAD_COVERS_PATH);
     Files.createDirectories(coversPath);
-    return coversPath.resolve(isbn + ".jpg");
+    return coversPath.resolve(bookId + ".jpg");
   }
 }
