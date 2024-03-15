@@ -260,7 +260,7 @@ public interface BookController {
       @ApiResponse(responseCode = "400", description = "Unable to import books from excel file",
           content = @Content)
   })
-  @PostMapping("/import")
+  @PostMapping(value = "/import", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   ResponseEntity<Object> importFromExcelFile(@Parameter(description = "excel file that contains books' information")
                                              @RequestPart(name = "excelFile") MultipartFile excelFile);
 }
