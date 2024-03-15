@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/api/v1/books")
 @Tag(name = "book-controller")
-@Validated
 public interface BookController {
 
   @Operation(summary = "List all books and their information. Only for logged-in users.")
@@ -253,4 +252,8 @@ public interface BookController {
   @DeleteMapping("/delete/{id}")
   ResponseEntity<Object> deleteBookById(@Parameter(description = "id of the book that will be deleted")
                                         @PathVariable Long id);
+
+  @PostMapping("/import")
+  ResponseEntity<Object> importFromExcelFile(@Parameter(description = "excel file that contains books' information")
+                                             @RequestPart(name = "excelFile") MultipartFile excelFile);
 }

@@ -10,23 +10,25 @@ import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.*;
 
-import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
+import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertSetToMap;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class BookServiceImpl implements BookService {
 
   private final BookRepository bookRepository;
@@ -37,7 +39,7 @@ public class BookServiceImpl implements BookService {
   private final Validator validator;
 
   public Page<Book> listAllBooks(ListAllBooksDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid list all books request", violations);
     }
@@ -58,7 +60,7 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public Page<Book> findBooks(SearchBooksDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid search books by term request", violations);
     }
@@ -70,7 +72,7 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public Page<Book> findBooksByTitle(SearchBooksDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid search books by title request", violations);
     }
@@ -85,7 +87,7 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public Page<Book> findBooksByAuthors(SearchBooksDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid search books by authors request", violations);
     }
@@ -100,7 +102,7 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public Page<Book> findBooksByPublisher(SearchBooksDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid search books by publisher request", violations);
     }
@@ -115,7 +117,7 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public Page<Book> findBooksByType(SearchBooksDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid search books by type request", violations);
     }
@@ -130,7 +132,7 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public Page<Book> findBooksByField(SearchBooksDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid search books by field request", violations);
     }
@@ -145,7 +147,7 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public Page<Book> findBooksByIsbn(SearchBooksDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid search books by isbn request", violations);
     }
@@ -160,7 +162,7 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public Page<Book> findBooksByInventoryNumber(SearchBooksDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid search books by inventory number request", violations);
     }
@@ -192,21 +194,21 @@ public class BookServiceImpl implements BookService {
     return removeParentFolders(coverImagePath, 3).toString();
   }
 
-  private Path removeParentFolders(Path path, int count) {
+  public Path removeParentFolders(Path path, int count) {
     int elementsToRemove = Math.min(count, path.getNameCount());
     return path.subpath(elementsToRemove, path.getNameCount());
   }
 
   @Override
   @Transactional
-  public void createBook(CreateBookDto request, MultipartFile coverImage) throws BadRequestDetailsException {
+  public Book createBook(CreateBookDto request, MultipartFile coverImage) throws BadRequestDetailsException {
     long nextBookId = 100;
     Optional<Book> firstBook = bookRepository.findFirstByOrderById();
     if (firstBook.isPresent()) {
       nextBookId = bookRepository.getCurrentBookIdSequenceValue() + 1;
     }
 
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid create book request", violations);
     }
@@ -229,82 +231,69 @@ public class BookServiceImpl implements BookService {
         .edition(request.getEdition())
         .isbn(request.getIsbn())
         .inventoryNumber(generateInventoryNumber(nextBookId, request.getType(), request.getYear()))
-        .coverImage(getCoverImagePath(request.getCoverUrl(), coverImage, request.getIsbn().trim()))
+        .coverImage(getCoverImagePath(request.getCoverUrl(), coverImage, nextBookId))
         .quantity(request.getQuantity())
         .build();
 
-    bookRepository.save(book);
+    return bookRepository.save(book);
   }
 
   @Override
   @Transactional
   public void updateBook(Long id, UpdateBookDto request, MultipartFile coverImage) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid create book request", violations);
     }
 
-    if (request.getTitle() != null) {
-      Optional<Book> bookWithSameTitle = bookRepository.getBookByTitle(request.getTitle().trim());
-      if (bookWithSameTitle.isPresent() && id != bookWithSameTitle.get().getId()) {
-        violations.put("title", "A book with the same title is already stored in the library");
-        throw new BadRequestDetailsException("Invalid create book request", violations);
-      }
-    }
-
-    Optional<Book> b = bookRepository.getBookById(id);
-    if (b.isEmpty()) {
-      violations.put("id", "There is no book with id " + id);
+    Optional<Book> bookWithSameTitle = bookRepository.getBookByTitle(request.getTitle().trim());
+    if (bookWithSameTitle.isPresent() && id != bookWithSameTitle.get().getId()) {
+      violations.put("title", "A book with the same title is already stored in the library");
       throw new BadRequestDetailsException("Invalid create book request", violations);
     }
 
-    Book book = b.get();
-    updateIfNotNull(request.getTitle(), book::setTitle);
-    updateIfNotNull(request.getAuthors(), book::setAuthors);
-    updateIfNotNull(request.getPublisher(), book::setPublisher);
-    updateIfNotNull(bookTypeService.getBookTypeByString(request.getType(), false),
-        book::setType);
-    updateIfNotNull(bookFieldService.getBookFieldByString(request.getField(), false),
-        book::setField);
-    updateIfNotNull(request.getYear(), book::setYear);
-    updateIfNotNull(request.getEdition(), book::setEdition);
-    updateIfNotNull(request.getIsbn(), book::setIsbn);
-    book.setInventoryNumber(generateInventoryNumber(id, book.getType().getName(), book.getYear()));
-    updateIfNotNull(getCoverImagePath(request.getCoverUrl(), coverImage, request.getIsbn()),
-        book::setCoverImage);
+    Book book = bookRepository.getBookById(id).orElseThrow(() -> {
+      violations.put("id", "There is no book with id " + id);
+      return new BadRequestDetailsException("Invalid create book request", violations);
+    });
 
-    if (request.getQuantity() != null) {
-      Integer countOpenedBorrowEntries = borrowEntryRepository.countOpenedBorrowEntriesByBook(book);
-      if (request.getQuantity() < countOpenedBorrowEntries) {
-        violations.put("quantity", "New quantity of a book can't be smaller than number of issued books");
-        throw new BadRequestDetailsException("Invalid create book request", violations);
-      }
-      book.setQuantity(request.getQuantity());
+    Integer countOpenedBorrowEntries = borrowEntryRepository.countOpenedBorrowEntriesByBook(book);
+    if (request.getQuantity() < countOpenedBorrowEntries) {
+      violations.put("quantity", "New quantity of a book can't be smaller than number of issued books");
+      throw new BadRequestDetailsException("Invalid create book request", violations);
     }
+    book.setQuantity(request.getQuantity());
 
-    bookRepository.save(book);
+    bookRepository.updateBookById(
+        book.getId(),
+        request.getTitle().trim(),
+        request.getAuthors().trim(),
+        request.getPublisher().trim(),
+        bookTypeService.getBookTypeByString(request.getType().trim(), false),
+        bookFieldService.getBookFieldByString(request.getField().trim(), false),
+        request.getYear(),
+        request.getEdition(),
+        request.getIsbn().trim(),
+        generateInventoryNumber(id, book.getType().getName(), book.getYear()),
+        request.getQuantity(),
+        getCoverImagePath(request.getCoverUrl(), coverImage, book.getId())
+    );
   }
 
-  private String generateInventoryNumber(Long id, String type, int year) {
+  public String generateInventoryNumber(Long id, String type, int year) {
     return id + " CSST " + type.toUpperCase().substring(0, 2) + " " + year;
   }
 
-  private String getCoverImagePath(String coverImageUrl, MultipartFile coverImage, String isbn) {
+  public String getCoverImagePath(String coverImageUrl, MultipartFile coverImage, Long bookId) {
     if (coverImage != null) {
-      return imageFileService.uploadImage(coverImage, isbn);
+      return imageFileService.uploadImage(coverImage, bookId);
     }
 
     if (coverImageUrl != null) {
-      return imageFileService.downloadImage(coverImageUrl, isbn);
+      return imageFileService.downloadImage(coverImageUrl, bookId);
     }
 
     return null;
-  }
-
-  private <T> void updateIfNotNull(T value, Consumer<T> updater) {
-    if (value != null) {
-      updater.accept(value);
-    }
   }
 
   @Override
@@ -328,5 +317,74 @@ public class BookServiceImpl implements BookService {
     }
 
     bookRepository.deleteBookById(id);
+  }
+
+  @Override
+  @Transactional
+  public void importBooksFromExcelFile(MultipartFile excelFile) {
+    try {
+      File uploadedExcelFile = convertToFile(excelFile);
+      FileInputStream fis = new FileInputStream(uploadedExcelFile);
+      var workbook = new XSSFWorkbook(fis);
+      var sheet = workbook.getSheetAt(0);
+
+      int i = 0;
+      var properties = new ArrayList<String>();
+      for (Iterator<Row> rowIterator = sheet.iterator(); rowIterator.hasNext(); rowIterator.next(), i++) {
+        Row currentRow = rowIterator.next();
+        Map<String, String> data = new HashMap<>();
+        int j = 0;
+        for (Cell cell : currentRow) {
+          if (i == 0) {
+            properties.add(cell.getStringCellValue().toLowerCase());
+          } else {
+            data.put(properties.get(j), cell.getStringCellValue());
+          }
+          j++;
+        }
+
+        if (i == 0) {
+          log.info("Properties: " + properties);
+          continue;
+        }
+
+        Book book = Book.builder()
+            .id(Long.parseLong(data.get("id")))
+            .title(data.get("title"))
+            .authors(data.get("authors"))
+            .publisher(data.get("publisher"))
+            .type(bookTypeService.getBookTypeByString(data.get("type"), true))
+            .field(bookFieldService.getBookFieldByString(data.get("field"), true))
+            .year(Integer.parseInt(data.get("year")))
+            .edition(Integer.parseInt(data.get("edition")))
+            .isbn(data.get("isbn"))
+            .inventoryNumber(data.get("inventorynumber"))
+            .coverImage(null)
+            .quantity(Integer.parseInt(data.get("quantity")))
+            .build();
+        bookRepository.save(book);
+      }
+    } catch (IOException e) {
+      Map<String, String> violations = new HashMap<>();
+      violations.put("file", e.getMessage());
+      violations.put("stackTrace", Arrays.toString(e.getStackTrace()));
+      throw new BadRequestDetailsException("Unable to import books from excel file", violations);
+    }
+  }
+
+  private File convertToFile(MultipartFile file) throws IOException {
+    String fileName = file.getOriginalFilename();
+    if (fileName == null || fileName.isEmpty()) {
+      throw new IOException("File name is empty");
+    }
+    File convertedFile = new File("src/main/resources/" + file.getOriginalFilename());
+    boolean isCreated = convertedFile.createNewFile();
+    if (!isCreated) {
+      throw new IOException("Can't save uploaded file: " + file.getOriginalFilename());
+    }
+    FileOutputStream fos = new FileOutputStream(convertedFile);
+    fos.write(file.getBytes());
+    fos.close();
+    return convertedFile;
   }
 }

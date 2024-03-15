@@ -306,4 +306,20 @@ public class BookControllerImpl implements BookController {
         HttpStatus.NO_CONTENT, "Successfully delete book"
     );
   }
+
+  /**
+   * The API end-point for importing books from excel file. Only available for admins.
+   *
+   * @param  excelFile excel file that contains books' information, uploaded by admin
+   * @return ResponseEntity that contains a message and http response code - 200 if success
+   */
+  @Override
+  @Transactional
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  public ResponseEntity<Object> importFromExcelFile(MultipartFile excelFile) {
+    bookService.importBooksFromExcelFile(excelFile);
+    return responseEntityFactory.createSuccessResponse(
+        HttpStatus.OK, "Successfully import from excel file"
+    );
+  }
 }
