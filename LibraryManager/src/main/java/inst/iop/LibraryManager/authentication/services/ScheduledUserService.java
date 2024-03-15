@@ -16,7 +16,7 @@ public class ScheduledUserService {
 
   private final UserRepository userRepository;
 
-  @Scheduled(cron = "0 1 0 */2 * *", zone = "Europe/Berlin")
+  @Scheduled(cron = "0 0 0 */2 * *", zone = "Europe/Berlin")
   public void checkUnconfirmedUser() {
     log.info("Start checking for unconfirmed users...");
     List<User> lateUnconfirmedUsers = userRepository.findAllLateUsers();
