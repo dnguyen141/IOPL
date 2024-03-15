@@ -20,8 +20,6 @@ import org.springframework.security.web.session.DisableEncodeUrlFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-
-import java.time.Clock;
 import java.util.List;
 
 @Configuration

@@ -1,6 +1,8 @@
 package inst.iop.LibraryManager.library.controllers;
 
 import inst.iop.LibraryManager.library.dtos.CreateBorrowEntryDto;
+import inst.iop.LibraryManager.library.dtos.ListBorrowEntriesByBookIdAndStatusDto;
+import inst.iop.LibraryManager.library.dtos.ListBorrowEntriesByStatusDto;
 import inst.iop.LibraryManager.library.dtos.UpdateBorrowEntryDto;
 import inst.iop.LibraryManager.library.entities.BorrowEntry;
 import inst.iop.LibraryManager.library.entities.enums.BorrowStatus;
@@ -49,25 +51,27 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   /**
    * The API end-point for getting a list of borrow entries based on borrow status with pagination
    *
-   * @param status borrow entry's status. Can only be Requested, Issued, Returned, Overdue or Lost.
-   * @param pageNumber page index
-   * @param pageSize number of borrow entries in a page
+   * @param request information needed to list borrow entries by status
    * @return ResponseEntity that contains a report message, http response code - 200 if success or 400 if error, and
    * an object contains the borrow entries details
    */
   @Override
   @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
   public ResponseEntity<Object> listAllBorrowEntriesByStatus(String status, Integer pageNumber, Integer pageSize) {
-    Page<BorrowEntry> borrowEntries = borrowEntryService.listBorrowEntriesByStatus(status, pageNumber, pageSize);
+    Page<BorrowEntry> borrowEntries = borrowEntryService.listBorrowEntriesByStatus(
+        ListBorrowEntriesByStatusDto.builder()
+            .status(status)
+            .pageNumber(pageNumber)
+            .pageSize(pageSize)
+            .build()
+    );
     return findBorrowEntriesResultConstructor(borrowEntries);
   }
 
   /**
    * The API end-point for getting a list of borrow entries from current user based on borrow status with pagination
    *
-   * @param status borrow entry's status. Can only be Requested, Issued, Returned, Overdue or Lost.
-   * @param pageNumber page index
-   * @param pageSize number of borrow entries in a page
+   * @param request information needed to list borrow entries by status from current user
    * @return ResponseEntity that contains a report message, http response code - 200 if success or 400 if error, and
    * an object contains the borrow entries details
    */
@@ -76,7 +80,12 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
                                                                          Integer pageSize) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     Page<BorrowEntry> borrowEntries = borrowEntryService.listBorrowEntriesByUsernameAndStatus(
-        authentication.getName(), status, pageNumber, pageSize
+        authentication.getName(),
+        ListBorrowEntriesByStatusDto.builder()
+            .status(status)
+            .pageNumber(pageNumber)
+            .pageSize(pageSize)
+            .build()
     );
     return findBorrowEntriesResultConstructor(borrowEntries);
   }
@@ -84,10 +93,7 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   /**
    * The API end-point for getting a list of borrow entries based on book id and borrow status with pagination
    *
-   * @param bookId book's id
-   * @param status borrow entry's status. Can only be Requested, Issued, Returned, Overdue or Lost.
-   * @param pageNumber page index
-   * @param pageSize number of borrow entries in a page
+   * @param request information needed to list borrow entries by book id and status
    * @return ResponseEntity that contains a report message, http response code - 200 if success or 400 if error, and
    * an object contains the borrow entries details
    */
@@ -95,8 +101,14 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
   public ResponseEntity<Object> listBorrowEntriesByBookIdAndStatus(Long bookId, String status, Integer pageNumber,
                                                                    Integer pageSize) {
-    Page<BorrowEntry> borrowEntries = borrowEntryService.listBorrowEntriesByBookIdAndStatus(bookId, status, pageNumber,
-        pageSize);
+    Page<BorrowEntry> borrowEntries = borrowEntryService.listBorrowEntriesByBookIdAndStatus(
+        ListBorrowEntriesByBookIdAndStatusDto.builder()
+            .bookId(bookId)
+            .status(status)
+            .pageNumber(pageNumber)
+            .pageSize(pageSize)
+            .build()
+    );
     return findBorrowEntriesResultConstructor(borrowEntries);
   }
 
@@ -110,7 +122,7 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   @Override
   public ResponseEntity<Object> getBookAvailability(Long bookId) {
     Map<String, Object> details = new HashMap<>();
-    details.put("available", borrowEntryService.getBookAvailable(bookId));
+    details.put("available", borrowEntryService.getBookAvailability(bookId));
 
     return responseEntityFactory.createSuccessWithDataResponse(
         HttpStatus.OK, "Successfully get book availability", details
@@ -156,8 +168,8 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
    */
   @Override
   @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
-  public ResponseEntity<Object> updateBorrowEntryById(Long id, UpdateBorrowEntryDto request) {
-    borrowEntryService.updateBorrowEntryById(id, request);
+  public ResponseEntity<Object> updateBorrowEntryById(UpdateBorrowEntryDto request) {
+    borrowEntryService.updateBorrowEntryById(request);
     return responseEntityFactory.createSuccessResponse(
         HttpStatus.ACCEPTED, "Successfully update borrow entry"
     );
