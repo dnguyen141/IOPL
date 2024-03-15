@@ -253,7 +253,14 @@ public interface BookController {
   ResponseEntity<Object> deleteBookById(@Parameter(description = "id of the book that will be deleted")
                                         @PathVariable Long id);
 
-  @PostMapping("/import")
+  @Operation(summary = "Import books from an excel file. Only for admins.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully import from excel file",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to import books from excel file",
+          content = @Content)
+  })
+  @PostMapping(value = "/import", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   ResponseEntity<Object> importFromExcelFile(@Parameter(description = "excel file that contains books' information")
                                              @RequestPart(name = "excelFile") MultipartFile excelFile);
 }
