@@ -6,6 +6,7 @@ IOP's Library is the private library management for the Institute of Photonics, 
 - Authentication apis (log in/sign up/sign out/confirm registration per Email) with Json Web Tokens 
 - User management apis
 - Library management apis, including books and issues management
+- Inputs validation
 - Automatically schedule some library management tasks
 - Swagger UI documentation
 
