@@ -1,21 +1,18 @@
-package inst.iop.LibraryManager.authentication;
+package inst.iop.LibraryManager.authentication.services;
 
-import inst.iop.LibraryManager.LibraryManagerApplicationTestsConfig;
-import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
-import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateUserDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
 import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.authentication.entities.enums.Role;
 import inst.iop.LibraryManager.authentication.repositories.TokenRepository;
 import inst.iop.LibraryManager.authentication.repositories.UserRepository;
 import inst.iop.LibraryManager.authentication.services.UserServiceImpl;
-import inst.iop.LibraryManager.utilities.ConfirmationCodeGenerator;
 import inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import io.jsonwebtoken.lang.Collections;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.internal.engine.ValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -25,20 +22,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -46,7 +38,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
-@Import(LibraryManagerApplicationTestsConfig.class)
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class UserServiceImplUnitTests {
@@ -106,23 +97,22 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void findUserByIdHappyFlow() {
+  public void testFindUserByIdHappyFlow() {
     log.info("Test running - Find user by id happy flow...");
 
     when(userRepository.findUserById(0L)).thenReturn(Optional.of(user));
 
     try (
-        MockedStatic<SecurityContextHolder> ccg = mockStatic(SecurityContextHolder.class)
+        MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      ccg.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+      sch.when(SecurityContextHolder::getContext).thenReturn(securityContext);
       when(securityContext.getAuthentication()).thenReturn(authentication);
       when(authentication.getAuthorities()).thenReturn(Collections.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
 
-      User foundUser = userService.findUserById(0L);
-      assertEquals(foundUser, user);
+      assertEquals(user, userService.findUserById(0L));
 
       verify(userRepository, times(1)).findUserById(0L);
-      ccg.verify(SecurityContextHolder::getContext, times(1));
+      sch.verify(SecurityContextHolder::getContext, times(1));
       verify(securityContext, times(1)).getAuthentication();
       verify(authentication, times(1)).getAuthorities();
     }
@@ -131,7 +121,7 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void findUserByIdUserNotFoundFlow() {
+  public void testFindUserByIdUserNotFoundFlow() {
     log.info("Test running - Find user by id when user is not found...");
 
     when(userRepository.findUserById(0L)).thenReturn(Optional.empty());
@@ -142,10 +132,10 @@ public class UserServiceImplUnitTests {
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.findUserById(0L)
       );
-      assertEquals(exception.getMessage(), "Unable to get user with id 0");
+      assertEquals("Unable to get user with id 0", exception.getMessage());
       Map<String, String> violations = new HashMap<>();
       violations.put("id", "There is no user with id 0");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
       verify(userRepository, times(1)).findUserById(0L);
       sch.verify(SecurityContextHolder::getContext, never());
@@ -157,28 +147,28 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void findUserByIdUnauthorizedFlow() {
+  public void testFindUserByIdUnauthorizedFlow() {
     log.info("Test running - Find user by id when user sent the request doesn't have authority...");
 
     when(userRepository.findUserById(0L)).thenReturn(Optional.of(user));
 
     try (
-        MockedStatic<SecurityContextHolder> ccg = mockStatic(SecurityContextHolder.class)
+        MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      ccg.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+      sch.when(SecurityContextHolder::getContext).thenReturn(securityContext);
       when(securityContext.getAuthentication()).thenReturn(authentication);
       when(authentication.getAuthorities()).thenReturn(Collections.of(new SimpleGrantedAuthority("ROLE_USER")));
 
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.findUserById(0L)
       );
-      assertEquals(exception.getMessage(), "Unable to get user with id 0");
+      assertEquals("Unable to get user with id 0", exception.getMessage());
       Map<String, String> violations = new HashMap<>();
       violations.put("role", "You are not allowed to perform this action");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
       verify(userRepository, times(1)).findUserById(0L);
-      ccg.verify(SecurityContextHolder::getContext, times(1));
+      sch.verify(SecurityContextHolder::getContext, times(1));
       verify(securityContext, times(1)).getAuthentication();
       verify(authentication, times(1)).getAuthorities();
     }
@@ -187,13 +177,12 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void findUserByEmailHappyFlow() {
+  public void testFindUserByEmailHappyFlow() {
     log.info("Test running - Find user by email happy flow...");
 
     when(userRepository.findUserByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
-    User foundUser = userService.findUserByEmail(user.getEmail());
-    assertEquals(foundUser, user);
+    assertEquals(user, userService.findUserByEmail(user.getEmail()));
 
     verify(userRepository, times(1)).findUserByEmail(user.getEmail());
 
@@ -201,7 +190,7 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void findUserByEmailUserNotFoundFlow() {
+  public void testFindUserByEmailUserNotFoundFlow() {
     log.info("Test running - Find user by email when user can't be found...");
 
     when(userRepository.findUserByEmail(user.getEmail())).thenReturn(Optional.empty());
@@ -209,10 +198,10 @@ public class UserServiceImplUnitTests {
     BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
         () -> userService.findUserByEmail(user.getEmail())
     );
-    assertEquals(exception.getMessage(), "Unable to find user by email");
+    assertEquals("Unable to find user by email", exception.getMessage());
     Map<String, String> violations = new HashMap<>();
     violations.put("email", "There is no user with email address " + user.getEmail());
-    assertEquals(exception.getViolations(), violations);
+    assertEquals(violations, exception.getViolations());
 
     verify(userRepository, times(1)).findUserByEmail(user.getEmail());
 
@@ -220,27 +209,27 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void findAllModeratorsAndUsersHappyFlow() {
+  public void testFindAllModeratorsAndUsersHappyFlow() {
     PageImpl<User> expected = new PageImpl<>(List.of(user, moderator));
 
     when(userRepository.findAllModeratorsAndUsers(PageRequest.of(mockPageNumber, mockPageSize))).thenReturn(expected);
 
     Page<User> result = userService.findAllModeratorsAndUsers(mockPageNumber, mockPageSize);
-    assertEquals(result, expected);
+    assertEquals(expected, result);
   }
 
   @Test
-  public void findAllUsers() {
+  public void testFindAllUsers() {
     PageImpl<User> expected = new PageImpl<>(List.of(user));
 
     when(userRepository.findAllUsers(PageRequest.of(mockPageNumber, mockPageSize))).thenReturn(expected);
 
     Page<User> result = userService.findAllUsers(mockPageNumber, mockPageSize);
-    assertEquals(result, expected);
+    assertEquals(expected, result);
   }
 
   @Test
-  public void createUserHappyFlow() {
+  public void testCreateUserHappyFlow() {
     log.info("Test running - Create user happy flow...");
 
     user.setEnabled(true);
@@ -257,7 +246,7 @@ public class UserServiceImplUnitTests {
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class);
         MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       sch.when(SecurityContextHolder::getContext).thenReturn(securityContext);
       when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -265,22 +254,21 @@ public class UserServiceImplUnitTests {
       when(userRepository.findUserByEmail(request.getEmail())).thenReturn(Optional.empty());
       when(passwordEncoder.encode(request.getPassword())).thenReturn("testEncodedPassword");
 
-      User newUser = userService.createUser(request);
-      assertEquals(newUser, user);
+      assertEquals(user, userService.createUser(request));
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, times(1));
       verify(securityContext, times(1)).getAuthentication();
       verify(userRepository, times(1)).findUserByEmail(request.getEmail());
-      verify(userRepository, times(1)).save(newUser);
+      verify(userRepository, times(1)).save(user);
     }
 
     log.info("Passed - Create user happy flow");
   }
 
   @Test
-  public void createUserInvalidInputsFlow() {
+  public void testCreateUserInvalidInputsFlow() {
     log.info("Test running - Create user when inputs are invalid...");
 
     user.setEnabled(true);
@@ -297,7 +285,7 @@ public class UserServiceImplUnitTests {
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class);
         MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(getViolationsList());
 
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
@@ -305,7 +293,7 @@ public class UserServiceImplUnitTests {
       assertEquals(exception.getMessage(), "Invalid user register request");
       assertEquals(exception.getViolations(), getViolationsList());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, never());
       verify(securityContext, never()).getAuthentication();
@@ -328,7 +316,7 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void createUserInvalidAuthorityFlow() {
+  public void testCreateUserInvalidAuthorityFlow() {
     log.info("Test running - Create user when user who sends the request doesn't have authority...");
 
     RegisterDto request = RegisterDto.builder()
@@ -343,7 +331,7 @@ public class UserServiceImplUnitTests {
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class);
         MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       sch.when(SecurityContextHolder::getContext).thenReturn(securityContext);
       when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -351,13 +339,13 @@ public class UserServiceImplUnitTests {
 
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.createUser(request));
-      assertEquals(exception.getMessage(), "Invalid user register request");
+      assertEquals("Invalid user register request", exception.getMessage());
 
       Map<String, String> violations = new HashMap<>();
       violations.put("role", "You are not permitted to create an user that has more privileges that you");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, times(1));
       verify(securityContext, times(1)).getAuthentication();
@@ -369,7 +357,7 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void createUserEmailAlreadyExistedFlow() {
+  public void testCreateUserEmailAlreadyExistedFlow() {
     log.info("Test running - Create user when new user's email is already used...");
 
     RegisterDto request = RegisterDto.builder()
@@ -384,7 +372,7 @@ public class UserServiceImplUnitTests {
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class);
         MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       sch.when(SecurityContextHolder::getContext).thenReturn(securityContext);
       when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -393,13 +381,13 @@ public class UserServiceImplUnitTests {
 
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.createUser(request));
-      assertEquals(exception.getMessage(), "Invalid user register request");
+      assertEquals("Invalid user register request", exception.getMessage());
 
       Map<String, String> violations = new HashMap<>();
       violations.put("email", "An user with the same email is already existed");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, times(1));
       verify(securityContext, times(1)).getAuthentication();
@@ -411,12 +399,12 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void updateOtherUserByIdHappyFlow() {
+  public void testUpdateOtherUserByIdHappyFlow() {
     log.info("Test running - Update other user happy flow...");
 
     user.setEnabled(true);
 
-    ChangeUserDetailsDto request = ChangeUserDetailsDto.builder()
+    UpdateUserDetailsDto request = UpdateUserDetailsDto.builder()
         .password("testNewPassword")
         .confirmedPassword("testNewPassword")
         .firstName("NewUser")
@@ -439,7 +427,7 @@ public class UserServiceImplUnitTests {
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class);
         MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       sch.when(SecurityContextHolder::getContext).thenReturn(securityContext);
       when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -449,7 +437,7 @@ public class UserServiceImplUnitTests {
 
       userService.updateOtherUserById(user.getId(), request);
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, times(1));
       verify(securityContext, times(1)).getAuthentication();
@@ -467,12 +455,12 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void updateOtherUserByIdInvalidInputsFlow() {
+  public void testUpdateOtherUserByIdInvalidInputsFlow() {
     log.info("Test running - Update other user when inputs are invalid...");
 
     user.setEnabled(true);
 
-    ChangeUserDetailsDto request = ChangeUserDetailsDto.builder()
+    UpdateUserDetailsDto request = UpdateUserDetailsDto.builder()
         .password("testWrongNewPassword")
         .confirmedPassword("testNewPassword")
         .firstName("NewUser")
@@ -484,15 +472,15 @@ public class UserServiceImplUnitTests {
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class);
         MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(getViolationsList());
 
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.updateOtherUserById(user.getId(), request));
-      assertEquals(exception.getMessage(), "Invalid update other user request");
-      assertEquals(exception.getViolations(), getViolationsList());
+      assertEquals("Invalid update other user request", exception.getMessage());
+      assertEquals(getViolationsList(), exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, never());
       verify(securityContext, never()).getAuthentication();
@@ -504,12 +492,12 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void updateOtherUserByIdUserNotFoundFlow() {
+  public void testUpdateOtherUserByIdUserNotFoundFlow() {
     log.info("Test running - Update other user when the other user can't be found...");
 
     user.setEnabled(true);
 
-    ChangeUserDetailsDto request = ChangeUserDetailsDto.builder()
+    UpdateUserDetailsDto request = UpdateUserDetailsDto.builder()
         .password("testNewPassword")
         .confirmedPassword("testNewPassword")
         .firstName("NewUser")
@@ -521,7 +509,7 @@ public class UserServiceImplUnitTests {
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class);
         MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       sch.when(SecurityContextHolder::getContext).thenReturn(securityContext);
       when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -530,12 +518,12 @@ public class UserServiceImplUnitTests {
 
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.updateOtherUserById(user.getId(), request));
-      assertEquals(exception.getMessage(), "Invalid update other user request");
+      assertEquals("Invalid update other user request", exception.getMessage());
       Map<String, String> violations = new HashMap<>();
       violations.put("id", "No user with id 0 found");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, times(1));
       verify(securityContext, times(1)).getAuthentication();
@@ -547,12 +535,12 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void updateOtherUserByIdUnauthorizedFlow() {
+  public void testUpdateOtherUserByIdUnauthorizedFlow() {
     log.info("Test running - Update other user when the user requested update doesn't have authority...");
 
     user.setEnabled(true);
 
-    ChangeUserDetailsDto request = ChangeUserDetailsDto.builder()
+    UpdateUserDetailsDto request = UpdateUserDetailsDto.builder()
         .password("testNewPassword")
         .confirmedPassword("testNewPassword")
         .firstName("NewUser")
@@ -564,7 +552,7 @@ public class UserServiceImplUnitTests {
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class);
         MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       sch.when(SecurityContextHolder::getContext).thenReturn(securityContext);
       when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -573,12 +561,12 @@ public class UserServiceImplUnitTests {
 
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.updateOtherUserById(user.getId(), request));
-      assertEquals(exception.getMessage(), "Invalid update other user request");
+      assertEquals("Invalid update other user request", exception.getMessage());
       Map<String, String> violations = new HashMap<>();
       violations.put("role", "You are not allowed to perform this action");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, times(1));
       verify(securityContext, times(1)).getAuthentication();
@@ -590,12 +578,12 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void updateUserByEmailHappyFlow() {
+  public void testUpdateUserByEmailHappyFlow() {
     log.info("Test running - Update current user happy flow...");
 
     user.setEnabled(true);
 
-    ChangeDetailsDto request = ChangeDetailsDto.builder()
+    UpdateDetailsDto request = UpdateDetailsDto.builder()
         .password("testNewPassword")
         .confirmedPassword("testNewPassword")
         .firstName("NewUser")
@@ -617,7 +605,7 @@ public class UserServiceImplUnitTests {
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class);
         MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       sch.when(SecurityContextHolder::getContext).thenReturn(securityContext);
       when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -627,7 +615,7 @@ public class UserServiceImplUnitTests {
 
       userService.updateUserByEmail(request);
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, times(1));
       verify(securityContext, times(1)).getAuthentication();
@@ -645,12 +633,12 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void updateUserByEmailInvalidInputsFlow() {
+  public void testUpdateUserByEmailInvalidInputsFlow() {
     log.info("Test running - Update current user when inputs are invalid...");
 
     user.setEnabled(true);
 
-    ChangeDetailsDto request = ChangeDetailsDto.builder()
+    UpdateDetailsDto request = UpdateDetailsDto.builder()
         .password("testWrongNewPassword")
         .confirmedPassword("testNewPassword")
         .firstName("")
@@ -667,15 +655,15 @@ public class UserServiceImplUnitTests {
       violations.put("password", "The password must contain at least one lowercase Latin character and a " +
           "length of at least and at most 20 characters");
       violations.put("confirmedPassword", "Password and confirmed password must be matched");
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(violations);
 
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.updateUserByEmail(request));
-      assertEquals(exception.getMessage(), "Invalid update user request");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals("Invalid update user request", exception.getMessage());
+      assertEquals(violations, exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, never());
       verify(securityContext, never()).getAuthentication();
@@ -687,12 +675,12 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void updateUserByEmailUserNotFoundFlow() {
+  public void testUpdateUserByEmailUserNotFoundFlow() {
     log.info("Test running - Update current user when user can't be found...");
 
     user.setEnabled(true);
 
-    ChangeDetailsDto request = ChangeDetailsDto.builder()
+    UpdateDetailsDto request = UpdateDetailsDto.builder()
         .password("testNewPassword")
         .confirmedPassword("testNewPassword")
         .firstName("NewUser")
@@ -703,7 +691,7 @@ public class UserServiceImplUnitTests {
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class);
         MockedStatic<SecurityContextHolder> sch = mockStatic(SecurityContextHolder.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       sch.when(SecurityContextHolder::getContext).thenReturn(securityContext);
       when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -712,12 +700,12 @@ public class UserServiceImplUnitTests {
 
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.updateUserByEmail(request));
-      assertEquals(exception.getMessage(), "Invalid update user request");
+      assertEquals("Invalid update user request", exception.getMessage());
       Map<String, String> violations = new HashMap<>();
       violations.put("email", "No user with email " + authentication.getName() + " found");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       sch.verify(SecurityContextHolder::getContext, times(1));
       verify(securityContext, times(1)).getAuthentication();
@@ -729,7 +717,7 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void deleteUserByIdHappyFlow() {
+  public void testDeleteUserByIdHappyFlow() {
     log.info("Test running - Delete user by id happy flow...");
 
     try (
@@ -754,7 +742,7 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void deleteUserByIdUserNotFoundFlow() {
+  public void testDeleteUserByIdUserNotFoundFlow() {
     log.info("Test running - Delete user by id when user can't be found...");
 
     try (
@@ -765,10 +753,10 @@ public class UserServiceImplUnitTests {
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.deleteUserById(user.getId())
       );
-      assertEquals(exception.getMessage(), "Invalid delete user request");
+      assertEquals("Invalid delete user request", exception.getMessage());
       Map<String, String> violations = new HashMap<>();
       violations.put("id", "No user with id " + user.getId() + " found");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
       verify(userRepository, times(1)).findUserById(user.getId());
       sch.verify(SecurityContextHolder::getContext, never());
@@ -782,7 +770,7 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void deleteUserByIdUnauthorizedFlow() {
+  public void testDeleteUserByIdUnauthorizedFlow() {
     log.info("Test running - Delete user by id when requested user doesn't have authority...");
 
     try (
@@ -796,10 +784,10 @@ public class UserServiceImplUnitTests {
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.deleteUserById(user.getId())
       );
-      assertEquals(exception.getMessage(), "Invalid delete user request");
+      assertEquals("Invalid delete user request", exception.getMessage());
       Map<String, String> violations = new HashMap<>();
       violations.put("role", "You don't have the authorities to perform this action");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
       verify(userRepository, times(1)).findUserById(user.getId());
       sch.verify(SecurityContextHolder::getContext, times(1));
@@ -813,7 +801,7 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void deleteUserHappyFlow() {
+  public void testDeleteUserHappyFlow() {
     log.info("Test running - Delete current user happy flow...");
 
     try (
@@ -838,7 +826,7 @@ public class UserServiceImplUnitTests {
   }
 
   @Test
-  public void deleteUserUserNotFoundFlow() {
+  public void testDeleteUserUserNotFoundFlow() {
     log.info("Test running - Delete current user when user can't be found...");
 
     try (
@@ -852,10 +840,10 @@ public class UserServiceImplUnitTests {
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> userService.deleteUser()
       );
-      assertEquals(exception.getMessage(), "Invalid delete user request");
+      assertEquals("Invalid delete user request", exception.getMessage());
       Map<String, String> violations = new HashMap<>();
       violations.put("id", "No user with username " + user.getEmail() + " found");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
       verify(userRepository, times(1)).findUserByEmail(user.getEmail());
       sch.verify(SecurityContextHolder::getContext, times(1));

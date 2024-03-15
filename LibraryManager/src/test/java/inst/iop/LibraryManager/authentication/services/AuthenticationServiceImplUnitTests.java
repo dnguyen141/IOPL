@@ -1,6 +1,5 @@
-package inst.iop.LibraryManager.authentication;
+package inst.iop.LibraryManager.authentication.services;
 
-import inst.iop.LibraryManager.LibraryManagerApplicationTestsConfig;
 import inst.iop.LibraryManager.authentication.dtos.LoginDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
 import inst.iop.LibraryManager.authentication.entities.JwtToken;
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@Import(LibraryManagerApplicationTestsConfig.class)
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class AuthenticationServiceImplUnitTests {
@@ -77,6 +74,7 @@ public class AuthenticationServiceImplUnitTests {
 
   @BeforeEach
   public void setUp() {
+
     newUser = User.builder()
         .email("newUser@email.com")
         .password("testEncodedPassword")
@@ -91,7 +89,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void registerHappyFlow() {
+  public void testRegisterHappyFlow() {
     log.info("Test running - Register service happy flow...");
 
     RegisterDto request = RegisterDto.builder()
@@ -108,7 +106,7 @@ public class AuthenticationServiceImplUnitTests {
         MockedStatic<ConfirmationCodeGenerator> ccg = mockStatic(ConfirmationCodeGenerator.class);
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       when(userRepository.findUserByEmail(request.getEmail())).thenReturn(Optional.empty());
       ccg.when(ConfirmationCodeGenerator::generateSecuredUuid).thenReturn(mockConfirmationCode);
@@ -119,11 +117,11 @@ public class AuthenticationServiceImplUnitTests {
       )).thenReturn(true);
 
       User user = authenticationService.register(request);
-      assertEquals(user, newUser);
+      assertEquals(newUser, user);
 
       verify(userRepository, times(1)).findUserByEmail(request.getEmail());
       ccg.verify(ConfirmationCodeGenerator::generateSecuredUuid, times(1));
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       verify(userRepository, times(1)).save(newUser);
       verify(emailService, times(1)).sendConfirmationEmailToRecipient(
@@ -137,7 +135,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void registerUserExistedExceptionFlow() {
+  public void testRegisterUserExistedExceptionFlow() {
     log.info("Test running - Register service when user with same email existed...");
 
     RegisterDto request = RegisterDto.builder()
@@ -155,12 +153,12 @@ public class AuthenticationServiceImplUnitTests {
       when(userRepository.findUserByEmail(request.getEmail())).thenReturn(Optional.of(newUser));
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> authenticationService.register(request));
-      assertEquals(exception.getMessage(), "Invalid register request");
+      assertEquals("Invalid register request", exception.getMessage());
       Map<String, String> violations = new HashMap<>();
       violations.put("email", "An user with the same email is already existed");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       verify(userRepository, times(1)).findUserByEmail(request.getEmail());
       ccg.verify(ConfirmationCodeGenerator::generateSecuredUuid, never());
@@ -176,7 +174,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void registerInvalidInputsExceptionFlow() {
+  public void testRegisterInvalidInputsExceptionFlow() {
     log.info("Test running - Register service when inputs are invalid...");
 
     RegisterDto request = RegisterDto.builder()
@@ -191,14 +189,14 @@ public class AuthenticationServiceImplUnitTests {
         MockedStatic<ConfirmationCodeGenerator> ccg = mockStatic(ConfirmationCodeGenerator.class);
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(getViolationsList());
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> authenticationService.register(request));
-      assertEquals(exception.getMessage(), "Invalid register request");
-      assertEquals(exception.getViolations(), getViolationsList());
+      assertEquals("Invalid register request", exception.getMessage());
+      assertEquals(getViolationsList(), exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       verify(userRepository, never()).findUserByEmail(anyString());
       ccg.verify(ConfirmationCodeGenerator::generateSecuredUuid, never());
@@ -225,7 +223,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void registerFailToSendConfirmationEmailFlow() {
+  public void testRegisterFailToSendConfirmationEmailFlow() {
     log.info("Test running - Register service when confirmation email can't be sent...");
 
     RegisterDto request = RegisterDto.builder()
@@ -240,7 +238,7 @@ public class AuthenticationServiceImplUnitTests {
         MockedStatic<ConfirmationCodeGenerator> ccg = mockStatic(ConfirmationCodeGenerator.class);
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       when(userRepository.findUserByEmail(request.getEmail())).thenReturn(Optional.empty());
       ccg.when(ConfirmationCodeGenerator::generateSecuredUuid).thenReturn(mockConfirmationCode);
@@ -251,13 +249,12 @@ public class AuthenticationServiceImplUnitTests {
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> authenticationService.register(request));
 
-      assertEquals(exception.getMessage(), "Invalid register request");
-
+      assertEquals("Invalid register request", exception.getMessage());
       Map<String, String> violations = new HashMap<>();
       violations.put("email", "Unable to send confirmation email");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       verify(userRepository, times(1)).findUserByEmail(request.getEmail());
       ccg.verify(ConfirmationCodeGenerator::generateSecuredUuid, times(1));
@@ -273,7 +270,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void registerIOExceptionFlow() {
+  public void testRegisterIOExceptionFlow() {
     log.info("Test running - Register service when IOException is raised during sending confirmation email...");
 
     RegisterDto request = RegisterDto.builder()
@@ -288,7 +285,7 @@ public class AuthenticationServiceImplUnitTests {
         MockedStatic<ConfirmationCodeGenerator> ccg = mockStatic(ConfirmationCodeGenerator.class);
         MockedStatic<ConstraintViolationSetHandler> cvs = mockStatic(ConstraintViolationSetHandler.class)
     ) {
-      when(ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)))
+      when(ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)))
           .thenReturn(new HashMap<>());
       when(userRepository.findUserByEmail(request.getEmail())).thenReturn(Optional.empty());
       ccg.when(ConfirmationCodeGenerator::generateSecuredUuid).thenReturn(mockConfirmationCode);
@@ -299,13 +296,13 @@ public class AuthenticationServiceImplUnitTests {
       BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
           () -> authenticationService.register(request));
 
-      assertEquals(exception.getMessage(), "Invalid register request");
+      assertEquals("Invalid register request", exception.getMessage());
 
       Map<String, String> violations = new HashMap<>();
       violations.put("email", "Unable to send confirmation email");
-      assertEquals(exception.getViolations(), violations);
+      assertEquals(violations, exception.getViolations());
 
-      cvs.verify(() -> ConstraintViolationSetHandler.convertConstrainViolationSetToMap(validator.validate(request)),
+      cvs.verify(() -> ConstraintViolationSetHandler.convertSetToMap(validator.validate(request)),
           times(1));
       verify(userRepository, times(1)).findUserByEmail(request.getEmail());
       ccg.verify(ConfirmationCodeGenerator::generateSecuredUuid, times(1));
@@ -321,7 +318,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void loginHappyFlow() {
+  public void testLoginHappyFlow() {
     log.info("Test running - Login service happy flow...");
 
     newUser.setEnabled(true);
@@ -354,6 +351,12 @@ public class AuthenticationServiceImplUnitTests {
     when(tokenRepository.findAllValidTokensByUserId(0L)).thenReturn(List.of(oldAccessToken));
 
     Map<String, Object> response = authenticationService.login(request);
+
+    assertTrue(response.containsKey("accessToken"));
+    assertTrue(response.containsKey("refreshToken"));
+    assertEquals("newAccessToken", response.get("accessToken"));
+    assertEquals("newRefreshToken", response.get("refreshToken"));
+
     verify(authenticationManager, times(1)).authenticate(new UsernamePasswordAuthenticationToken(
         request.getEmail(), request.getPassword())
     );
@@ -364,16 +367,11 @@ public class AuthenticationServiceImplUnitTests {
     verify(tokenRepository, times(1)).save(newAccessToken);
     verify(tokenRepository, times(1)).saveAll(List.of(oldAccessToken));
 
-    assertTrue(response.containsKey("accessToken"));
-    assertTrue(response.containsKey("refreshToken"));
-    assertEquals(response.get("accessToken"), "newAccessToken");
-    assertEquals(response.get("refreshToken"), "newRefreshToken");
-
     log.info("Passed - Login service happy flow");
   }
 
   @Test
-  public void loginUsernameNotFound() {
+  public void testLoginUsernameNotFound() {
     log.info("Test running - Login service with non-existence username...");
 
     newUser.setEnabled(true);
@@ -386,13 +384,12 @@ public class AuthenticationServiceImplUnitTests {
 
     BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
         () -> authenticationService.login(request));
-    assertEquals(exception.getMessage(), "Unable to login");
-
+    assertEquals("Unable to login", exception.getMessage());
     Map<String, String> violations = new HashMap<>();
     violations.put("authentication", "Unable to authenticate with provided email and password. " +
         "Please check your inputs or if you have confirmed your account");
+    assertEquals(violations, exception.getViolations());
 
-    assertEquals(exception.getViolations(), violations);
     verify(authenticationManager, times(1)).authenticate(new UsernamePasswordAuthenticationToken(
         request.getEmail(), request.getPassword())
     );
@@ -405,7 +402,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void loginWrongPassword() {
+  public void testLoginWrongPassword() {
     log.info("Test running - Login service with wrong password...");
 
     newUser.setEnabled(true);
@@ -425,8 +422,8 @@ public class AuthenticationServiceImplUnitTests {
 
     BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
         () -> authenticationService.login(request));
-    assertEquals(exception.getMessage(), "Unable to login");
-    assertEquals(exception.getViolations(), violations);
+    assertEquals("Unable to login", exception.getMessage());
+    assertEquals(violations, exception.getViolations());
 
     verify(authenticationManager, times(1)).authenticate(new UsernamePasswordAuthenticationToken(
         request.getEmail(), request.getPassword())
@@ -440,7 +437,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void loginNonExistenceEmail() {
+  public void testLoginNonExistenceEmail() {
     log.info("Test running - Login service with non-existence email...");
 
     newUser.setEnabled(true);
@@ -460,8 +457,8 @@ public class AuthenticationServiceImplUnitTests {
 
     BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
         () -> authenticationService.login(request));
-    assertEquals(exception.getMessage(), "Unable to login");
-    assertEquals(exception.getViolations(), violations);
+    assertEquals("Unable to login", exception.getMessage());
+    assertEquals(violations, exception.getViolations());
 
     verify(authenticationManager, times(1)).authenticate(new UsernamePasswordAuthenticationToken(
         request.getEmail(), request.getPassword())
@@ -475,7 +472,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void refreshTokenHappyFlow() {
+  public void testRefreshTokenHappyFlow() {
     log.info("Test running - Refresh access token happy flow...");
 
     newUser.setEnabled(true);
@@ -507,8 +504,8 @@ public class AuthenticationServiceImplUnitTests {
     when(tokenRepository.save(newAccessToken)).thenReturn(newAccessToken);
 
     Map<String, Object> responseBody = authenticationService.refreshToken(request, response);
-    assertEquals(responseBody.get("accessToken"), "newAccessToken");
-    assertEquals(responseBody.get("refreshToken"), "refreshToken");
+    assertEquals("newAccessToken", responseBody.get("accessToken"));
+    assertEquals("refreshToken", responseBody.get("refreshToken"));
     assertTrue(oldAccessToken.isExpired());
     assertTrue(oldAccessToken.isRevoked());
     assertFalse(newAccessToken.isExpired());
@@ -526,7 +523,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void refreshTokenAuthenticationHeaderInvalidFlow() {
+  public void testRefreshTokenAuthenticationHeaderInvalidFlow() {
     log.info("Test running - Refresh access token when authentication header is invalid...");
 
     newUser.setEnabled(true);
@@ -537,10 +534,10 @@ public class AuthenticationServiceImplUnitTests {
 
     BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
         () -> authenticationService.refreshToken(request, response));
-    assertEquals(exception.getMessage(), "Unable to refresh token");
+    assertEquals("Unable to refresh token", exception.getMessage());
     Map<String, String> violations = new HashMap<>();
     violations.put("authentication", "Invalid header format for refreshing JWT");
-    assertEquals(exception.getViolations(), violations);
+    assertEquals(violations, exception.getViolations());
 
     verify(request, times(1)).getHeader("Authorization");
     verify(jwtService, never()).extractUsername(anyString());
@@ -554,7 +551,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void refreshTokenUserNotFoundFlow() {
+  public void testRefreshTokenUserNotFoundFlow() {
     log.info("Test running - Refresh access token when user is not found...");
 
     newUser.setEnabled(true);
@@ -567,10 +564,10 @@ public class AuthenticationServiceImplUnitTests {
 
     BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
         () -> authenticationService.refreshToken(request, response));
-    assertEquals(exception.getMessage(), "Unable to refresh token");
+    assertEquals("Unable to refresh token", exception.getMessage());
     Map<String, String> violations = new HashMap<>();
     violations.put("authentication", "Invalid header format for refreshing JWT");
-    assertEquals(exception.getViolations(), violations);
+    assertEquals(violations, exception.getViolations());
 
     verify(request, times(1)).getHeader("Authorization");
     verify(jwtService, times(1)).extractUsername("refreshToken");
@@ -584,7 +581,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void refreshTokenInvalidTokenFlow() {
+  public void testRefreshTokenInvalidTokenFlow() {
     log.info("Test running - Refresh access token when token is invalid...");
 
     newUser.setEnabled(true);
@@ -598,10 +595,10 @@ public class AuthenticationServiceImplUnitTests {
 
     BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
         () -> authenticationService.refreshToken(request, response));
-    assertEquals(exception.getMessage(), "Unable to refresh token");
+    assertEquals("Unable to refresh token", exception.getMessage());
     Map<String, String> violations = new HashMap<>();
     violations.put("token", "Token is invalid");
-    assertEquals(exception.getViolations(), violations);
+    assertEquals(violations, exception.getViolations());
 
     verify(request, times(1)).getHeader("Authorization");
     verify(jwtService, times(1)).extractUsername("refreshToken");
@@ -615,7 +612,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void logOutHappyFlow() {
+  public void testLogOutHappyFlow() {
     log.info("Test running - Log out happy flow...");
 
     newUser.setEnabled(true);
@@ -651,7 +648,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void logOutAuthenticationHeaderInvalidFlow() {
+  public void testLogOutAuthenticationHeaderInvalidFlow() {
     log.info("Test running - Log out when authentication header is invalid...");
 
     newUser.setEnabled(true);
@@ -686,7 +683,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void confirmRegistrationHappyFlow() {
+  public void testConfirmRegistrationHappyFlow() {
     log.info("Test running - Confirm registration happy flow...");
 
     newUser.setId(0L);
@@ -704,7 +701,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void confirmRegistrationUserNotFoundFlow() {
+  public void testConfirmRegistrationUserNotFoundFlow() {
     log.info("Test running - Confirm registration when user is not found...");
 
     assertFalse(newUser.isEnabled());
@@ -714,10 +711,10 @@ public class AuthenticationServiceImplUnitTests {
     BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
         () -> authenticationService.confirmRegistration(newUser.getEmail(), newUser.getConfirmationCode())
     );
-    assertEquals(exception.getMessage(), "Unable to confirm registration");
+    assertEquals("Unable to confirm registration", exception.getMessage());
     Map<String, String> violations = new HashMap<>();
     violations.put("url", "Invalid confirmation link");
-    assertEquals(exception.getViolations(), violations);
+    assertEquals(violations, exception.getViolations());
     assertFalse(newUser.isEnabled());
 
     verify(userRepository, times(1)).findUserByEmail(newUser.getEmail());
@@ -727,7 +724,7 @@ public class AuthenticationServiceImplUnitTests {
   }
 
   @Test
-  public void confirmRegistrationCodeInvalid() {
+  public void testConfirmRegistrationCodeInvalid() {
     log.info("Test running - Confirm registration when confirmation code is invalid...");
 
     newUser.setId(0L);
@@ -738,10 +735,10 @@ public class AuthenticationServiceImplUnitTests {
     BadRequestDetailsException exception = assertThrows(BadRequestDetailsException.class,
         () -> authenticationService.confirmRegistration(newUser.getEmail(), "falseMockConfirmationCode")
     );
-    assertEquals(exception.getMessage(), "Unable to confirm registration");
+    assertEquals("Unable to confirm registration", exception.getMessage());
     Map<String, String> violations = new HashMap<>();
     violations.put("url", "The code is invalid or already confirmed");
-    assertEquals(exception.getViolations(), violations);
+    assertEquals(violations, exception.getViolations());
     assertFalse(newUser.isEnabled());
 
     verify(userRepository, times(1)).findUserByEmail(newUser.getEmail());
