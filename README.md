@@ -7,8 +7,22 @@ IOP's Library is the private library management for the Institute of Photonics, 
 - User management apis
 - Library management apis, including books and issues management
 - Automatically schedule some library management tasks
+- Swagger UI documentation
 
-## Installation
+## Tools
+- Java 17
+- Spring Framework 6
+- Hibernate Validator
+- Lombok
+- PostgreSQL
+- JUnit 5
+- Mockito
+- OpenAPI
+- Apache POI
+- SendGrid API
+- Docker
+
+## Running instruction
 
 ### Back-end
 - **docker-compose**: Using the <em>docker-compose.yml</em> under <em>LibraryManagement</em> folder, the application can be started via docker-compose:
@@ -71,3 +85,9 @@ The <em>application.yml</em> should look similar in the following code snippet:
 
 ### Front-end
 To be determined. 
+
+## Testing
+- Use maven in <em>LibraryManagement</em> folder to run all the unit tests:
+  ```
+    mvn test
+  ```
