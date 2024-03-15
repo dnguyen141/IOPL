@@ -9,6 +9,10 @@ IOP's Library is the private library management for the Institute of Photonics, 
 - Automatically schedule some library management tasks
 - Swagger UI documentation
 
+## API Documentation
+- Swagger UI is available under http://localhost:8080/swagger-ui/index.html when the application starts in local machine. Screenshot:
+  ![swagger-ui](https://i.imgur.com/lLqa3En.png)
+
 ## Tools
 - Java 17
 - Spring Framework 6
@@ -25,7 +29,7 @@ IOP's Library is the private library management for the Institute of Photonics, 
 ## Running instruction
 
 ### Back-end
-- **docker-compose**: Using the <em>docker-compose.yml</em> under <em>LibraryManagement</em> folder, the application can be started via docker-compose:
+- **docker-compose**: Using the <em>docker-compose.yml</em> under <em>LibraryManagement</em> folder, the application can be started via docker-compose and reachable under http://localhost:8080:
   ```bash
   docker-compose up
   ```
