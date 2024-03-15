@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class ConstraintViolationSetHandler {
 
-  public static <T> Map<String, String> convertConstrainViolationSetToMap(
+  public static <T> Map<String, String> convertSetToMap(
       Set<ConstraintViolation<T>> constraintViolations) {
     Map<String, String> violations = new HashMap<>();
 
