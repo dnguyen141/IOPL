@@ -1,7 +1,7 @@
 package inst.iop.LibraryManager.authentication.services;
 
-import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
-import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateUserDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
 import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.authentication.entities.enums.Role;
@@ -18,14 +18,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
+import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertSetToMap;
 
 @Service
 @RequiredArgsConstructor
@@ -82,7 +81,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public User createUser(RegisterDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
 
     if (checkInvalidConfirmedPassword(request.getPassword(), request.getConfirmedPassword())) {
       violations.put("confirmedPassword", "Password and confirmed password must be matched");
@@ -120,8 +119,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void updateOtherUserById(Long id, ChangeUserDetailsDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+  public void updateOtherUserById(Long id, UpdateUserDetailsDto request) throws BadRequestDetailsException {
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
 
     if (checkInvalidConfirmedPassword(request.getPassword(), request.getConfirmedPassword())) {
       violations.put("confirmedPassword", "Password and confirmed password must be matched");
@@ -157,8 +156,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void updateUserByEmail(ChangeDetailsDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+  public void updateUserByEmail(UpdateDetailsDto request) throws BadRequestDetailsException {
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
 
     if (checkInvalidConfirmedPassword(request.getPassword(), request.getConfirmedPassword())) {
       violations.put("confirmedPassword", "Password and confirmed password must be matched");

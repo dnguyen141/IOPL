@@ -1,7 +1,7 @@
 package inst.iop.LibraryManager.authentication.services;
 
-import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
-import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateUserDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
 import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
@@ -19,9 +19,9 @@ public interface UserService {
 
   User createUser(RegisterDto request) throws BadRequestDetailsException;
 
-  void updateOtherUserById(Long id, ChangeUserDetailsDto request) throws BadRequestDetailsException;
+  void updateOtherUserById(Long id, UpdateUserDetailsDto request) throws BadRequestDetailsException;
 
-  void updateUserByEmail(ChangeDetailsDto request) throws BadRequestDetailsException;
+  void updateUserByEmail(UpdateDetailsDto request) throws BadRequestDetailsException;
 
   void deleteUser();
 
