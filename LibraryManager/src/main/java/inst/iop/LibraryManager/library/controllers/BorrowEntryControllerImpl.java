@@ -51,7 +51,9 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   /**
    * The API end-point for getting a list of borrow entries based on borrow status with pagination
    *
-   * @param request information needed to list borrow entries by status
+   * @param status status of borrow entries
+   * @param pageNumber page index
+   * @param pageSize number of entries in a page
    * @return ResponseEntity that contains a report message, http response code - 200 if success or 400 if error, and
    * an object contains the borrow entries details
    */
@@ -71,7 +73,9 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   /**
    * The API end-point for getting a list of borrow entries from current user based on borrow status with pagination
    *
-   * @param request information needed to list borrow entries by status from current user
+   * @param status status of borrow entries
+   * @param pageNumber page index
+   * @param pageSize number of entries in a page
    * @return ResponseEntity that contains a report message, http response code - 200 if success or 400 if error, and
    * an object contains the borrow entries details
    */
@@ -93,7 +97,10 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   /**
    * The API end-point for getting a list of borrow entries based on book id and borrow status with pagination
    *
-   * @param request information needed to list borrow entries by book id and status
+   * @param bookId id of the book
+   * @param status status of borrow entries
+   * @param pageNumber page index
+   * @param pageSize number of entries in a page
    * @return ResponseEntity that contains a report message, http response code - 200 if success or 400 if error, and
    * an object contains the borrow entries details
    */
@@ -162,7 +169,6 @@ public class BorrowEntryControllerImpl implements BorrowEntryController {
   /**
    * The API end-point for updating a borrow entry
    *
-   * @param id borrow entry's id
    * @param request contains updated information for borrow entry
    * @return ResponseEntity that contains a report message and http response code - 202 if success or 400 if error
    */
