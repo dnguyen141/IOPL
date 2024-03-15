@@ -30,9 +30,11 @@ public interface BookService {
 
   String getCoverImagePath(Long id);
 
-  void createBook(CreateBookDto request, MultipartFile coverImage) throws BadRequestDetailsException;
+  Book createBook(CreateBookDto request, MultipartFile coverImage) throws BadRequestDetailsException;
 
   void updateBook(Long id, UpdateBookDto bookDto, MultipartFile coverImage) throws BadRequestDetailsException;
 
   void deleteBookById(Long id) throws BadRequestDetailsException;
+
+  void importBooksFromExcelFile(MultipartFile excelFile) throws BadRequestDetailsException;
 }

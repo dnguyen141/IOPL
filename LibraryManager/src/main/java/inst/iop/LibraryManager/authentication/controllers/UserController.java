@@ -1,96 +1,110 @@
 package inst.iop.LibraryManager.authentication.controllers;
 
-import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
-import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateUserDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/users")
-@Validated
+@Tag(name = "user-controller")
 public interface UserController {
 
-  /**
-   * The API end-point to get current user information.
-   *
-   * @return ResponseEntity that contains a message, http response code, a Map contains user information in success case
-   * or violations from input or verification in error case
-   */
+  @Operation(summary = "Get current users. Only for logged in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully get user information",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to get user",
+          content = @Content)
+  })
   @GetMapping("/current")
   ResponseEntity<Object> getCurrentUser();
 
-  /**
-   * The API end-point for listing a user's information.
-   * There are 3 types of user: ADMIN, MODERATOR and USER. ADMINs can see MODERATORs and USERs information,
-   * MODERATORs can only see USERs information.
-   *
-   * @param  id user's id
-   * @return ResponseEntity that contains a message, http response code, a list of users in success case or violations
-   *         from input or verification in error case
-   */
+  @Operation(summary = "Get user information by id. Only for admins and moderators.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully get user information",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to get user",
+          content = @Content)
+  })
   @GetMapping("/{id}")
-  ResponseEntity<Object> getUserById(@PathVariable Long id);
+  ResponseEntity<Object> getUserById(@Parameter(description = "id of the user") @PathVariable Long id);
 
-  /**
-   * The API end-point for listing users for admins and moderators.
-   * There are 3 types of user: ADMIN, MODERATOR and USER. ADMINs can see MODERATORs and USERs information,
-   * MODERATORs can only see USERs information.
-   *
-   * @param  pageNumber page number
-   * @param  pageSize number of entries in a page
-   * @return ResponseEntity that contains a message, http response code, a list of users in success case or violations
-   *         from input or verification in error case
-   */
+  @Operation(summary = "List all users and their information. Only for admins and moderators")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully list users information",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to list users",
+          content = @Content)
+  })
   @GetMapping("")
-  ResponseEntity<Object> listAllUsers(@RequestParam(defaultValue = "0") Integer pageNumber,
+  ResponseEntity<Object> listAllUsers(@Parameter(description = "Page number")
+                                      @RequestParam(defaultValue = "0") Integer pageNumber,
+                                      @Parameter(description = "Number of entries in the page")
                                       @RequestParam(defaultValue = "20") Integer pageSize);
 
-  /**
-   * The API end-point for create new user. It also sends email for user to confirm their identity.
-   *
-   * @param  request create user request
-   * @return ResponseEntity that contains a message, http response code, a list of users in success case or violations
-   *         from input or verification in error case
-   */
+  @Operation(summary = "Create new user. Only for admins and moderators and the new user must have less authorities " +
+      "than the user that creates it.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Successfully create new user",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to create user",
+          content = @Content)
+  })
   @PostMapping("/create")
-  ResponseEntity<Object> createUser(@RequestBody RegisterDto request);
+  ResponseEntity<Object> createUser(@Parameter(description = "New user's information")
+                                    @RequestBody RegisterDto request);
 
-  /**
-   * The API end-point used by admins and moderators to update other user's profile.
-   *
-   * @param  request create user request
-   * @return ResponseEntity that contains a message, http response code, a list of users in success case or violations
-   *         from input or verification in error case
-   */
+  @Operation(summary = "Update other user's profile. Only for admins and moderators and it's impossible for an user " +
+      "to change information of an other user that has more privileges than them.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "202", description = "Successfully update user's information",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to update user's information",
+          content = @Content)
+  })
   @PutMapping("/edit/{id}")
-  ResponseEntity<Object> updateOtherUserProfile(@PathVariable Long id, @RequestBody ChangeUserDetailsDto request);
+  ResponseEntity<Object> updateOtherUserProfile(@Parameter(description = "id of the user whose information needs to be " +
+      "changed") @PathVariable Long id,
+                                                @Parameter(description = "updated information")
+                                                @RequestBody UpdateUserDetailsDto request);
 
-  /**
-   * The API end-point used by users to update their profile.
-   *
-   * @param  request create user request
-   * @return ResponseEntity that contains a message, http response code, a list of users in success case or violations
-   *         from input or verification in error case
-   */
+  @Operation(summary = "Update current user's profile. Only for logged in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "202", description = "Successfully update current user's information",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to update current user's information",
+          content = @Content)
+  })
   @PutMapping("/edit")
-  ResponseEntity<Object> updateUserProfile(@RequestBody ChangeDetailsDto request);
+  ResponseEntity<Object> updateUserProfile(@Parameter(description = "updated information")
+                                           @RequestBody UpdateDetailsDto request);
 
-  /**
-   * The API end-point used by admins and moderators to delete a user by their ID. Can only delete if the account has
-   * less authority.
-   *
-   * @param  id User ID to delete.
-   * @return ResponseEntity with success message.
-   */
+  @Operation(summary = "Delete other user by their id. Only for admins and moderators." +
+      "User can't delete accounts with higher privileges")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Successfully delete user",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to delete user",
+          content = @Content)
+  })
   @DeleteMapping("/delete/{id}")
-  ResponseEntity<Object> deleteUserById(@PathVariable Long id);
+  ResponseEntity<Object> deleteUserById(@Parameter(description = "id of the user that will be deleted")
+                                        @PathVariable Long id);
 
-  /**
-   * Delete the currently authenticated user.
-   *
-   * @return ResponseEntity with success message.
-   */
+  @Operation(summary = "Delete current user. Only for logged in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Successfully delete current user",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to delete current user",
+          content = @Content)
+  })
   @DeleteMapping("/delete")
   ResponseEntity<Object> deleteUser();
 }

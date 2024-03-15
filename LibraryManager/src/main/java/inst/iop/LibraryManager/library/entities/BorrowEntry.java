@@ -46,6 +46,7 @@ public class BorrowEntry {
   private LocalDate returnDate;
 
   @Enumerated(EnumType.STRING)
+  @Builder.Default
   private BorrowStatus status = BorrowStatus.Requested;
 
   public BorrowEntryDto mapToDto() {

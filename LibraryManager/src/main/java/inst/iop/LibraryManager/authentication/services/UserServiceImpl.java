@@ -1,7 +1,7 @@
 package inst.iop.LibraryManager.authentication.services;
 
-import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
-import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateUserDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
 import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.authentication.entities.enums.Role;
@@ -18,19 +18,24 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
-import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
+import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertSetToMap;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
+
   private final TokenRepository tokenRepository;
+
   private final PasswordEncoder passwordEncoder;
+
   private final Validator validator;
 
   @Override
@@ -48,7 +53,7 @@ public class UserServiceImpl implements UserService {
     if (compareRole(callerRole, targetRole) <= 0) {
       Map<String, String> violations = new HashMap<>();
       violations.put("role", "You are not allowed to perform this action");
-      throw new BadRequestDetailsException("Invalid update user request", violations);
+      throw new BadRequestDetailsException("Unable to get user with id " + id, violations);
     }
 
     return user;
@@ -59,7 +64,7 @@ public class UserServiceImpl implements UserService {
     return userRepository.findUserByEmail(email).orElseThrow(() -> {
       Map<String, String> violations = new HashMap<>();
       violations.put("email", "There is no user with email address " + email);
-      return new BadRequestDetailsException("Invalid find user by id email", violations);
+      return new BadRequestDetailsException("Unable to find user by email", violations);
     });
   }
 
@@ -75,8 +80,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void createUser(RegisterDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+  public User createUser(RegisterDto request) throws BadRequestDetailsException {
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
 
     if (checkInvalidConfirmedPassword(request.getPassword(), request.getConfirmedPassword())) {
       violations.put("confirmedPassword", "Password and confirmed password must be matched");
@@ -88,9 +93,14 @@ public class UserServiceImpl implements UserService {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String callerRole = authentication.getAuthorities().stream().toList().get(0).toString();
-    String targetRole = "ROLE_USER";
-    if (callerRole.equals("ROLE_MODERATOR") && compareRole(callerRole, targetRole) <= 0) {
+    if (compareRole(callerRole, "ROLE_USER") <= 0) {
       violations.put("role", "You are not permitted to create an user that has more privileges that you");
+      throw new BadRequestDetailsException("Invalid user register request", violations);
+    }
+
+    Optional<User> u = userRepository.findUserByEmail(request.getEmail());
+    if (u.isPresent()) {
+      violations.put("email", "An user with the same email is already existed");
       throw new BadRequestDetailsException("Invalid user register request", violations);
     }
 
@@ -99,42 +109,44 @@ public class UserServiceImpl implements UserService {
         .password(passwordEncoder.encode(request.getPassword()))
         .firstName(request.getFirstName())
         .lastName(request.getLastName())
+        .createdDate(LocalDate.now())
         .role(Role.USER)
         .enabled(true)
         .build();
     userRepository.save(user);
+    return user;
   }
 
   @Override
   @Transactional
-  public void updateOtherUserById(Long id, ChangeUserDetailsDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+  public void updateOtherUserById(Long id, UpdateUserDetailsDto request) throws BadRequestDetailsException {
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
 
     if (checkInvalidConfirmedPassword(request.getPassword(), request.getConfirmedPassword())) {
       violations.put("confirmedPassword", "Password and confirmed password must be matched");
     }
 
     if (!violations.isEmpty()) {
-      throw new BadRequestDetailsException("Invalid update user request", violations);
+      throw new BadRequestDetailsException("Invalid update other user request", violations);
     }
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String callerRole = authentication.getAuthorities().stream().toList().get(0).toString();
 
     User user = userRepository.findUserById(id).orElseThrow(() -> {
-      violations.put("email", "No user with id " + id + " found");
-      return new BadRequestDetailsException("Invalid update user request", violations);
+      violations.put("id", "No user with id " + id + " found");
+      return new BadRequestDetailsException("Invalid update other user request", violations);
     });
 
     String targetRole = "ROLE_" + user.getRole().toString();
     if (compareRole(callerRole, targetRole) <= 0) {
       violations.put("role", "You are not allowed to perform this action");
-      throw new BadRequestDetailsException("Invalid update user request", violations);
+      throw new BadRequestDetailsException("Invalid update other user request", violations);
     }
 
     userRepository.updateUserById(
         id,
-        request.getPassword() != null && !request.getPassword().equals(user.getPassword()) ?
+        request.getPassword() != null && !passwordEncoder.encode(request.getPassword()).equals(user.getPassword()) ?
             passwordEncoder.encode(request.getPassword()) : user.getPassword(),
         request.getFirstName(),
         request.getLastName(),
@@ -144,8 +156,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void updateUserByEmail(ChangeDetailsDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+  public void updateUserByEmail(UpdateDetailsDto request) throws BadRequestDetailsException {
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
 
     if (checkInvalidConfirmedPassword(request.getPassword(), request.getConfirmedPassword())) {
       violations.put("confirmedPassword", "Password and confirmed password must be matched");
@@ -163,7 +175,7 @@ public class UserServiceImpl implements UserService {
 
     userRepository.updateUserByEmail(
         authentication.getName(),
-        request.getPassword() != null && !request.getPassword().equals(user.getPassword()) ?
+        request.getPassword() != null && !passwordEncoder.encode(request.getPassword()).equals(user.getPassword()) ?
             passwordEncoder.encode(request.getPassword()) : user.getPassword(),
         request.getFirstName(),
         request.getLastName(),
@@ -171,15 +183,15 @@ public class UserServiceImpl implements UserService {
     );
   }
 
-  private int compareRole(String callerRole, String targetRole) throws IllegalArgumentException {
+  public int compareRole(String callerRole, String targetRole) throws IllegalArgumentException {
     return Integer.compare(
         Objects.requireNonNull(Role.getRoleFromAuthority(callerRole)).getOrder(),
         Objects.requireNonNull(Role.getRoleFromAuthority(targetRole)).getOrder()
     );
   }
 
-  private boolean checkInvalidConfirmedPassword(String password, String confirmedPassword) {
-    return !Objects.equals(password, confirmedPassword);
+  public boolean checkInvalidConfirmedPassword(String password, String confirmedPassword) {
+    return !password.equals(confirmedPassword);
   }
 
   @Override

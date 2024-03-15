@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertConstrainViolationSetToMap;
+import static inst.iop.LibraryManager.utilities.ConstraintViolationSetHandler.convertSetToMap;
 
 @RequiredArgsConstructor
 @Service
@@ -37,7 +37,7 @@ public class BookFieldServiceImpl implements BookFieldService {
     if (bf.isEmpty()) {
       Map<String, String> violations = new HashMap<>();
       violations.put("id", "There is no book field with id " + id);
-      throw new BadRequestDetailsException("Invalid get book field by id request", violations);
+      throw new BadRequestDetailsException("Unable to get book field by string", violations);
     }
     return bf.get();
   }
@@ -45,9 +45,9 @@ public class BookFieldServiceImpl implements BookFieldService {
   @Override
   public BookField getBookFieldByString(@Valid @FieldConstraint String name, boolean isCreateBookRequest)
       throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(name));
+    Map<String, String> violations = convertSetToMap(validator.validate(name));
     if (!violations.isEmpty()) {
-      throw new BadRequestDetailsException("Invalid get book field by string request", violations);
+      throw new BadRequestDetailsException("Unable to get book field by string", violations);
     }
 
     Optional<BookField> bf = bookFieldRepository.getBookFieldByString(name);
@@ -66,7 +66,7 @@ public class BookFieldServiceImpl implements BookFieldService {
   @Override
   @Transactional
   public void createField(CreateUpdateFieldDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid create book field request", violations);
     }
@@ -87,7 +87,7 @@ public class BookFieldServiceImpl implements BookFieldService {
   @Override
   @Transactional
   public void updateBookFieldById(Long id, CreateUpdateFieldDto request) throws BadRequestDetailsException {
-    Map<String, String> violations = convertConstrainViolationSetToMap(validator.validate(request));
+    Map<String, String> violations = convertSetToMap(validator.validate(request));
     if (!violations.isEmpty()) {
       throw new BadRequestDetailsException("Invalid update book field by id request", violations);
     }

@@ -17,10 +17,8 @@ public class IsbnConstraintValidator implements ConstraintValidator<IsbnConstrai
 
   @Override
   public boolean isValid(String value, ConstraintValidatorContext context) {
-    String ISBN_REGEX = "^(?:ISBN(?:-1[03])?:?●)?(?=[0-9X]{10}$|(?=(?:[0-9]+[-●]){3})" +
-        "[-●0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[-●]){4})[-●0-9]{17}$)" +
-        "(?:97[89][-●]?)?[0-9]{1,5}[-●]?[0-9]+[-●]?[0-9]+[-●]?[0-9X]$";
+    String ISBN_REGEX = "^\\d{10}(\\d{3})?$";
     return !isNotNullConstrain && value == null || value != null
-        && Pattern.compile(ISBN_REGEX).matcher(value).matches();
+        && Pattern.compile(ISBN_REGEX).matcher(value.replaceAll("-", "")).matches();
   }
 }

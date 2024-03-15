@@ -4,24 +4,26 @@ import inst.iop.LibraryManager.authentication.entities.constraints.NameConstrain
 import inst.iop.LibraryManager.authentication.entities.constraints.PasswordConstraint;
 import inst.iop.LibraryManager.authentication.entities.constraints.RoleConstraint;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @AllArgsConstructor
-public class ChangeUserDetailsDto {
+public class UpdateUserDetailsDto {
 
-  @PasswordConstraint(isNotNullConstrain = false)
+  @PasswordConstraint
   private String password;
 
-  @PasswordConstraint(isNotNullConstrain = false)
+  @PasswordConstraint
   private String confirmedPassword;
 
-  @RoleConstraint(isNotNullConstrain = false)
+  @RoleConstraint
   private String role;
 
-  @NameConstraint(isNotNullConstrain = false)
+  @NameConstraint
   private String firstName;
 
-  @NameConstraint(isNotNullConstrain = false)
+  @NameConstraint
   private String lastName;
 }

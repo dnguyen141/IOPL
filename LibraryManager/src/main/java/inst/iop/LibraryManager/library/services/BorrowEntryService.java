@@ -1,9 +1,10 @@
 package inst.iop.LibraryManager.library.services;
 
 import inst.iop.LibraryManager.library.dtos.CreateBorrowEntryDto;
+import inst.iop.LibraryManager.library.dtos.ListBorrowEntriesByBookIdAndStatusDto;
+import inst.iop.LibraryManager.library.dtos.ListBorrowEntriesByStatusDto;
 import inst.iop.LibraryManager.library.dtos.UpdateBorrowEntryDto;
 import inst.iop.LibraryManager.library.entities.BorrowEntry;
-import inst.iop.LibraryManager.library.entities.constraints.BorrowStatusConstraint;
 import inst.iop.LibraryManager.utilities.exceptions.BadRequestDetailsException;
 import org.springframework.data.domain.Page;
 
@@ -11,21 +12,19 @@ public interface BorrowEntryService {
 
   BorrowEntry getBorrowEntryById(Long id) throws BadRequestDetailsException;
 
-  Page<BorrowEntry> listBorrowEntriesByStatus(String status, Integer pageNumber, Integer pageSize)
+  Page<BorrowEntry> listBorrowEntriesByStatus(ListBorrowEntriesByStatusDto request) throws BadRequestDetailsException;
+
+  Page<BorrowEntry> listBorrowEntriesByUsernameAndStatus(String username, ListBorrowEntriesByStatusDto request)
       throws BadRequestDetailsException;
 
-  Page<BorrowEntry> listBorrowEntriesByUsernameAndStatus(String username, @BorrowStatusConstraint String status,
-                                                         Integer pageNumber, Integer pageSize)
+  Page<BorrowEntry> listBorrowEntriesByBookIdAndStatus(ListBorrowEntriesByBookIdAndStatusDto request)
       throws BadRequestDetailsException;
 
-  Page<BorrowEntry> listBorrowEntriesByBookIdAndStatus(Long bookId, String status, Integer pageNumber, Integer pageSize)
-      throws BadRequestDetailsException;
+  Integer getBookAvailability(Long bookID);
 
-  Integer getBookAvailable(Long bookID);
+  BorrowEntry createBorrowEntry(CreateBorrowEntryDto request) throws BadRequestDetailsException;
 
-  void createBorrowEntry(CreateBorrowEntryDto request) throws BadRequestDetailsException;
-
-  void updateBorrowEntryById(Long id, UpdateBorrowEntryDto request) throws BadRequestDetailsException;
+  void updateBorrowEntryById(UpdateBorrowEntryDto request) throws BadRequestDetailsException;
 
   void deleteBorrowEntryById(Long id);
 }

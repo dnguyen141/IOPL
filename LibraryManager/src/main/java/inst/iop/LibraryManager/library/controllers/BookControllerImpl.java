@@ -241,7 +241,7 @@ public class BookControllerImpl implements BookController {
   /**
    * Helper function to construct books' details to a proper response body
    *
-   * @param borrowEntries a page of borrow entries
+   * @param books a page of borrow entries
    * @return ResponseEntity that contains a report message and http response code 200
    */
   private ResponseEntity<Object> findBooksResultConstructor(Page<Book> books) {
@@ -269,7 +269,7 @@ public class BookControllerImpl implements BookController {
   public ResponseEntity<Object> createBook(CreateBookDto request, MultipartFile coverImage) {
     bookService.createBook(request, coverImage);
     return responseEntityFactory.createSuccessResponse(
-        HttpStatus.ACCEPTED, "Successfully create book"
+        HttpStatus.CREATED, "Successfully create book"
     );
   }
 
@@ -303,7 +303,23 @@ public class BookControllerImpl implements BookController {
   public ResponseEntity<Object> deleteBookById(Long id) {
     bookService.deleteBookById(id);
     return responseEntityFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully delete book"
+        HttpStatus.NO_CONTENT, "Successfully delete book"
+    );
+  }
+
+  /**
+   * The API end-point for importing books from excel file. Only available for admins.
+   *
+   * @param  excelFile excel file that contains books' information, uploaded by admin
+   * @return ResponseEntity that contains a message and http response code - 200 if success
+   */
+  @Override
+  @Transactional
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  public ResponseEntity<Object> importFromExcelFile(MultipartFile excelFile) {
+    bookService.importBooksFromExcelFile(excelFile);
+    return responseEntityFactory.createSuccessResponse(
+        HttpStatus.OK, "Successfully import from excel file"
     );
   }
 }

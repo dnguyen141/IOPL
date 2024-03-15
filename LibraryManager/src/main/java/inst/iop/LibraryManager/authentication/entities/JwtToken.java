@@ -23,6 +23,7 @@ public class JwtToken {
   private String token;
 
   @Enumerated(EnumType.STRING)
+  @Builder.Default
   private TokenType tokenType = TokenType.BEARER;
 
   private boolean revoked;

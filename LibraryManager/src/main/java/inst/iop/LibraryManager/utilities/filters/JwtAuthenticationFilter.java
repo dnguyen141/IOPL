@@ -18,11 +18,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.stream.Stream;
+
+import static inst.iop.LibraryManager.utilities.configs.SecurityConstants.*;
 
 @Component
 @RequiredArgsConstructor
@@ -44,12 +47,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       String authenticationHeader = request.getHeader("Authorization");
       if (authenticationHeader == null || !authenticationHeader.startsWith("Bearer ")) {
         boolean checkIfUriMatches = Stream.of(
-            "/api/v1/auth/login",
-            "/api/v1/auth/register",
-            "/api/v1/auth/confirm",
-            "/api/v1/books/list",
-            "/api/v1/books/search"
-        ).anyMatch(uri -> request.getRequestURI().startsWith(uri));
+            LOGIN_URI, REGISTER_URI, CONFIRM_REGISTRATION_URI, DOCUMENTATION_URI, SWAGGER_UI_URI, ACTUATOR_URI,
+            SWAGGER_FAVICON_URI
+        ).map(AntPathRequestMatcher::new).anyMatch(antPathRequestMatcher -> antPathRequestMatcher.matches(request));
 
         if (!checkIfUriMatches) {
           handleErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST,

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -14,14 +15,18 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UpdateBorrowEntryDto {
 
+  private Long borrowEntryId;
+
   private Long userId;
 
   private Long bookId;
 
+  @DateTimeFormat(pattern = "dd-MM-yyyy", iso = DateTimeFormat.ISO.DATE)
   private LocalDate borrowDate;
 
+  @DateTimeFormat(pattern = "dd-MM-yyyy", iso = DateTimeFormat.ISO.DATE)
   private LocalDate returnDate;
 
   @BorrowStatusConstraint(isNotNullConstrain = false)
-  private String borrowStatus;
+  private String status;
 }

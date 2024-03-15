@@ -49,6 +49,7 @@ public class User implements UserDetails {
   private String lastName;
 
   @Enumerated(EnumType.STRING)
+  @Builder.Default
   private Role role = Role.USER;
 
   @OneToMany(mappedBy = "borrower")

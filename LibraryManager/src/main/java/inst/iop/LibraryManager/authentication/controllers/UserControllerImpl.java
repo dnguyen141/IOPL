@@ -1,7 +1,7 @@
 package inst.iop.LibraryManager.authentication.controllers;
 
-import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
-import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateUserDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
 import inst.iop.LibraryManager.authentication.entities.User;
 import inst.iop.LibraryManager.authentication.services.UserService;
@@ -125,10 +125,10 @@ public class UserControllerImpl implements UserController {
    */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
-  public ResponseEntity<Object> updateOtherUserProfile(Long id, ChangeUserDetailsDto request) {
+  public ResponseEntity<Object> updateOtherUserProfile(Long id, UpdateUserDetailsDto request) {
     userService.updateOtherUserById(id, request);
     return responseFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully update specified user details"
+        HttpStatus.ACCEPTED, "Successfully update specified user details"
     );
   }
 
@@ -140,10 +140,10 @@ public class UserControllerImpl implements UserController {
    *         from input or verification in error case
    */
   @Override
-  public ResponseEntity<Object> updateUserProfile(ChangeDetailsDto request) {
+  public ResponseEntity<Object> updateUserProfile(UpdateDetailsDto request) {
     userService.updateUserByEmail(request);
     return responseFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully update current user details"
+        HttpStatus.ACCEPTED, "Successfully update current user details"
     );
   }
 
@@ -159,7 +159,7 @@ public class UserControllerImpl implements UserController {
   public ResponseEntity<Object> deleteUserById(Long id) {
     userService.deleteUserById(id);
     return responseFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully delete user with id " + id
+        HttpStatus.NO_CONTENT, "Successfully delete user with id " + id
     );
   }
 
@@ -172,7 +172,7 @@ public class UserControllerImpl implements UserController {
   public ResponseEntity<Object> deleteUser() {
     userService.deleteUser();
     return responseFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully delete current user"
+        HttpStatus.NO_CONTENT, "Successfully delete current user"
     );
   }
 }

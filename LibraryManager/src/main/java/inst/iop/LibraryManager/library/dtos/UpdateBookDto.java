@@ -16,36 +16,33 @@ import org.springframework.web.multipart.MultipartFile;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UpdateBookDto {
 
-  @TitleConstraint(isNotNullConstrain = false)
+  @TitleConstraint
   private String title;
 
-  @AuthorsConstraint(isNotNullConstrain = false)
+  @AuthorsConstraint
   private String authors;
 
-  @PublisherConstraint(isNotNullConstrain = false)
+  @PublisherConstraint
   private String publisher;
 
-  @TypeConstraint(isNotNullConstrain = false)
+  @TypeConstraint
   private String type;
 
-  @FieldConstraint(isNotNullConstrain = false)
+  @FieldConstraint
   private String field;
 
-  @YearConstraint(isNotNullConstrain = false)
+  @YearConstraint
   private Integer year;
 
-  @EditionConstraint(isNotNullConstrain = false)
+  @EditionConstraint
   private Integer edition;
 
-  @IsbnConstraint(isNotNullConstrain = false)
+  @IsbnConstraint
   private String isbn;
 
-  @QuantityConstraint(isNotNullConstrain = false)
+  @QuantityConstraint
   private Integer quantity;
 
   @UrlConstraint
   private String coverUrl;
-
-  @Nullable
-  private MultipartFile coverImage;
 }

@@ -1,10 +1,13 @@
 package inst.iop.LibraryManager.utilities.configs;
 
+import static inst.iop.LibraryManager.utilities.configs.SecurityConstants.*;
 import inst.iop.LibraryManager.utilities.filters.JwtAuthenticationFilter;
 import inst.iop.LibraryManager.utilities.filters.TrailingSlashFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,7 +49,8 @@ public class GlobalProjectConfig {
         .authorizeHttpRequests(
             (authorize) -> authorize
                 .requestMatchers(
-                    "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/confirm"
+                    LOGIN_URI, REGISTER_URI, CONFIRM_REGISTRATION_URI, DOCUMENTATION_URI, SWAGGER_UI_URI, ACTUATOR_URI,
+                    SWAGGER_FAVICON_URI
                 )
                 .permitAll()
                 .anyRequest()
@@ -59,5 +63,12 @@ public class GlobalProjectConfig {
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(trailingSlashFilter, DisableEncodeUrlFilter.class);
     return http.build();
+  }
+
+  @Bean
+  public TaskScheduler taskScheduler() {
+    var taskScheduler = new ThreadPoolTaskScheduler();
+    taskScheduler.setPoolSize(5);
+    return taskScheduler;
   }
 }

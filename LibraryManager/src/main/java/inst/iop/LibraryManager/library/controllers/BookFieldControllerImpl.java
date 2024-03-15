@@ -1,6 +1,7 @@
 package inst.iop.LibraryManager.library.controllers;
 
 import inst.iop.LibraryManager.library.dtos.CreateUpdateFieldDto;
+import inst.iop.LibraryManager.library.services.BookFieldService;
 import inst.iop.LibraryManager.library.services.BookFieldServiceImpl;
 import inst.iop.LibraryManager.utilities.responses.ApiResponseEntityFactory;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.Map;
 @RestController
 public class BookFieldControllerImpl implements BookFieldController {
 
-  private final BookFieldServiceImpl bookFieldService;
+  private final BookFieldService bookFieldService;
   private final ApiResponseEntityFactory responseEntityFactory;
 
   /**
@@ -59,7 +60,7 @@ public class BookFieldControllerImpl implements BookFieldController {
    * The API end-point for creating a new book field from string
    *
    * @param request which contains new book field's name
-   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   * @return ResponseEntity that contains a report message and http response code - 201 if success or 400 if error
    */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
@@ -75,14 +76,14 @@ public class BookFieldControllerImpl implements BookFieldController {
    *
    * @param id book field's id
    * @param request which contains book field's new name
-   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   * @return ResponseEntity that contains a report message and http response code - 202 if success or 400 if error
    */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> updateBookField(Long id, CreateUpdateFieldDto request) {
     bookFieldService.updateBookFieldById(id, request);
     return responseEntityFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully update book field with id " + id
+        HttpStatus.ACCEPTED, "Successfully update book field with id " + id
     );
   }
 
@@ -90,14 +91,14 @@ public class BookFieldControllerImpl implements BookFieldController {
    * The API end-point for deleting a book field
    *
    * @param id book field's id
-   * @return ResponseEntity that contains a report message and http response code - 200 if success or 400 if error
+   * @return ResponseEntity that contains a report message and http response code - 204 if success or 400 if error
    */
   @Override
   @PreAuthorize("hasAnyRole({'ROLE_ADMIN', 'ROLE_MODERATOR'})")
   public ResponseEntity<Object> deleteBookField(Long id) {
     bookFieldService.deleteField(id);
     return responseEntityFactory.createSuccessResponse(
-        HttpStatus.OK, "Successfully delete book field with id " + id
+        HttpStatus.NO_CONTENT, "Successfully delete book field with id " + id
     );
   }
 }

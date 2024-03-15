@@ -2,6 +2,12 @@ package inst.iop.LibraryManager.library.controllers;
 
 import inst.iop.LibraryManager.library.dtos.CreateBookDto;
 import inst.iop.LibraryManager.library.dtos.UpdateBookDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -9,231 +15,245 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/api/v1/books")
-@Validated
+@Tag(name = "book-controller")
 public interface BookController {
 
-  /**
-   * The API end-point for listing all books in the library with pagination
-   *
-   * @param  pageNumber page number
-   * @param  pageSize number of entries in a page
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "List all books and their information. Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully list books information",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to list books information",
+          content = @Content)
+  })
   @GetMapping("")
-  ResponseEntity<Object> listAllBooks(@RequestParam(defaultValue = "0") Integer pageNumber,
+  ResponseEntity<Object> listAllBooks(@Parameter(description = "Page number")
+                                      @RequestParam(defaultValue = "0") Integer pageNumber,
+                                      @Parameter(description = "Number of entries in a page")
                                       @RequestParam(defaultValue = "10") Integer pageSize);
 
-  /**
-   * The API end-point for getting a book by id
-   *
-   * @param  id book's id
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "Get book information from its id. Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully get book information",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to get book information",
+          content = @Content)
+  })
   @GetMapping("/{id}")
-  ResponseEntity<Object> getBookById(@PathVariable Long id);
+  ResponseEntity<Object> getBookById(@Parameter(description = "id of the book that will be retrieved")
+                                     @PathVariable Long id);
 
-  /**
-   * The API end-point for searching book in every category using a search term.
-   *
-   * @param  term search term
-   * @param  beforeYear upper limit of book's published year
-   * @param  afterYear lower limit of book's published year
-   * @param  pageNumber page index number
-   * @param  pageSize number of entries in a page
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "Search book using an input search query from user. Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully search books",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to search books",
+          content = @Content)
+  })
   @GetMapping("/search")
   ResponseEntity<Object> findBooks(
-      @RequestParam String term,
+      @Parameter(description = "search term") @RequestParam String term,
+      @Parameter(description = "filter books that have been published before specific year")
       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") Integer beforeYear,
+      @Parameter(description = "filter books that have been published after specific year")
       @RequestParam(defaultValue = "1900") Integer afterYear,
+      @Parameter(description = "Page number")
       @RequestParam(defaultValue = "0") Integer pageNumber,
+      @Parameter(description = "Number of entries in a page")
       @RequestParam(defaultValue = "10") Integer pageSize
   );
 
-  /**
-   * The API end-point for searching book base on title using a search term.
-   *
-   * @param  term search term
-   * @param  beforeYear upper limit of book's published year
-   * @param  afterYear lower limit of book's published year
-   * @param  pageNumber page index number
-   * @param  pageSize number of entries in a page
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "Search book by title using an input search query from user. Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully search books",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to search books",
+          content = @Content)
+  })
   @GetMapping("/search/title")
   ResponseEntity<Object> findBooksByTitle(
-      @RequestParam String term,
+      @Parameter(description = "search term") @RequestParam String term,
+      @Parameter(description = "filter books that have been published before specific year")
       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") Integer beforeYear,
+      @Parameter(description = "filter books that have been published after specific year")
       @RequestParam(defaultValue = "1900") Integer afterYear,
+      @Parameter(description = "Page number")
       @RequestParam(defaultValue = "0") Integer pageNumber,
+      @Parameter(description = "Number of entries in a page")
       @RequestParam(defaultValue = "10") Integer pageSize
   );
 
-  /**
-   * The API end-point for searching book base on authors using a search term.
-   *
-   * @param  term search term
-   * @param  beforeYear upper limit of book's published year
-   * @param  afterYear lower limit of book's published year
-   * @param  pageNumber page index number
-   * @param  pageSize number of entries in a page
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "Search book by authors using an input search query from user. Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully search books",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to search books",
+          content = @Content)
+  })
   @GetMapping("/search/authors")
   ResponseEntity<Object> findBooksByAuthors(
-      @RequestParam String term,
+      @Parameter(description = "search term") @RequestParam String term,
+      @Parameter(description = "filter books that have been published before specific year")
       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") Integer beforeYear,
+      @Parameter(description = "filter books that have been published after specific year")
       @RequestParam(defaultValue = "1900") Integer afterYear,
+      @Parameter(description = "Page number")
       @RequestParam(defaultValue = "0") Integer pageNumber,
+      @Parameter(description = "Number of entries in a page")
       @RequestParam(defaultValue = "10") Integer pageSize
   );
 
-  /**
-   * The API end-point for searching book base on publisher using a search term.
-   *
-   * @param  term search term
-   * @param  beforeYear upper limit of book's published year
-   * @param  afterYear lower limit of book's published year
-   * @param  pageNumber page index number
-   * @param  pageSize number of entries in a page
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "Search book by publisher using an input search query from user. Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully search books",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to search books",
+          content = @Content)
+  })
   @GetMapping("/search/publisher")
   ResponseEntity<Object> findBooksByPublisher(
-      @RequestParam String term,
+      @Parameter(description = "search term") @RequestParam String term,
+      @Parameter(description = "filter books that have been published before specific year")
       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") Integer beforeYear,
+      @Parameter(description = "filter books that have been published after specific year")
       @RequestParam(defaultValue = "1900") Integer afterYear,
+      @Parameter(description = "Page number")
       @RequestParam(defaultValue = "0") Integer pageNumber,
+      @Parameter(description = "Number of entries in a page")
       @RequestParam(defaultValue = "10") Integer pageSize
   );
 
-  /**
-   * The API end-point for searching book base on book type using a search term.
-   *
-   * @param  term search term
-   * @param  beforeYear upper limit of book's published year
-   * @param  afterYear lower limit of book's published year
-   * @param  pageNumber page index number
-   * @param  pageSize number of entries in a page
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "Search book by book type using an input search query from user. Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully search books",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to search books",
+          content = @Content)
+  })
   @GetMapping("/search/type")
   ResponseEntity<Object> findBooksByType(
-      @RequestParam String term,
+      @Parameter(description = "search term") @RequestParam String term,
+      @Parameter(description = "filter books that have been published before specific year")
       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") Integer beforeYear,
+      @Parameter(description = "filter books that have been published after specific year")
       @RequestParam(defaultValue = "1900") Integer afterYear,
+      @Parameter(description = "Page number")
       @RequestParam(defaultValue = "0") Integer pageNumber,
+      @Parameter(description = "Number of entries in a page")
       @RequestParam(defaultValue = "10") Integer pageSize
   );
 
-  /**
-   * The API end-point for searching book base on book field using a search term.
-   *
-   * @param  term search term
-   * @param  beforeYear upper limit of book's published year
-   * @param  afterYear lower limit of book's published year
-   * @param  pageNumber page index number
-   * @param  pageSize number of entries in a page
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "Search book by book field using an input search query from user. Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully search books",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to search books",
+          content = @Content)
+  })
   @GetMapping("/search/field")
   ResponseEntity<Object> findBooksByField(
-      @RequestParam String term,
+      @Parameter(description = "search term") @RequestParam String term,
+      @Parameter(description = "filter books that have been published before specific year")
       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") Integer beforeYear,
+      @Parameter(description = "filter books that have been published after specific year")
       @RequestParam(defaultValue = "1900") Integer afterYear,
+      @Parameter(description = "Page number")
       @RequestParam(defaultValue = "0") Integer pageNumber,
+      @Parameter(description = "Number of entries in a page")
       @RequestParam(defaultValue = "10") Integer pageSize
   );
 
-  /**
-   * The API end-point for searching book base on ISBN using a search term.
-   *
-   * @param  term search term
-   * @param  beforeYear upper limit of book's published year
-   * @param  afterYear lower limit of book's published year
-   * @param  pageNumber page index number
-   * @param  pageSize number of entries in a page
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "Search book by book ISBN using an input search query from user. Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully search books",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to search books",
+          content = @Content)
+  })
   @GetMapping("/search/isbn")
   ResponseEntity<Object> findBooksByIsbn(
-      @RequestParam String term,
+      @Parameter(description = "search term") @RequestParam String term,
+      @Parameter(description = "filter books that have been published before specific year")
       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") Integer beforeYear,
+      @Parameter(description = "filter books that have been published after specific year")
       @RequestParam(defaultValue = "1900") Integer afterYear,
+      @Parameter(description = "Page number")
       @RequestParam(defaultValue = "0") Integer pageNumber,
+      @Parameter(description = "Number of entries in a page")
       @RequestParam(defaultValue = "10") Integer pageSize
   );
 
-  /**
-   * The API end-point for searching book base on inventory number using a search term.
-   *
-   * @param  term search term
-   * @param  beforeYear upper limit of book's published year
-   * @param  afterYear lower limit of book's published year
-   * @param  pageNumber page index number
-   * @param  pageSize number of entries in a page
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "Search book by inventory number using an input search query from user. " +
+      "Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully search books",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to search books",
+          content = @Content)
+  })
   @GetMapping("/search/inventory-number")
   ResponseEntity<Object> findBooksByInventoryNumber(
-      @RequestParam String term,
+      @Parameter(description = "search term") @RequestParam String term,
+      @Parameter(description = "filter books that have been published before specific year")
       @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().getYear()}") Integer beforeYear,
+      @Parameter(description = "filter books that have been published after specific year")
       @RequestParam(defaultValue = "1900") Integer afterYear,
+      @Parameter(description = "Page number")
       @RequestParam(defaultValue = "0") Integer pageNumber,
+      @Parameter(description = "Number of entries in a page")
       @RequestParam(defaultValue = "10") Integer pageSize
   );
 
-  /**
-   * The API end-point exposes a book's cover image
-   *
-   * @param  id book's id
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of books in success case or violations from input in error case
-   */
+  @Operation(summary = "Get cover image of a specific book using its id. Only for logged-in users.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successfully get book's cover",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to get book's cover",
+          content = @Content)
+  })
   @GetMapping("/{id}/cover")
-  ResponseEntity<?> getCoverImage(@PathVariable Long id);
+  ResponseEntity<?> getCoverImage(@Parameter(description = "id of the book that will be retrieved")
+                                  @PathVariable Long id);
 
-  /**
-   * The API end-point for creating a new book
-   *
-   * @param request    contains every book's details
-   * @param coverImage for uploading image from local machine
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of violations from inputs in error case
-   */
+  @Operation(summary = "Create a book entry in the library. Only for moderators and admins.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Successfully create book",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to create book",
+          content = @Content)
+  })
   @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  ResponseEntity<Object> createBook(@ModelAttribute CreateBookDto request,
+  ResponseEntity<Object> createBook(@Parameter(description = "All information needed for the book entry")
+                                    @RequestPart CreateBookDto request,
+                                    @Parameter(description = "Book cover's image which is uploaded by user")
                                     @RequestPart(name = "coverImage", required = false) MultipartFile coverImage);
 
-  /**
-   * The API end-point for updating an existed books
-   *
-   * @param  request contains every book's details
-   * @param  coverImage for uploading image from local machine
-   * @return ResponseEntity that contains a message, http response code - 200 in success and 400 in error case, and
-   * a list of violations from inputs in error case
-   */
+  @Operation(summary = "Update a book entry's information. Only for moderators and admins.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "202", description = "Successfully update book",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to update book",
+          content = @Content)
+  })
   @PostMapping(value = "/update/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  ResponseEntity<Object> updateBookById(@PathVariable Long id, @ModelAttribute UpdateBookDto request,
+  ResponseEntity<Object> updateBookById(@Parameter(description = "id of the book that will be updated")
+                                        @PathVariable Long id,
+                                        @Parameter(description = "Updated information for the book entry")
+                                        @RequestPart UpdateBookDto request,
+                                        @Parameter(description = "Updated cover image for the book entry")
                                         @RequestPart(name = "coverImage", required = false) MultipartFile coverImage);
 
-  /**
-   * The API end-point for deleting an existed books
-   *
-   * @param  id book's id
-   * @return ResponseEntity that contains a message and http response code - 200 if success
-   */
+  @Operation(summary = "Delete a book entry. Only for moderators and admins.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Successfully delete book",
+          content = @Content),
+      @ApiResponse(responseCode = "400", description = "Unable to delete book",
+          content = @Content)
+  })
   @DeleteMapping("/delete/{id}")
-  ResponseEntity<Object> deleteBookById(@PathVariable Long id);
+  ResponseEntity<Object> deleteBookById(@Parameter(description = "id of the book that will be deleted")
+                                        @PathVariable Long id);
+
+  @PostMapping("/import")
+  ResponseEntity<Object> importFromExcelFile(@Parameter(description = "excel file that contains books' information")
+                                             @RequestPart(name = "excelFile") MultipartFile excelFile);
 }

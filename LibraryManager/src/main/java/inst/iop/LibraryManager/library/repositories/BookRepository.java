@@ -1,5 +1,6 @@
 package inst.iop.LibraryManager.library.repositories;
 
+import inst.iop.LibraryManager.authentication.entities.enums.Role;
 import inst.iop.LibraryManager.library.entities.Book;
 import inst.iop.LibraryManager.library.entities.BookField;
 import inst.iop.LibraryManager.library.entities.BookType;
@@ -113,6 +114,24 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
   @Query(value = "SELECT currval('book_id_sequence')", nativeQuery = true)
   Long getCurrentBookIdSequenceValue();
+
+  @Modifying
+  @Query("UPDATE Book b " +
+      "SET b.title = CASE WHEN (:title is not null) THEN :title ELSE b.title END, " +
+      "b.authors = CASE WHEN (:authors is not null) THEN :authors ELSE b.authors END, " +
+      "b.publisher = CASE WHEN (:publisher is not null) THEN :publisher ELSE b.publisher END, " +
+      "b.type = CASE WHEN (:type is not null) THEN :type ELSE b.type END, " +
+      "b.field = CASE WHEN (:field is not null) THEN :field ELSE b.field END, " +
+      "b.year = CASE WHEN (:year is not null) THEN :year ELSE b.year END, " +
+      "b.edition = CASE WHEN (:edition is not null) THEN :edition ELSE b.edition END, " +
+      "b.isbn = CASE WHEN (:isbn is not null) THEN :isbn ELSE b.isbn END, " +
+      "b.quantity = CASE WHEN (:quantity is not null) THEN :quantity ELSE b.quantity END, " +
+      "b.inventoryNumber = CASE WHEN (:inventoryNumber is not null) THEN :inventoryNumber ELSE b.inventoryNumber END, " +
+      "b.coverImage = CASE WHEN (:coverImage is not null) THEN :coverImage ELSE b.coverImage END " +
+      "WHERE b.id = :id")
+  void updateBookById(Long id, String title, String authors, String publisher, BookType type, BookField field,
+                      Integer year, Integer edition, String isbn, String inventoryNumber, Integer quantity,
+                      String coverImage);
 
   @Modifying
   @Transactional

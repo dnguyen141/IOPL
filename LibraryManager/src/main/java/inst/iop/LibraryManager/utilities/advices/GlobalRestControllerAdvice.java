@@ -18,6 +18,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -124,19 +125,17 @@ public class GlobalRestControllerAdvice extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-  public ResponseEntity<SuccessWithDataApiResponse> handleMethodArgumentTypeMismatchException(
+  public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(
       MethodArgumentTypeMismatchException e
   ) {
-    Map<String, Object> details = new HashMap<>();
-    details.put("causes", e.getCause().toString());
+    Map<String, String> violations = new HashMap<>();
+    violations.put("causes", e.getCause().toString());
+    return responseEntityFactory.createErrorWithDetailsResponse(HttpStatus.FORBIDDEN, e.getMessage(), violations);
+  }
 
-    return ResponseEntity
-        .status(HttpStatus.FORBIDDEN)
-        .body(new SuccessWithDataApiResponse(
-            "error",
-            403,
-            e.getMessage(),
-            details
-        ));
+  @Override
+  protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
+      HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    return responseEntityFactory.createErrorResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage());
   }
 }
