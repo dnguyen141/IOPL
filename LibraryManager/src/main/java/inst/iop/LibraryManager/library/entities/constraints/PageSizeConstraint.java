@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = PageSizeConstraintValidator.class)
 public @interface PageSizeConstraint {
-  String message() default "Page size must be at least 1";
+  String message() default "Page size must be an integer of at least 1";
 
   Class<?>[] groups() default {};
 

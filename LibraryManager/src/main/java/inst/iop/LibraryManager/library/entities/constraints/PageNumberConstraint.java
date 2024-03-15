@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = PageNumberConstraintValidator.class)
 public @interface PageNumberConstraint {
-  String message() default "Page number must be positive";
+  String message() default "Page number must be an integer that is bigger than 0";
 
   Class<?>[] groups() default {};
 
