@@ -1,7 +1,7 @@
 package inst.iop.LibraryManager.authentication.controllers;
 
-import inst.iop.LibraryManager.authentication.dtos.ChangeDetailsDto;
-import inst.iop.LibraryManager.authentication.dtos.ChangeUserDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateDetailsDto;
+import inst.iop.LibraryManager.authentication.dtos.UpdateUserDetailsDto;
 import inst.iop.LibraryManager.authentication.dtos.RegisterDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/users")
@@ -74,7 +73,7 @@ public interface UserController {
   ResponseEntity<Object> updateOtherUserProfile(@Parameter(description = "id of the user whose information needs to be " +
       "changed") @PathVariable Long id,
                                                 @Parameter(description = "updated information")
-                                                @RequestBody ChangeUserDetailsDto request);
+                                                @RequestBody UpdateUserDetailsDto request);
 
   @Operation(summary = "Update current user's profile. Only for logged in users.")
   @ApiResponses(value = {
@@ -85,7 +84,7 @@ public interface UserController {
   })
   @PutMapping("/edit")
   ResponseEntity<Object> updateUserProfile(@Parameter(description = "updated information")
-                                           @RequestBody ChangeDetailsDto request);
+                                           @RequestBody UpdateDetailsDto request);
 
   @Operation(summary = "Delete other user by their id. Only for admins and moderators." +
       "User can't delete accounts with higher privileges")

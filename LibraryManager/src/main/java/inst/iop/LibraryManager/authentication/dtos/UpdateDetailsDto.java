@@ -11,18 +11,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChangeDetailsDto {
+public class UpdateDetailsDto {
 
-  @NameConstraint(isNotNullConstrain = false)
+  @NameConstraint
   private String firstName;
 
-  @NameConstraint(isNotNullConstrain = false)
+  @NameConstraint
   private String lastName;
 
-  @PasswordConstraint(isNotNullConstrain = false)
+  @PasswordConstraint
   private String password;
 
-  @PasswordConstraint(isNotNullConstrain = false)
+  @PasswordConstraint
   private String confirmedPassword;
 }
 
