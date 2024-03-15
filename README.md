@@ -11,7 +11,7 @@ IOP's Library is the private library management for the Institute of Photonics, 
 
 ## API Documentation
 - Swagger UI is available under http://localhost:8080/swagger-ui/index.html when the application starts in local machine. Screenshot:
-  ![swagger-ui](https://i.imgur.com/hMGEbX3.png)
+  ![swagger-ui](https://i.imgur.com/lLqa3En.png)
 
 ## Tools
 - Java 17
