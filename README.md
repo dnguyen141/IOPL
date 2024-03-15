@@ -9,6 +9,10 @@ IOP's Library is the private library management for the Institute of Photonics, 
 - Automatically schedule some library management tasks
 - Swagger UI documentation
 
+## API Documentation
+- Swagger UI is available under /swagger-ui/index.html when the application starts
+  ![swagger-ui](https://imgur.com/a/LbDQofO.png?raw=true)
+
 ## Tools
 - Java 17
 - Spring Framework 6
